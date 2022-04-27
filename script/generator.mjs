@@ -1,4 +1,4 @@
-import seedrandom from 'seedrandom';
+import RandomSeeded from './random-seed.mjs';
 
 /**
  * This is the algorithm's main logic piece. 
@@ -131,7 +131,7 @@ export default class MarkovChainWordGenerator {
     this._seed = args.seed;
     this.spellingStrategy = args.spellingStrategy;
 
-    this._rng = seedrandom(this._seed);
+    this._rng = new RandomSeeded(this._seed);
   }
 
   /**
@@ -419,25 +419,25 @@ export default class MarkovChainWordGenerator {
       throw new Error(`Failed to get item for value '${value}' from list!`);
     }
 
-    const targetLength = Math.round(this._rndRange(minLength, maxLength));
+    const targetLength = Math.round(this._rng.generate(minLength, maxLength));
 
     // This is the length of the string that will be produced. 
     let charactersLength = 0;
 
     // Determine first sequence.
-    const rndBeginning = this._rng();
+    const rndBeginning = this._rng.generate();
     const beginningSequence = _getMatchingSequence(probableBeginnings, rndBeginning).sequence;
     resultingSequences.push(beginningSequence);
     charactersLength += beginningSequence.chars.length;
     
     // Determine last sequence. 
-    const rndEnding = this._rng();
+    const rndEnding = this._rng.generate();
     const endingSequence = _getMatchingSequence(probableEndings, rndEnding).sequence;
     charactersLength += endingSequence.chars.length;
     
     // Determine middle sequences. 
     while (charactersLength < targetLength) {
-      const rndMiddle = this._rng();
+      const rndMiddle = this._rng.generate();
       const middleSequence = _getMatchingSequence(probableMiddles, rndMiddle).sequence;
       resultingSequences.push(middleSequence);
       charactersLength += middleSequence.chars.length;
@@ -447,16 +447,6 @@ export default class MarkovChainWordGenerator {
     resultingSequences.push(endingSequence);
     
     return resultingSequences.map(it => it.chars).join("");
-  }
-
-  /**
-   * Returns a random number within the given range. 
-   * @param {Number} min Lower boundary. 
-   * @param {Number} max Upper boundary. 
-   * @returns {Number} A random number within the given range. 
-   */
-  _rndRange(min, max) {
-    return this._rng() * (max - min) + min;
   }
 }
 
