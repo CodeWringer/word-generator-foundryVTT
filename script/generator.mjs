@@ -341,7 +341,7 @@ export default class MarkovChainWordGenerator {
    * 
    * @param {Array<AggregatedSequenceProbabilities>} probabilities 
    * @param {SEQUENCE_TYPES} type 
-   * @returns {Array<Object>}
+   * @returns {Array<ProbabilityAndSequence>}
    * @private
    */
   _getWeightedProbabilities(probabilities, type) {
@@ -351,26 +351,26 @@ export default class MarkovChainWordGenerator {
     if (type === SEQUENCE_TYPES.BEGINNING) {
       filteredAndSorted = probabilities.filter(it => { return it.probabilityBeginning > 0; })
       .map(it => { 
-        return {
+        return new ProbabilityAndSequence({
           sequence: it.sequence,
           probability: it.probabilityBeginning,
-        }
+        });
       });
     } else if (type === SEQUENCE_TYPES.MIDDLE) {
       filteredAndSorted = probabilities.filter(it => { return it.probabilityMiddle > 0; })
       .map(it => { 
-        return {
+        return new ProbabilityAndSequence({
           sequence: it.sequence,
           probability: it.probabilityMiddle,
-        }
+        });
       });
     } else if (type === SEQUENCE_TYPES.ENDING) {
       filteredAndSorted = probabilities.filter(it => { return it.probabilityEnding > 0; })
       .map(it => { 
-        return {
+        return new ProbabilityAndSequence({
           sequence: it.sequence,
           probability: it.probabilityEnding,
-        }
+        });
       });
     }
 
@@ -398,9 +398,9 @@ export default class MarkovChainWordGenerator {
    * Generates a single word, based on the given probabilty-weighted sequences. 
    * 
    * Also tries to ensure the generated word stays within the given min and max length. 
-   * @param {Array<Object>} probableBeginnings 
-   * @param {Array<Object>} probableMiddles 
-   * @param {Array<Object>} probableEndings 
+   * @param {Array<ProbabilityAndSequence>} probableBeginnings 
+   * @param {Array<ProbabilityAndSequence>} probableMiddles 
+   * @param {Array<ProbabilityAndSequence>} probableEndings 
    * @param {Number} minLength Targeted minimum length in string characters. 
    * @param {Number} maxLength Targeted maximum length in string characters. 
    * @returns {String} The generated word. 
@@ -516,6 +516,17 @@ class CharFrequency {
   constructor(args = {}) {
     this.char = args.char;
     this.frequency = args.frequency;
+  }
+}
+
+/**
+ * @property {Number} probability
+ * @property {AggregatedSequence} sequence
+ */
+class ProbabilityAndSequence {
+  constructor(args = {}) {
+    this.probability = args.probability;
+    this.sequence = args.sequence;
   }
 }
 
