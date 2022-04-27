@@ -1,0 +1,21 @@
+{
+  "name": "markov-chain-word-generator",
+  "title": "Markov-Chain Word Generator",
+  "description": "Adds a means of generating wordes or names semi-randomly, based on a provided sample set, via a dedicated menu.",
+  "author": "Nicolas Haase",
+  "version": "1.0.0",
+  "minimumCoreVersion": "0.9.269",
+  "compatibleCoreVersion": "9",
+  "esmodules": ["markov-word-generator.mjs"],
+  "socket": true,
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "https://github.com/CodeWringer/markov-chain-word-generator-foundryVTT",
+  "manifest": "https://github.com/CodeWringer/markov-chain-word-generator-foundryVTT/releases/download/latest/module.json",
+  "download": "https://github.com/CodeWringer/markov-chain-word-generator-foundryVTT/releases/download/latest/module.zip"
+}

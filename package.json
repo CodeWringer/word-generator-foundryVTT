@@ -1,0 +1,34 @@
+{
+  "name": "markov-chain-name-generator",
+  "version": "1.0.0",
+  "description": "Adds a means of generating names semi-randomly, based on a provided sample set, via a dedicated menu.",
+  "main": "markov-word-generator.js",
+  "scripts": {
+    "build": "node build.js",
+    "test": "mocha ./test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeWringer/markov-chain-name-generator-foundryVTT.git"
+  },
+  "keywords": [
+    "FoundryVTT"
+  ],
+  "author": "Nicolas Haase <nh@lutzhaase.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CodeWringer/markov-chain-name-generator-foundryVTT/issues"
+  },
+  "homepage": "https://github.com/CodeWringer/markov-chain-name-generator-foundryVTT#readme",
+  "dependencies": {
+    "seedrandom": "^3.0.5"
+  },
+  "devDependencies": {
+    "fs-extra": "^10.1.0",
+    "mocha": "^9.2.2",
+    "node-zip": "^1.1.1",
+    "should": "^13.2.3",
+    "should-sinon": "0.0.6",
+    "sinon": "^13.0.2"
+  }
+}
