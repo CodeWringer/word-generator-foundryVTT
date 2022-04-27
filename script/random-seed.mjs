@@ -23,9 +23,9 @@ export default class RandomSeeded {
     if (min !== undefined && max !== undefined) {
       return rnd * (max - min) + min;
     } else if (min !== undefined) {
-      return Math.max(min, rnd);
+      return min + rnd;
     } else if (max !== undefined) {
-      return Math.min(max, rnd);
+      return Math.min(max, rnd * max);
     } else {
       return rnd;
     }
