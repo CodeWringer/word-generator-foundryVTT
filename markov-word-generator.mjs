@@ -1,5 +1,6 @@
 import MarkovChainWordGenerator from "./script/generator.mjs";
+import ListDialog from "./script/list-dialog.mjs";
 
-export function showDefinitionsDialog() {
-  // TODO
-}
+Hooks.once("ready", async function() {
+  console.log("Init Markov-Chain word generator");
+});

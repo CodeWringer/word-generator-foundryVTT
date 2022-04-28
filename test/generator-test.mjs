@@ -1,8 +1,9 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import MarkovChainWordGenerator from '../script/generator.mjs';
-import BeginningCapitalsSpellingStrategy from '../script/beginning-capitals-strategy.mjs';
+import MarkovChainWordGenerator from '../script/generator/generator.mjs';
+import BeginningCapitalsSpellingStrategy from '../script/generator/postprocessing/beginning-capitals-strategy.mjs';
+import CharDepthSequencingStrategy from '../script/generator/sequencing/char-depth-sequencing-strategy.mjs';
 
 describe('MarkovChainWordGenerator', function() {
   const testSeed = "Test1234567890";
@@ -15,12 +16,12 @@ describe('MarkovChainWordGenerator', function() {
         "Gobob",
         "Bobby",
       ];
-      const depth = 2;
+      const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 3;
       const max = 4;
       const generator = new MarkovChainWordGenerator({
         sampleSet: sampleSet,
-        depth: depth,
+        sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
@@ -38,12 +39,12 @@ describe('MarkovChainWordGenerator', function() {
         "Gobob",
         "Bobby",
       ];
-      const depth = 2;
+      const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 3;
       const max = 7;
       const generator = new MarkovChainWordGenerator({
         sampleSet: sampleSet,
-        depth: depth,
+        sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
@@ -61,13 +62,13 @@ describe('MarkovChainWordGenerator', function() {
         "Gobob",
         "Bobby",
       ];
-      const depth = 2;
+      const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 3;
       const max = 7;
       const spellingStrategy = new BeginningCapitalsSpellingStrategy();
       const generator = new MarkovChainWordGenerator({
         sampleSet: sampleSet,
-        depth: depth,
+        sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
@@ -104,13 +105,13 @@ describe('MarkovChainWordGenerator', function() {
         "Tederis",
         "Teszederin",
       ];
-      const depth = 2;
+      const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 4;
       const max = 10;
       const spellingStrategy = new BeginningCapitalsSpellingStrategy();
       const generator = new MarkovChainWordGenerator({
         sampleSet: sampleSet,
-        depth: depth,
+        sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,

@@ -1,4 +1,6 @@
-import RandomSeeded from './random-seed.mjs';
+import { isInteger } from '../util/validation.mjs';
+import RandomSeeded from '../util/random-seed.mjs';
+import Sequence from './sequencing/sequence.mjs';
 
 /**
  * This is the algorithm's main logic piece. 
@@ -10,6 +12,8 @@ import RandomSeeded from './random-seed.mjs';
  * @property {Number} depth
  * @property {Number} targetLengthMin
  * @property {Number} targetLengthMax
+ * @property {AbstractSequencingStrategy} sequencingStrategy
+ * @property {AbstractSpellingStrategy | undefined} spellingStrategy
  */
 export default class MarkovChainWordGenerator {
   /**
@@ -37,17 +41,6 @@ export default class MarkovChainWordGenerator {
   /**
    * @private
    */
-  _depth = undefined;
-  /**
-   * Returns the provided depth. 
-   * @type {Number}
-   * @readonly
-   */
-  get depth() { return this._depth; }
-  
-  /**
-   * @private
-   */
   _targetLengthMin = undefined;
   /**
    * Returns the provided target minimum length. 
@@ -66,6 +59,12 @@ export default class MarkovChainWordGenerator {
    * @readonly
    */
   get targetLengthMax() { return this._targetLengthMax; }
+
+  /**
+   * The sequencing strategy used to determine sequences. 
+   * @type {AbstractSequencingStrategy}
+   */
+  sequencingStrategy = undefined;
 
   /**
    * The spelling strategy applied to generated words. 
@@ -88,7 +87,8 @@ export default class MarkovChainWordGenerator {
   get seed() { return this._seed; }
 
   /**
-   * @type {??}
+   * The seeded random number generator. 
+   * @type {RandomSeeded}
    * @private
    */
   _rng = undefined;
@@ -96,13 +96,9 @@ export default class MarkovChainWordGenerator {
   /**
    * @param {Object} args Parameter object. 
    * @param {Array<String>} args.sampleSet The sample set this generator will work with. 
-   * @param {Number} args.depth The depth of the look-back for the algorithm. 
-   * Higher numbers result in more similar results more similar to the provided sample set, 
-   * but also in less variety. 
-   * 
-   * Note, that a number less than 1 will result in an error. 
    * @param {Number} args.targetLengthMin The minimum length the results *should* have. 
    * @param {Number} args.targetLengthMax The maximum length the results *should* have. 
+   * @param {AbstractSequencingStrategy} args.sequencingStrategy The sequencing strategy to use. 
    * @param {String | undefined} args.seed Optional. A seed for the randomization. 
    * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy Optional. The spelling strategy applied to generated words. 
    * 
@@ -114,14 +110,14 @@ export default class MarkovChainWordGenerator {
     if (args.sampleSet === undefined || args.sampleSet.length === 0) {
       throw new Error("`args.sampleSet` must not be undefined or an empty list!");
     }
-    if (validateIsIntegerGreaterOne(args.depth) !== true) {
-      throw new Error("`args.depth` must be an integer, greater or equal to 1!");
-    }
-    if (validateIsIntegerGreaterOne(args.targetLengthMin) !== true) {
+    if (isInteger(args.targetLengthMin) !== true || parseInt(args.targetLengthMin) <= 0) {
       throw new Error("`args.targetLengthMin` must be an integer, greater or equal to 1!");
     }
-    if (validateIsIntegerGreaterOne(args.targetLengthMax) !== true) {
+    if (isInteger(args.targetLengthMax) !== true || parseInt(args.targetLengthMax) <= 0) {
       throw new Error("`args.targetLengthMax` must be an integer, greater or equal to 1!");
+    }
+    if (args.sequencingStrategy === undefined) {
+      throw new Error("`args.sequencingStrategy` must be not be undefined!");
     }
     
     this._sampleSet = args.sampleSet;
@@ -129,6 +125,7 @@ export default class MarkovChainWordGenerator {
     this._targetLengthMin = args.targetLengthMin;
     this._targetLengthMax = args.targetLengthMax;
     this._seed = args.seed;
+    this.sequencingStrategy = args.sequencingStrategy;
     this.spellingStrategy = args.spellingStrategy;
 
     this._rng = new RandomSeeded(this._seed);
@@ -141,7 +138,7 @@ export default class MarkovChainWordGenerator {
    * the target length was unreachable. 
    */
   generate(howMany) {
-    const sequences = this._getSequencesOfSamples(this._sampleSet, this._depth);
+    const sequences = this.sequencingStrategy.getSequencesOfSet(this.sampleSet);
     const aggregatedSequences = this._aggregateSequences(sequences);
 
     const probabilities = this._getAggregatedSequenceProbabilities(aggregatedSequences);
@@ -222,52 +219,6 @@ export default class MarkovChainWordGenerator {
   }
 
   /**
-   * Returns a list of sequences found in the given sample strings. 
-   * @param {Array<String>} sampleSet A list of strings to take apart. 
-   * @param {Number} depth Number of chars per sequence. 
-   * 
-   * Note, ending sequences may be shorter than this number. 
-   * @returns {Array<Sequence>} The sequences found in the given samples. 
-   * @private
-   */
-  _getSequencesOfSamples(sampleSet, depth) {
-    const sequences = [];
-    for(const sample of sampleSet) {
-      const sequencesOfSample = this._getSequencesOfSample(sample, depth);
-      for (const sequenceOfSample of sequencesOfSample) {
-        sequences.push(sequenceOfSample);
-      }
-    }
-    return sequences;
-  }
-
-  /**
-   * Returns a list of sequences found in the given sample string. 
-   * @param {String} sample A string to take apart. 
-   * @param {Number} depth Number of chars per sequence. 
-   * 
-   * Note, ending sequences may be shorter than this number. 
-   * @returns {Array<Sequence>} The sequences found in the given sample. 
-   * @private
-   */
-  _getSequencesOfSample(sample, depth) {
-    const sequences = [];
-    for (let i = 0; i < sample.length; i += depth) {
-      const chars = sample.substring(i, i + depth).toLowerCase();
-      const followingChar = sample.substring(i + depth, i + depth + 1).toLowerCase();
-
-      sequences.push(new Sequence({
-        chars: chars,
-        followingChar: followingChar.length > 0 ? followingChar : undefined,
-        isBeginning: i === 0,
-        isMiddle: i !== 0 && followingChar.length > 0,
-        isEnding: followingChar.length === 0
-      }));
-    }
-    return sequences;
-  }
-
-  /**
    * Returns a list of aggregated sequences, based on the given sequences. 
    * @param {Array<Sequence>} sequences 
    * @returns {Array<AggregatedSequence>}
@@ -284,7 +235,6 @@ export default class MarkovChainWordGenerator {
       if (aggregratedSequence === undefined) {
         aggregratedSequence = new AggregatedSequence({
           chars: sequence.chars,
-          followingChars: [],
           frequencyBeginning: 0,
           frequencyMiddle: 0,
           frequencyEnding: 0,
@@ -294,15 +244,6 @@ export default class MarkovChainWordGenerator {
       }
 
       // Modify the aggregated sequence's values. 
-      const followingChar = aggregratedSequence.followingChars.find(it => { return it.char === sequence.followingChar; });
-      if (followingChar !== undefined) {
-        followingChar.frequency++;
-      } else if (sequence.followingChar !== undefined) {
-        aggregratedSequence.followingChars.push(new CharFrequency({
-          char: sequence.followingChar,
-          frequency: 1,
-        }));
-      }
       if (sequence.isBeginning === true) {
         aggregratedSequence.frequencyBeginning++;
       }
@@ -451,27 +392,8 @@ export default class MarkovChainWordGenerator {
 }
 
 /**
- * Represents a sequence of the sample set. 
- * @property {String} chars The chars of the sequence. 
- * @property {String} followingChar A char that can follow the sequence's chars. 
- * @property {Boolean} isBeginning
- * @property {Boolean} isMiddle
- * @property {Boolean} isEnding
- */
-class Sequence {
-  constructor(args = {}) {
-    this.chars = args.chars;
-    this.followingChar = args.followingChar;
-    this.isBeginning = args.isBeginning;
-    this.isMiddle = args.isMiddle;
-    this.isEnding = args.isEnding;
-  }
-}
-
-/**
  * Represents an aggregated sequence. 
  * @property {String} chars  The chars of the sequence. 
- * @property {Array<CharFrequency>} followingChars A list of chars that can follow the sequence's chars. 
  * @property {Number} args.frequencyBeginning How often the char sequence occurred at the beginning of a sample.
  * @property {Number} args.frequencyMiddle How often the char sequence occurred in the middle of a sample.
  * @property {Number} args.frequencyEnding How often the char sequence occurred at the end of a sample.
@@ -480,7 +402,6 @@ class Sequence {
 class AggregatedSequence {
   constructor(args = {}) {
     this.chars = args.chars;
-    this.followingChars = args.followingChars;
     this.frequencyBeginning = args.frequencyBeginning;
     this.frequencyMiddle = args.frequencyMiddle;
     this.frequencyEnding = args.frequencyEnding;
@@ -507,19 +428,6 @@ class AggregatedSequenceProbabilities {
 }
 
 /**
- * Represents the number of occurences of a char. 
- * @property {String} args.char The char in question. 
- * @property {Number} args.frequency How often the char occurred. 
- * @private
- */
-class CharFrequency {
-  constructor(args = {}) {
-    this.char = args.char;
-    this.frequency = args.frequency;
-  }
-}
-
-/**
  * @property {Number} probability
  * @property {AggregatedSequence} sequence
  */
@@ -534,24 +442,4 @@ const SEQUENCE_TYPES = {
   BEGINNING: 0,
   MIDDLE: 1,
   ENDING: 2
-}
-
-/**
- * Returns true, if the given value is an integer value >= 1. 
- * @param {Any} value The value to test. 
- * @returns {Boolean} True, if the given value is an integer value >= 1. 
- */
-function validateIsIntegerGreaterOne(value) {
-  try {
-    const parsed = parseInt(value);
-    if (parsed === undefined || parsed === null) {
-      return false;
-    }
-    if (parsed < 1) {
-      return false;
-    }
-  } catch (error) {
-    return false;
-  }
-  return true;
 }
