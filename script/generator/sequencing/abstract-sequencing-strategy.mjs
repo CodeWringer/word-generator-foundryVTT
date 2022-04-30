@@ -8,7 +8,14 @@ export default class AbstractSequencingStrategy {
    * @returns {Array<Sequence>}
    */
   getSequencesOfSet(sampleSet) {
-    throw new Error("Not implemented");
+    const sequences = [];
+    for(const sample of sampleSet) {
+      const sequencesOfSample = this.getSequencesOfSample(sample, this.depth);
+      for (const sequenceOfSample of sequencesOfSample) {
+        sequences.push(sequenceOfSample);
+      }
+    }
+    return sequences;
   }
   
   /**
@@ -17,6 +24,14 @@ export default class AbstractSequencingStrategy {
    * @returns {Array<Sequence>}
    */
   getSequencesOfSample(sample) {
+    throw new Error("Not implemented");
+  }
+  
+  /**
+   * Returns the current settings of this sequencing strategy. 
+   * @returns {Object}
+   */
+  getSettings() {
     throw new Error("Not implemented");
   }
 }

@@ -1,6 +1,7 @@
 import { isInteger } from '../util/validation.mjs';
-import RandomSeeded from '../util/random-seed.mjs';
-import Sequence from './sequencing/sequence.mjs';
+import SequenceReducer from './sequencing/sequence-reducer.mjs';
+import SequenceProbabilityBuilder from './sequencing/sequence-probability-builder.mjs';
+import SequenceConcatenator from './sequencing/sequence-concatenator.mjs';
 
 /**
  * This is the algorithm's main logic piece. 
@@ -14,6 +15,22 @@ import Sequence from './sequencing/sequence.mjs';
  * @property {Number} targetLengthMax
  * @property {AbstractSequencingStrategy} sequencingStrategy
  * @property {AbstractSpellingStrategy | undefined} spellingStrategy
+ * @property {Number} entropy A number between 0 and 1 (inclusive), which determines the 
+ * likelihood of the next sequence being picked entirely at random. 
+ * 
+ * Default 0
+ * @property {Number} entropyStart A number between 0 and 1 (inclusive), which determines the 
+ * likelihood of the next starting sequence being picked entirely at random. 
+ * 
+ * Default 0
+ * @property {Number} entropyMiddle A number between 0 and 1 (inclusive), which determines the 
+ * likelihood of the next middle sequence being picked entirely at random. 
+ * 
+ * Default 0
+ * @property {Number} entropyEnd A number between 0 and 1 (inclusive), which determines the 
+ * likelihood of the next ending sequence being picked entirely at random. 
+ * 
+ * Default 0
  */
 export default class MarkovChainWordGenerator {
   /**
@@ -39,26 +56,22 @@ export default class MarkovChainWordGenerator {
   get sampleSet() { return this._sampleSet; }
   
   /**
-   * @private
-   */
-  _targetLengthMin = undefined;
-  /**
-   * Returns the provided target minimum length. 
+   * The target minimum length that generated texts should be. 
+   * 
+   * Note, that there is no guarantee these boundaries can be respected, at all times. 
    * @type {Number}
-   * @readonly
+   * @default 1
    */
-  get targetLengthMin() { return this._targetLengthMin; }
+  targetLengthMin = 1;
   
   /**
-   * @private
-   */
-  _targetLengthMax = undefined;
-  /**
-   * Returns the provided target maximum length. 
+   * The target maximum length that generated texts should be. 
+   * 
+   * Note, that there is no guarantee these boundaries can be respected, at all times. 
    * @type {Number}
-   * @readonly
+   * @default 10
    */
-  get targetLengthMax() { return this._targetLengthMax; }
+  targetLengthMax = 10;
 
   /**
    * The sequencing strategy used to determine sequences. 
@@ -85,13 +98,6 @@ export default class MarkovChainWordGenerator {
    * @readonly
    */
   get seed() { return this._seed; }
-
-  /**
-   * The seeded random number generator. 
-   * @type {RandomSeeded}
-   * @private
-   */
-  _rng = undefined;
 
   /**
    * @param {Object} args Parameter object. 
@@ -122,13 +128,17 @@ export default class MarkovChainWordGenerator {
     
     this._sampleSet = args.sampleSet;
     this._depth = args.depth;
-    this._targetLengthMin = args.targetLengthMin;
-    this._targetLengthMax = args.targetLengthMax;
+    this.targetLengthMin = args.targetLengthMin;
+    this.targetLengthMax = args.targetLengthMax;
     this._seed = args.seed;
     this.sequencingStrategy = args.sequencingStrategy;
     this.spellingStrategy = args.spellingStrategy;
 
-    this._rng = new RandomSeeded(this._seed);
+    // These settings will be passed through to the concatenator. 
+    this.entropy = args.entropy;
+    this.entropyStart = args.entropyStart;
+    this.entropyMiddle = args.entropyMiddle;
+    this.entropyEnd = args.entropyEnd;
   }
 
   /**
@@ -138,13 +148,27 @@ export default class MarkovChainWordGenerator {
    * the target length was unreachable. 
    */
   generate(howMany) {
+    // Determine which sequences exist. Contains duplicate entries. 
     const sequences = this.sequencingStrategy.getSequencesOfSet(this.sampleSet);
-    const aggregatedSequences = this._aggregateSequences(sequences);
+    
+    // Remove duplicate entries and count the occurrences (= frequencies) of the sequences. 
+    const reducer = new SequenceReducer();
+    const reducedSequences = reducer.reduce(sequences);
 
-    const probabilities = this._getAggregatedSequenceProbabilities(aggregatedSequences);
-    const probableBeginnings = this._getWeightedProbabilities(probabilities, SEQUENCE_TYPES.BEGINNING);
-    const probableMiddles = this._getWeightedProbabilities(probabilities, SEQUENCE_TYPES.MIDDLE);
-    const probableEndings = this._getWeightedProbabilities(probabilities, SEQUENCE_TYPES.ENDING);
+    // Build the chain of probabilities of the sequences. 
+    const probabilityBuilder = new SequenceProbabilityBuilder();
+    const sequenceProbabilities = probabilityBuilder.build(reducedSequences);
+
+    // The concatenator generates the new texts and needs the chain of 
+    // probability-enriched sequences for that task. 
+    const sequenceConcatenator = new SequenceConcatenator({
+      sequences: sequenceProbabilities,
+      entropy: this.entropy,
+      entropyStart: this.entropyStart,
+      entropyMiddle: this.entropyMiddle,
+      entropyEnd: this.entropyEnd,
+      seed: this._seed,
+    });
 
     // Generate words. 
     const repetitionMaximum = 1000;
@@ -159,7 +183,7 @@ export default class MarkovChainWordGenerator {
         }
 
         try {
-          word = this._generateSingleWord(probableBeginnings, probableMiddles, probableEndings, this._targetLengthMin, this._targetLengthMax);
+          word = sequenceConcatenator.generate(this.targetLengthMin, this.targetLengthMax);
         } catch (error) {
           // Prevent crash and re-throw, if necessary. 
           if (attempt + 1 >= repetitionMaximum) {
@@ -180,266 +204,4 @@ export default class MarkovChainWordGenerator {
       return words;
     }
   }
-
-  /**
-   * 
-   * @param {Array<AggregatedSequence>} aggregatedSequences 
-   * @returns {Array<AggregatedSequenceProbabilities>}
-   * @private
-   */
-  _getAggregatedSequenceProbabilities(aggregatedSequences) {
-    // Tally up the total numbers of occurences, by beginning, middle and ending. 
-
-    let frequencyTotalBeginnings = 0;
-    let frequencyTotalMiddles = 0;
-    let frequencyTotalEndings = 0;
-    let frequencyTotal = aggregatedSequences.length;
-
-    for (const aggregatedSequence of aggregatedSequences) {
-      frequencyTotalBeginnings += aggregatedSequence.frequencyBeginning;
-      frequencyTotalMiddles += aggregatedSequence.frequencyMiddle;
-      frequencyTotalEndings += aggregatedSequence.frequencyEnding;
-    }
-
-    // Calculate the probabilities. 
-    const probabilities = [];
-
-    for (const aggregatedSequence of aggregatedSequences) {
-      const totalOccurrences = aggregatedSequence.frequencyBeginning + aggregatedSequence.frequencyMiddle + aggregatedSequence.frequencyEnding;
-      probabilities.push(new AggregatedSequenceProbabilities({
-        sequence: aggregatedSequence,
-        probabilityBeginning: aggregatedSequence.frequencyBeginning > 0 ? aggregatedSequence.frequencyBeginning / frequencyTotalBeginnings : 0,
-        probabilityMiddle: aggregatedSequence.frequencyMiddle > 0 ? aggregatedSequence.frequencyMiddle / frequencyTotalMiddles : 0,
-        probabilityEnding: aggregatedSequence.frequencyEnding > 0 ? aggregatedSequence.frequencyEnding / frequencyTotalEndings : 0,
-        probability: totalOccurrences / frequencyTotal,
-      }));
-    }
-
-    return probabilities;
-  }
-
-  /**
-   * Returns a list of aggregated sequences, based on the given sequences. 
-   * @param {Array<Sequence>} sequences 
-   * @returns {Array<AggregatedSequence>}
-   * @private
-   */
-  _aggregateSequences(sequences) {
-    // Map<String, AggregatedSequence>
-    // The key is the chars string of the sequence. 
-    const mapOfAggregated = new Map();
-
-    for (const sequence of sequences) {
-      // Get or create the respective instance of an aggregated sequence. 
-      let aggregratedSequence = mapOfAggregated.get(sequence.chars);
-      if (aggregratedSequence === undefined) {
-        aggregratedSequence = new AggregatedSequence({
-          chars: sequence.chars,
-          frequencyBeginning: 0,
-          frequencyMiddle: 0,
-          frequencyEnding: 0,
-          frequency: 0,
-        });
-        mapOfAggregated.set(sequence.chars, aggregratedSequence);
-      }
-
-      // Modify the aggregated sequence's values. 
-      if (sequence.isBeginning === true) {
-        aggregratedSequence.frequencyBeginning++;
-      }
-      if (sequence.isMiddle === true) {
-        aggregratedSequence.frequencyMiddle++;
-      }
-      if (sequence.isEnding === true) {
-        aggregratedSequence.frequencyEnding++;
-      }
-      aggregratedSequence.frequency++;
-    }
-    
-    const aggregated = [];
-    for (const value of mapOfAggregated.values()) {
-      aggregated.push(value);
-    }
-    return aggregated;
-  }
-
-  /**
-   * Returns a sorted and weighted list of sequences. 
-   * 
-   * Each result returned consists of a 'sequence' and a 'probability' property. 
-   * 
-   * The probabilities appear in order. E. g.
-   * ```
-   * Sequence:    |  a  |  b  |  c  |  d  |
-   *              | --- | --- | --- | --- |
-   * Frequency:   |  3  |  2  |  2  |  1  | total: 8
-   * Probability: |0.375|0.625|0.875|1.000| 
-   * ```
-   * 
-   * The random number, which is then generated, must be a value between 0 and 1 (inclusive). 
-   * These values should then be iterated and the first value which is greater or equal to the 
-   * random number, is the choice to pick. 
-   * 
-   * @param {Array<AggregatedSequenceProbabilities>} probabilities 
-   * @param {SEQUENCE_TYPES} type 
-   * @returns {Array<ProbabilityAndSequence>}
-   * @private
-   */
-  _getWeightedProbabilities(probabilities, type) {
-    let filteredAndSorted = [];
-
-    // Filter by type. 
-    if (type === SEQUENCE_TYPES.BEGINNING) {
-      filteredAndSorted = probabilities.filter(it => { return it.probabilityBeginning > 0; })
-      .map(it => { 
-        return new ProbabilityAndSequence({
-          sequence: it.sequence,
-          probability: it.probabilityBeginning,
-        });
-      });
-    } else if (type === SEQUENCE_TYPES.MIDDLE) {
-      filteredAndSorted = probabilities.filter(it => { return it.probabilityMiddle > 0; })
-      .map(it => { 
-        return new ProbabilityAndSequence({
-          sequence: it.sequence,
-          probability: it.probabilityMiddle,
-        });
-      });
-    } else if (type === SEQUENCE_TYPES.ENDING) {
-      filteredAndSorted = probabilities.filter(it => { return it.probabilityEnding > 0; })
-      .map(it => { 
-        return new ProbabilityAndSequence({
-          sequence: it.sequence,
-          probability: it.probabilityEnding,
-        });
-      });
-    }
-
-    // Sort by absolute probability. 
-    filteredAndSorted.sort((a, b) => { a.probability > b.probability ? 1 : -1 });
-
-    // Enrich with weights. 
-    const weightedAndSorted = [];
-    let newProbability = 0;
-    for (const o of filteredAndSorted) {
-      newProbability = newProbability + o.probability;
-      weightedAndSorted.push({
-        probability: newProbability,
-        sequence: o.sequence,
-      });
-    }
-
-    // This pre-empts any floating-point inaccuracies. 
-    weightedAndSorted[weightedAndSorted.length - 1].probability = 1.0;
-
-    return weightedAndSorted;
-  }
-
-  /**
-   * Generates a single word, based on the given probabilty-weighted sequences. 
-   * 
-   * Also tries to ensure the generated word stays within the given min and max length. 
-   * @param {Array<ProbabilityAndSequence>} probableBeginnings 
-   * @param {Array<ProbabilityAndSequence>} probableMiddles 
-   * @param {Array<ProbabilityAndSequence>} probableEndings 
-   * @param {Number} minLength Targeted minimum length in string characters. 
-   * @param {Number} maxLength Targeted maximum length in string characters. 
-   * @returns {String} The generated word. 
-   * @private
-   * @throws {Error} Thrown, if the target length could not be achieved. 
-   */
-  _generateSingleWord(probableBeginnings, probableMiddles, probableEndings, minLength, maxLength) {
-    const resultingSequences = [];
-
-    function _getMatchingSequence(weightedList, value) {
-      for (const weightedItem of weightedList) {
-        if (value <= weightedItem.probability) {
-          return weightedItem;
-        }
-      }
-      throw new Error(`Failed to get item for value '${value}' from list!`);
-    }
-
-    const targetLength = Math.round(this._rng.generate(minLength, maxLength));
-
-    // This is the length of the string that will be produced. 
-    let charactersLength = 0;
-
-    // Determine first sequence.
-    const rndBeginning = this._rng.generate();
-    const beginningSequence = _getMatchingSequence(probableBeginnings, rndBeginning).sequence;
-    resultingSequences.push(beginningSequence);
-    charactersLength += beginningSequence.chars.length;
-    
-    // Determine last sequence. 
-    const rndEnding = this._rng.generate();
-    const endingSequence = _getMatchingSequence(probableEndings, rndEnding).sequence;
-    charactersLength += endingSequence.chars.length;
-    
-    // Determine middle sequences. 
-    while (charactersLength < targetLength) {
-      const rndMiddle = this._rng.generate();
-      const middleSequence = _getMatchingSequence(probableMiddles, rndMiddle).sequence;
-      resultingSequences.push(middleSequence);
-      charactersLength += middleSequence.chars.length;
-    }
-
-    // Add ending sequence, so that it will be last in the list. 
-    resultingSequences.push(endingSequence);
-    
-    return resultingSequences.map(it => it.chars).join("");
-  }
-}
-
-/**
- * Represents an aggregated sequence. 
- * @property {String} chars  The chars of the sequence. 
- * @property {Number} args.frequencyBeginning How often the char sequence occurred at the beginning of a sample.
- * @property {Number} args.frequencyMiddle How often the char sequence occurred in the middle of a sample.
- * @property {Number} args.frequencyEnding How often the char sequence occurred at the end of a sample.
- * @property {Number} args.frequency How often the char sequence occurred in total. 
- */
-class AggregatedSequence {
-  constructor(args = {}) {
-    this.chars = args.chars;
-    this.frequencyBeginning = args.frequencyBeginning;
-    this.frequencyMiddle = args.frequencyMiddle;
-    this.frequencyEnding = args.frequencyEnding;
-    this.frequency = args.frequency;
-  }
-}
-
-/**
- * Represents the probabilities of an aggregated sequence. 
- * @property {AggregatedSequence} sequence
- * @property {Number} args.probabilityBeginning How probable the sequence is to be a beginning. 
- * @property {Number} args.probabilityMiddle How probable the sequence is to be a middle. 
- * @property {Number} args.probabilityEnding How probable the sequence is to be an ending. 
- * @property {Number} args.probability How probable the sequence is. 
- */
-class AggregatedSequenceProbabilities {
-  constructor(args = {}) {
-    this.sequence = args.sequence;
-    this.probabilityBeginning = args.probabilityBeginning;
-    this.probabilityMiddle = args.probabilityMiddle;
-    this.probabilityEnding = args.probabilityEnding;
-    this.probability = args.probability;
-  }
-}
-
-/**
- * @property {Number} probability
- * @property {AggregatedSequence} sequence
- */
-class ProbabilityAndSequence {
-  constructor(args = {}) {
-    this.probability = args.probability;
-    this.sequence = args.sequence;
-  }
-}
-
-const SEQUENCE_TYPES = {
-  BEGINNING: 0,
-  MIDDLE: 1,
-  ENDING: 2
 }

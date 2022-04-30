@@ -5,6 +5,11 @@ import Sequence from "./sequence.mjs";
 /**
  * This sequencing strategy creates sequences of characters, based on a given depth 
  * (= character count/length). 
+ * @property {Number | undefined} depth The depth of the look-back for the algorithm. 
+ * Higher numbers result in results more similar to the provided sample set, 
+ * but also in less variety. 
+ * @property {Boolean | undefined} preserveCase If true, will not transform found sequences 
+ * to lower case, but instead preserve the casing found in the sequence. Default false. 
  */
 export default class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   /**
@@ -19,15 +24,25 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
   get depth() { return this._depth; }
 
   /**
-   * @param {Number} depth The depth of the look-back for the algorithm. 
-   * Higher numbers result in more similar results more similar to the provided sample set, 
+   * If true, will not transform found sequences to lower case, but instead preserve 
+   * the casing found in the sequence. 
+   * @type {Boolean}
+   * @default false
+   */
+  preserveCase = false;
+
+  /**
+   * @param {Number | undefined} depth The depth of the look-back for the algorithm. 
+   * Higher numbers result in results more similar to the provided sample set, 
    * but also in less variety. 
    * 
    * Note, that a number less than 1 will result in an error. 
+   * @param {Boolean | undefined} preserveCase If true, will not transform found sequences 
+   * to lower case, but instead preserve the casing found in the sequence. Default false. 
    * 
    * @throws {Error} Thrown, if the passed parameter 'depth' is not an integer greater 0. 
    */
-  constructor(depth = 1) {
+  constructor(depth = 1, preserveCase = false) {
     super();
 
     if (isInteger(depth) !== true || parseInt(depth) <= 0) {
@@ -35,25 +50,24 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
     }
 
     this._depth = depth;
+    this.preserveCase = preserveCase ?? false;
   }
 
   /** @override */
   getSequencesOfSet(sampleSet) {
-    const sequences = [];
-    for(const sample of sampleSet) {
-      const sequencesOfSample = this.getSequencesOfSample(sample, this.depth);
-      for (const sequenceOfSample of sequencesOfSample) {
-        sequences.push(sequenceOfSample);
-      }
-    }
-    return sequences;
+    return super.getSequencesOfSet(sampleSet);
   }
   
   /** @override */
   getSequencesOfSample(sample) {
     const sequences = [];
     for (let i = 0; i < sample.length; i += this.depth) {
-      const chars = sample.substring(i, i + this.depth).toLowerCase();
+      let chars = sample.substring(i, i + this.depth);
+
+      if (this.preserveCase !== true) {
+        chars = chars.toLowerCase();
+      }
+
       const hasFollowingChar = (i + 1) < sample.length;
 
       sequences.push(new Sequence({
@@ -64,5 +78,13 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
       }));
     }
     return sequences;
+  }
+
+  /** @override */
+  getSettings() {
+    return {
+      depth: this.depth,
+      preserveCase: this.preserveCase,
+    };
   }
 }

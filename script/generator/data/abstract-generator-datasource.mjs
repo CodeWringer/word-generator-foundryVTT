@@ -9,8 +9,9 @@ export default class AbstractGeneratorDataSource {
    * @param {String} userId 
    * @param {String} id 
    * @returns {GeneratorSettings}
+   * @async
    */
-  get(userId, id) {
+  async get(userId, id) {
     throw new Error("Not implemented");
   }
 
@@ -18,8 +19,9 @@ export default class AbstractGeneratorDataSource {
    * 
    * @param {String} userId 
    * @returns {Array<GeneratorSettings>}
+   * @async
    */
-  getAll(userId) {
+  async getAll(userId) {
     throw new Error("Not implemented");
   }
   
@@ -28,8 +30,9 @@ export default class AbstractGeneratorDataSource {
    * @param {String} userId 
    * @param {String} id 
    * @param {GeneratorSettings} generatorSettings 
+   * @async
    */
-  set(userId, id, generatorSettings) {
+  async set(userId, id, generatorSettings) {
     throw new Error("Not implemented");
   }
 
@@ -38,16 +41,18 @@ export default class AbstractGeneratorDataSource {
    * @param {String} userId 
    * @param {String} id 
    * @returns {Boolean} True, if an entry with the given id was removed. 
+   * @async
    */
-  remove(userId, id) {
+  async remove(userId, id) {
     throw new Error("Not implemented");
   }
   
   /**
    * 
    * @param {String} userId 
+   * @async
    */
-  clear(userId) {
+  async clear(userId) {
     throw new Error("Not implemented");
   }
 }

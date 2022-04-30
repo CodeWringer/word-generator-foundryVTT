@@ -1,5 +1,10 @@
+import UserFlagGeneratorSettingsDataSource from "../generator/data/user-flag-datasource.mjs";
+
 export default class ListDialog {
-  
+  constructor() {
+    const dataSource = new UserFlagGeneratorSettingsDataSource();
+    const settingsList = dataSource.getAll(game.user.id);
+  }
 }
 
 /**

@@ -1,5 +1,7 @@
 {
   "mcwg": {
-    "placeholder": "Placeholder"
+    "placeholder": {
+      "generatorName": "Generator Name"
+    }
   }
 }

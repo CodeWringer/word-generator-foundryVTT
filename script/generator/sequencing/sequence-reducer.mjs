@@ -8,7 +8,7 @@ export default class SequenceReducer {
    * @returns {Array<ReducedSequence>} A list of reduced sequences. 
    */
   reduce(sequences) {
-    const reducedList = [];
+    const reducedSequences = [];
 
     if (sequences.length === 0) return [];
 
@@ -16,14 +16,14 @@ export default class SequenceReducer {
     for (let i = 1; i <= sequences.length; i++) {
       const sequence = i < sequences.length ? sequences[i] : undefined;
 
-      const reduced = reducedList.find(it => it.chars === previousSequence.chars);
+      const reduced = reducedSequences.find(it => it.chars === previousSequence.chars);
       if (reduced === undefined) {
         const newFollowing = sequence !== undefined ? new CountedSequence({
           chars: sequence.chars,
           frequency: 1,
         }) : undefined;
 
-        reducedList.push(
+        reducedSequences.push(
           new ReducedSequence({
             chars: previousSequence.chars,
             frequencyStart: previousSequence.isBeginning === true ? 1 : 0,
@@ -60,10 +60,18 @@ export default class SequenceReducer {
       previousSequence = sequence;
     }
 
-    return reducedList;
+    return reducedSequences;
   }
 }
 
+/**
+ * @property {String} chars
+ * @property {Number} frequencyStart
+ * @property {Number} frequencyMiddle
+ * @property {Number} frequencyEnd
+ * @property {Number} frequency
+ * @property {Array<CountedSequence>} following
+ */
 export class ReducedSequence {
   constructor(args = {}) {
     this.chars = args.chars;
@@ -75,6 +83,10 @@ export class ReducedSequence {
   }
 }
 
+/**
+ * @property {String} chars
+ * @property {Number} frequency
+ */
 export class CountedSequence {
   constructor(args = {}) {
     this.chars = args.chars;

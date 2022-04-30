@@ -5,6 +5,7 @@
   "main": "markov-word-generator.js",
   "scripts": {
     "build": "node build.js",
+    "sass": "node-sass ./styles/main.scss ./styles/main.css",
     "test": "mocha ./test/**/*.[m]js"
   },
   "repository": {
@@ -24,6 +25,7 @@
   "devDependencies": {
     "fs-extra": "^10.1.0",
     "mocha": "^9.2.2",
+    "node-sass": "^7.0.1",
     "node-zip": "^1.1.1",
     "sass": "^1.51.0",
     "should": "^13.2.3",

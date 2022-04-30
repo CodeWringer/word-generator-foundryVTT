@@ -13,4 +13,12 @@ export default class AbstractSpellingStrategy {
   apply(word) {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Returns the current settings of this spelling strategy. 
+   * @returns {Object}
+   */
+  getSettings() {
+    throw new Error("Not implemented");
+  }
 }

@@ -1,0 +1,19 @@
+{{!-- Parameters:
+settings: {Array<GeneratorSettings>}
+cssClass: {undefined | String}
+--}}
+<section class="{{cssClass}}">
+  <ol class="markov-unstyled-list">
+    {{#each settings as |setting index|}}
+      <li class="markov-setting-entry">
+        <input 
+          class="markov-input-textfield"
+          type="text"
+          id="{{setting.id}}"
+          placeholder="{{localize "mcwg.placeholder.generatorName"}}"
+          value="{{setting.name}}"
+        />
+      </li>
+    {{/each}}
+  </ol>
+</section>
