@@ -1,56 +1,45 @@
 import SequenceProbabilityBuilder from "../../script/generator/sequencing/sequence-probability-builder.mjs";
-import { CountedSequence } from "../../script/generator/sequencing/sequence-reducer.mjs";
-import { ReducedSequence } from "../../script/generator/sequencing/sequence-reducer.mjs";
+import Sequence from "../../script/generator/sequencing/sequence.mjs";
 
 describe('SequenceProbabilityBuilder', function() {
   describe('build', function() {
-    it('Builds the expected probabilities', function() {
+    it('builds "bob" correctly', function() {
       // Given
+      const sequencesList = [
+        [
+          new Sequence({
+            chars: "b",
+            isBeginning: true,
+            isMiddle: false,
+            isEnding: false,
+          }),
+          new Sequence({
+            chars: "o",
+            isBeginning: false,
+            isMiddle: true,
+            isEnding: false,
+          }),
+          new Sequence({
+            chars: "b",
+            isBeginning: false,
+            isMiddle: false,
+            isEnding: true,
+          }),
+        ]
+      ];
       const builder = new SequenceProbabilityBuilder();
-      const reducedSequences = [
-        new ReducedSequence({
-          chars: "bo",
-          frequencyStart: 1,
-          frequencyMiddle: 1,
-          frequencyEnd: 0,
-          frequency: 2,
-          following: [
-            new CountedSequence({
-              chars: "bo",
-              frequency: 1,
-            }),
-            new CountedSequence({
-              chars: "bb",
-              frequency: 1,
-            }),
-          ],
-        }),
-        new ReducedSequence({
-          chars: "bb",
-          frequencyStart: 0,
-          frequencyMiddle: 1,
-          frequencyEnd: 0,
-          frequency: 1,
-          following: [
-            new CountedSequence({
-              chars: "y",
-              frequency: 1,
-            }),
-          ],
-        }),
-        new ReducedSequence({
-          chars: "y",
-          frequencyStart: 0,
-          frequencyMiddle: 0,
-          frequencyEnd: 1,
-          frequency: 1,
-          following: [],
-        }),
-      ]
       // When
-      const probabilities = builder.build(reducedSequences);
+      const built = builder.build(sequencesList);
       // Then
-      // TODO
+      built.all.length.should.be.equal(2);
+      built.all[0].sequenceChars.should.be.equal("b");
+      built.all[1].sequenceChars.should.be.equal("o");
+      
+      built.starts.length.should.be.equal(1);
+      built.starts[0].sequenceChars.should.be.equal("b");
+      
+      built.endings.length.should.be.equal(1);
+      built.endings[0].sequenceChars.should.be.equal("b");
     });
   });
 });

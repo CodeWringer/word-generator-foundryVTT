@@ -4,18 +4,26 @@
 export default class AbstractSequencingStrategy {
   /**
    * Returns sequences for the given sample set. 
-   * @param {Array<String>} sampleSet 
-   * @returns {Array<Sequence>}
+   * @param {Array<String>} sampleSet An array of strings that are to be broken down 
+   * into sequences. 
+   * @returns {Array<Array<Sequence>>} An array of the sequences found in each sample. 
+   * Every sample has its own array of sequences representing it. 
+   * 
+   * So, for the samples "Bob" and "Steve", you might receive: 
+   * ```JSON
+   * [
+   *   ["B", "o", "b"],
+   *   ["S", "t", "e", "v", "e"]
+   * ]
+   * ```
    */
   getSequencesOfSet(sampleSet) {
-    const sequences = [];
+    const sequencesOfSet = [];
     for(const sample of sampleSet) {
       const sequencesOfSample = this.getSequencesOfSample(sample, this.depth);
-      for (const sequenceOfSample of sequencesOfSample) {
-        sequences.push(sequenceOfSample);
-      }
+      sequencesOfSet.push(sequencesOfSample);
     }
-    return sequences;
+    return sequencesOfSet;
   }
   
   /**

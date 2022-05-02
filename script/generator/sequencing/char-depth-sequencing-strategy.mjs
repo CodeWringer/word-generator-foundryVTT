@@ -70,13 +70,16 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
 
       const hasFollowingChar = (i + 1) < sample.length;
 
-      sequences.push(new Sequence({
+      const currentSequence = new Sequence({
         chars: chars,
         isBeginning: i === 0,
         isMiddle: i !== 0 && hasFollowingChar === true,
         isEnding: hasFollowingChar !== true
-      }));
+      });
+
+      sequences.push(currentSequence);
     }
+
     return sequences;
   }
 

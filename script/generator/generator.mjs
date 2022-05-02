@@ -32,7 +32,7 @@ import SequenceConcatenator from './sequencing/sequence-concatenator.mjs';
  * 
  * Default 0
  */
-export default class MarkovChainWordGenerator {
+export default class WordGenerator {
   /**
    * @private
    */

@@ -42,24 +42,14 @@ describe('SequenceReducer', function() {
       reduced[0].frequencyMiddle.should.be.equal(1);
       reduced[0].frequencyEnd.should.be.equal(0);
       reduced[0].frequency.should.be.equal(2);
-
       reduced[0].following.length.should.be.equal(2);
-      reduced[0].following[0].chars.should.be.equal("bo");
-      reduced[0].following[0].frequency.should.be.equal(1);
-      reduced[0].following[1].chars.should.be.equal("bb");
-      reduced[0].following[1].frequency.should.be.equal(1);
-      
       
       reduced[1].chars.should.be.equal("bb");
       reduced[1].frequencyStart.should.be.equal(0);
       reduced[1].frequencyMiddle.should.be.equal(1);
       reduced[1].frequencyEnd.should.be.equal(0);
       reduced[1].frequency.should.be.equal(1);
-      
       reduced[1].following.length.should.be.equal(1);
-      reduced[1].following[0].chars.should.be.equal("y");
-      reduced[1].following[0].frequency.should.be.equal(1);
-      
       
       reduced[2].chars.should.be.equal("y");
       reduced[2].frequencyStart.should.be.equal(0);

@@ -1,6 +1,6 @@
-# Markov-Chain Name Generator
+# Text Generator
 
-This module for FoundryVTT adds a means of randomly generating names, using the Markov-Chain algorithm, based on a given sample set and parameters. 
+This module for FoundryVTT adds a means of randomly generating names, based on a given sample set and parameters. 
 
 ## Usage
 TODO

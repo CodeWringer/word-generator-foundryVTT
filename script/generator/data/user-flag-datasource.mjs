@@ -6,7 +6,7 @@ import GeneratorSettings from "./generator-settings.mjs";
  */
 export default class UserFlagGeneratorSettingsDataSource extends AbstractGeneratorDataSource {
   static FLAG_SCOPE = "core";
-  static KEY_FLAG = "markov-chain-word-generator-settings";
+  static KEY_FLAG = "word-generator-settings";
 
   /** @override */
   async get(userId, id) {

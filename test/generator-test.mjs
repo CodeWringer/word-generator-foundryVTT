@@ -1,11 +1,11 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import MarkovChainWordGenerator from '../script/generator/generator.mjs';
+import WordGenerator from '../script/generator/generator.mjs';
 import BeginningCapitalsSpellingStrategy from '../script/generator/postprocessing/beginning-capitals-strategy.mjs';
 import CharDepthSequencingStrategy from '../script/generator/sequencing/char-depth-sequencing-strategy.mjs';
 
-describe('MarkovChainWordGenerator', function() {
+describe('WordGenerator', function() {
   const testSeed = "Test1234567890";
 
   describe('generate', function() {
@@ -19,7 +19,7 @@ describe('MarkovChainWordGenerator', function() {
       const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 3;
       const max = 4;
-      const generator = new MarkovChainWordGenerator({
+      const generator = new WordGenerator({
         sampleSet: sampleSet,
         sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
@@ -42,7 +42,7 @@ describe('MarkovChainWordGenerator', function() {
       const sequencingStrategy = new CharDepthSequencingStrategy(2);
       const min = 3;
       const max = 7;
-      const generator = new MarkovChainWordGenerator({
+      const generator = new WordGenerator({
         sampleSet: sampleSet,
         sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
@@ -66,7 +66,7 @@ describe('MarkovChainWordGenerator', function() {
       const min = 3;
       const max = 7;
       const spellingStrategy = new BeginningCapitalsSpellingStrategy();
-      const generator = new MarkovChainWordGenerator({
+      const generator = new WordGenerator({
         sampleSet: sampleSet,
         sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,
@@ -109,7 +109,7 @@ describe('MarkovChainWordGenerator', function() {
       const min = 4;
       const max = 10;
       const spellingStrategy = new BeginningCapitalsSpellingStrategy();
-      const generator = new MarkovChainWordGenerator({
+      const generator = new WordGenerator({
         sampleSet: sampleSet,
         sequencingStrategy: sequencingStrategy,
         targetLengthMin: min,

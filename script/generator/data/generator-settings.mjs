@@ -3,7 +3,7 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
- * maximum length, etc.) for a Markov-Chain word generator. 
+ * maximum length, etc.) for a word generator. 
  * @property {String} id
  * @property {String} name
  * @property {Array<String>} sampleSet
