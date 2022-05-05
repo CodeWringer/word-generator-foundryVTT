@@ -2,6 +2,23 @@ import RandomSeeded from "../../util/random-seed.mjs";
 import { isInteger } from "../../util/validation.mjs";
 
 /**
+ * Represents the different modes of how an ending sequence may be picked. 
+ * @constant
+ * @type {Object}
+ * @property {Number} NONE Ending sequences are not considered, at all and may 
+ * even appear in the middle of a built word. 
+ * @property {Number} RANDOM An ending sequence is picked entirely at random, 
+ * from the set of ending sequences. 
+ * @property {Number} FOLLOW_BRANCH Branches will be followed until eventually 
+ * reaching an ending sequence, which is then picked. 
+ */
+export const ENDING_PICK_MODES = {
+  NONE: 0,
+  RANDOM: 1,
+  FOLLOW_BRANCH: 2,
+}
+
+/**
  * Concatenates probability-weighted sequences. 
  * @property {SequenceProbabilities} sequences
  * 
@@ -22,7 +39,9 @@ import { isInteger } from "../../util/validation.mjs";
  * likelihood of the next ending sequence being picked entirely at random. 
  * 
  * Default 0
- * @property {String | undefined} seed A randomization seed. 
+ * @property {String} seed A randomization seed. 
+ * @property {ENDING_PICK_MODES} endingPickMode Determines how and if an ending sequence 
+ * will be picked for generated words. 
  */
 export default class SequenceConcatenator {
   /**
@@ -39,6 +58,7 @@ export default class SequenceConcatenator {
    * @param {Number | undefined} entropyMiddle
    * @param {Number | undefined} entropyEnd
    * @param {String | undefined} seed
+   * @param {ENDING_PICK_MODES | undefined} endingPickMode
    */
   constructor(args = {}) {
     this.probabilities = args.probabilities;
@@ -48,6 +68,7 @@ export default class SequenceConcatenator {
     this.entropyMiddle = args.entropyMiddle ?? 0.0;
     this.entropyEnd = args.entropyEnd ?? 0.0;
     this.seed = args.seed ?? Math.random();
+    this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.NONE,
     
     this._rng = new RandomSeeded(args.seed);
   }
@@ -76,26 +97,29 @@ export default class SequenceConcatenator {
     const startingSequence = this._pickStart();
     let previousSequence = startingSequence;
     let resultingSequences = [startingSequence];
-    let endingSequence = undefined;
     let resultLength = startingSequence.sequenceChars.length;
 
     while (resultLength < targetLength) {
       const nextSequence = this._pickFollowingOf(previousSequence);
-      const isEndingSequence = this.probabilities.endings.find(it => it.sequenceChars === nextSequence.sequenceChars) !== undefined;
 
-      if(isEndingSequence === true) {
-        resultLength -= endingSequence.sequenceChars.length;
-        endingSequence = nextSequence;
-        resultLength += endingSequence.sequenceChars.length;
-      } else {
-        resultingSequences.push(nextSequence);
-        resultLength += nextSequence.sequenceChars.length;
-      }
+      resultingSequences.push(nextSequence);
+      resultLength += nextSequence.sequenceChars.length;
       
       previousSequence = nextSequence;
     }
 
+    let endingSequence = undefined;
+    if (this.endingPickMode === ENDING_PICK_MODES.RANDOM) {
+      endingSequence = this._pickEnd();
+    } else if (this.endingPickMode === ENDING_PICK_MODES.FOLLOW_BRANCH) {
+      const lastPickedSequence = resultingSequences[resultingSequences.length - 1];
+      endingSequence = this._pickEndByBranchFollow(lastPickedSequence);
+    }
     if (endingSequence !== undefined) {
+      if (resultLength + endingSequence.sequenceChars.length > targetLength) {
+      const removed = resultingSequences.splice(resultingSequences.length - 1, 1)[0];
+        resultLength -= removed.sequenceChars.length;
+      }
       resultingSequences.push(endingSequence);
     }
 
@@ -110,12 +134,38 @@ export default class SequenceConcatenator {
   _pickStart() {
     return this._pickSequenceFrom(this.probabilities.starts, this.entropyStart);
   }
+
+  /**
+   * Picks and returns a random ending sequence. 
+   * @returns {ProbableSequence}
+   * @private
+   */
+  _pickEnd() {
+    return this._pickSequenceFrom(this.probabilities.endings, this.entropyEnd);
+  }
+  
+  /**
+   * Follows the given branch, by randomly picking the next sequence and if it 
+   * is an ending sequence, returning it. Or, if it isn't an ending sequence, 
+   * will call itself (recurse) again, with the picked sequence.
+   * @param {ProbableSequence} sequence
+   * @returns {ProbableSequence}
+   * @private
+   */
+  _pickEndByBranchFollow(sequence) {
+    const next = this._pickFollowingOf(sequence);
+    if (this.probabilities.endings.find(it => it.sequenceChars === sequence.sequenceChars) !== undefined) {
+      return next;
+    } else {
+      return this._pickEndByBranchFollow(next);
+    }
+  }
   
   /**
    * Picks and returns one of the sequences that can follow the given sequence. 
    * 
-   * If the given sequence doesn't have any sequences that follow it (= it is an 
-   * ending sequence), then a random middle sequence will be picked, instead. 
+   * If the given sequence doesn't have any sequences that follow it, 
+   * then a random sequence will be picked, instead. 
    * @param {ProbableSequence} sequence
    * @returns {ProbableSequence}
    * @private
