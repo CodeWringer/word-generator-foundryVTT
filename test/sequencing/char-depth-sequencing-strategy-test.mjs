@@ -58,28 +58,10 @@ describe('CharDepthSequencingStrategy', function() {
       // When
       const sequences = strategy.getSequencesOfSet(sampleSet);
       // Then
-      sequences.length.should.be.equal(8);
+      sequences.length.should.be.equal(2);
 
-      sequences[0].chars.should.containEql("b");
-      sequences[1].chars.should.containEql("o");
-      sequences[2].chars.should.containEql("b");
-      sequences[3].chars.should.containEql("s");
-      sequences[4].chars.should.containEql("t");
-      sequences[5].chars.should.containEql("e");
-      sequences[6].chars.should.containEql("v");
-      sequences[7].chars.should.containEql("e");
-  
-      sequences[0].isBeginning.should.be.equal(true);
-      sequences[0].isMiddle.should.be.equal(false);
-      sequences[0].isEnding.should.be.equal(false);
-  
-      sequences[1].isBeginning.should.be.equal(false);
-      sequences[1].isMiddle.should.be.equal(true);
-      sequences[1].isEnding.should.be.equal(false);
-  
-      sequences[2].isBeginning.should.be.equal(false);
-      sequences[2].isMiddle.should.be.equal(false);
-      sequences[2].isEnding.should.be.equal(true);
+      sequences[0].length.should.be.equal(3);
+      sequences[1].length.should.be.equal(5);
     });
 
     it('Correctly determines sequences of ["Bob", "Steve] at depth 2', function() {
@@ -89,33 +71,10 @@ describe('CharDepthSequencingStrategy', function() {
       // When
       const sequences = strategy.getSequencesOfSet(sampleSet);
       // Then
-      sequences.length.should.be.equal(5);
+      sequences.length.should.be.equal(2);
 
-      sequences[0].chars.should.containEql("bo");
-      sequences[1].chars.should.containEql("b");
-      sequences[2].chars.should.containEql("st");
-      sequences[3].chars.should.containEql("ev");
-      sequences[4].chars.should.containEql("e");
-  
-      sequences[0].isBeginning.should.be.equal(true);
-      sequences[0].isMiddle.should.be.equal(false);
-      sequences[0].isEnding.should.be.equal(false);
-  
-      sequences[1].isBeginning.should.be.equal(false);
-      sequences[1].isMiddle.should.be.equal(false);
-      sequences[1].isEnding.should.be.equal(true);
-  
-      sequences[2].isBeginning.should.be.equal(true);
-      sequences[2].isMiddle.should.be.equal(false);
-      sequences[2].isEnding.should.be.equal(false);
-  
-      sequences[3].isBeginning.should.be.equal(false);
-      sequences[3].isMiddle.should.be.equal(true);
-      sequences[3].isEnding.should.be.equal(false);
-  
-      sequences[4].isBeginning.should.be.equal(false);
-      sequences[4].isMiddle.should.be.equal(false);
-      sequences[4].isEnding.should.be.equal(true);
+      sequences[0].length.should.be.equal(2);
+      sequences[1].length.should.be.equal(3);
     });
   });
 });
