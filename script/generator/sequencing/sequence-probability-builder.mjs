@@ -1,4 +1,4 @@
-export default class SequenceProbabilityBuilder {3
+export default class SequenceProbabilityBuilder {
   /**
    * Returns the probabilities of the given sequences. 
    * @param {Array<Array<Sequence>>} sequencesList 
@@ -9,10 +9,57 @@ export default class SequenceProbabilityBuilder {3
     const branches = this._getBranchesOf(chainEntries);
     const probableBranches = this._getProbabilitiesOf(branches); 
 
+    const starts = [];
+    const endings = [];
+    let frequencyStarts = 0;
+    let frequencyEndings = 0;
+
+    for (const sequences of sequencesList) {
+      const startSequence = sequences[0];
+      const existingStart = starts.find(it => it.sequenceChars === startSequence.chars);
+      if (existingStart === undefined) {
+        const newStart = new CountedSequence({
+          sequenceChars: startSequence.chars,
+          frequency: 1,
+        });
+        starts.push(newStart);
+      } else {
+        existingStart.frequency++;
+      }
+      frequencyStarts++;
+
+      const endingSequence = sequences[sequences.length - 1];
+      const existingEnd = endings.find(it => it.sequenceChars === endingSequence.chars);
+      if (existingEnd === undefined) {
+        const newEnd = new CountedSequence({
+          sequenceChars: endingSequence.chars,
+          frequency: 1,
+        });
+        endings.push(newEnd);
+      } else {
+        existingEnd.frequency++;
+      }
+      frequencyEndings++;
+    }
+
+    const mappedStarts = starts.map(it => new ProbableSequence({
+      sequenceChars: it.sequenceChars,
+      frequency: it.frequency,
+      probability: it.frequency / frequencyStarts,
+    }));
+    this._sortAndStack(mappedStarts);
+
+    const mappedEndings = endings.map(it => new ProbableSequence({
+      sequenceChars: it.sequenceChars,
+      frequency: it.frequency,
+      probability: it.frequency / frequencyEndings,
+    }));
+    this._sortAndStack(mappedEndings);
+
     const result = new SequenceProbabilities({
-      all: probableBranches,
-      starts: undefined, // TODO
-      endings: undefined, // TODO
+      branches: probableBranches,
+      starts: mappedStarts,
+      endings: mappedEndings,
     });
     return result;
   }
@@ -300,13 +347,13 @@ export class ProbableSequence {
 }
 
 /**
- * @property {Array<ProbableSequenceBranch>} all
- * @property {Array<ProbableSequenceBranch>} starts
- * @property {Array<ProbableSequenceBranch>} endings
+ * @property {Array<ProbableSequenceBranch>} branches
+ * @property {Array<ProbableSequence>} starts
+ * @property {Array<ProbableSequence>} endings
  */
 export class SequenceProbabilities {
   constructor(args = {}) {
-    this.all = args.all;
+    this.branches = args.branches;
     this.starts = args.starts;
     this.endings = args.endings;
   }
