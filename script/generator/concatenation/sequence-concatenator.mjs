@@ -33,20 +33,21 @@ export default class SequenceConcatenator {
   _rng = undefined;
 
   /**
-   * @param {SequenceProbabilities} sequences
-   * @param {Number} entropy
-   * @param {Number} entropyStart
-   * @param {Number} entropyMiddle
-   * @param {Number} entropyEnd
+   * @param {SequenceProbabilities} probabilities
+   * @param {Number | undefined} entropy
+   * @param {Number | undefined} entropyStart
+   * @param {Number | undefined} entropyMiddle
+   * @param {Number | undefined} entropyEnd
    * @param {String | undefined} seed
    */
   constructor(args = {}) {
-    this.sequences = args.sequences;
-    this.entropy = args.entropy;
-    this.entropyStart = args.entropyStart;
-    this.entropyMiddle = args.entropyMiddle;
-    this.entropyEnd = args.entropyEnd;
-    this.seed = args.seed;
+    this.probabilities = args.probabilities;
+
+    this.entropy = args.entropy ?? 0.0;
+    this.entropyStart = args.entropyStart ?? 0.0;
+    this.entropyMiddle = args.entropyMiddle ?? 0.0;
+    this.entropyEnd = args.entropyEnd ?? 0.0;
+    this.seed = args.seed ?? Math.random();
     
     this._rng = new RandomSeeded(args.seed);
   }
@@ -76,19 +77,19 @@ export default class SequenceConcatenator {
     let previousSequence = startingSequence;
     let resultingSequences = [startingSequence];
     let endingSequence = undefined;
-    let resultLength = startingSequence.chars.length;
+    let resultLength = startingSequence.sequenceChars.length;
 
     while (resultLength < targetLength) {
       const nextSequence = this._pickFollowingOf(previousSequence);
-      const isEndingSequence = nextSequence.following.length <= 0;
+      const isEndingSequence = this.probabilities.endings.find(it => it.sequenceChars === nextSequence.sequenceChars) !== undefined;
 
       if(isEndingSequence === true) {
-        resultLength -= endingSequence.chars.length;
+        resultLength -= endingSequence.sequenceChars.length;
         endingSequence = nextSequence;
-        resultLength += endingSequence.chars.length;
+        resultLength += endingSequence.sequenceChars.length;
       } else {
         resultingSequences.push(nextSequence);
-        resultLength += nextSequence.chars.length;
+        resultLength += nextSequence.sequenceChars.length;
       }
       
       previousSequence = nextSequence;
@@ -98,7 +99,7 @@ export default class SequenceConcatenator {
       resultingSequences.push(endingSequence);
     }
 
-    return resultingSequences.join();
+    return resultingSequences.map(it => it.sequenceChars).join("");
   }
 
   /**
@@ -107,7 +108,7 @@ export default class SequenceConcatenator {
    * @private
    */
   _pickStart() {
-    return this._pickSequenceFrom(this.sequences.starts, this.entropyStart);
+    return this._pickSequenceFrom(this.probabilities.starts, this.entropyStart);
   }
   
   /**
@@ -120,10 +121,12 @@ export default class SequenceConcatenator {
    * @private
    */
   _pickFollowingOf(sequence) {
-    if (sequence.following.length > 0) {
-      return this._pickSequenceFrom(sequence.following, this.entropyMiddle);
+    const branch = this.probabilities.branches.find(it => it.sequenceChars === sequence.sequenceChars);
+
+    if (branch.branches.length > 0) {
+      return this._pickSequenceFrom(branch.branches, this.entropyMiddle);
     } else {
-      return this._pickSequenceFrom(this.sequences.middles, this.entropyMiddle);
+      return this._pickSequenceFrom(this.probabilities.branches, this.entropyMiddle);
     }
   }
 
@@ -141,7 +144,7 @@ export default class SequenceConcatenator {
     if (rnd <= this.entropy || entropy) {
       // Pick a sequence entirely at random. 
       rnd = this._rng.generate();
-      return this._getMatchingSequenceFrom(this.sequences.sequences, rnd);
+      return this._getMatchingSequenceFrom(this.probabilities.sequences, rnd);
     } else {
       // Pick a probable sequence. 
       rnd = this._rng.generate();

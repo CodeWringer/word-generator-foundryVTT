@@ -1,7 +1,6 @@
 import { isInteger } from '../util/validation.mjs';
-import SequenceReducer from './sequencing/sequence-reducer.mjs';
-import SequenceProbabilityBuilder from './sequencing/sequence-probability-builder.mjs';
-import SequenceConcatenator from './sequencing/sequence-concatenator.mjs';
+import SequenceProbabilityBuilder from './probability-building/sequence-probability-builder.mjs';
+import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
 
 /**
  * This is the algorithm's main logic piece. 
@@ -151,18 +150,14 @@ export default class WordGenerator {
     // Determine which sequences exist. Contains duplicate entries. 
     const sequences = this.sequencingStrategy.getSequencesOfSet(this.sampleSet);
     
-    // Remove duplicate entries and count the occurrences (= frequencies) of the sequences. 
-    const reducer = new SequenceReducer();
-    const reducedSequences = reducer.reduce(sequences);
-
     // Build the chain of probabilities of the sequences. 
     const probabilityBuilder = new SequenceProbabilityBuilder();
-    const sequenceProbabilities = probabilityBuilder.build(reducedSequences);
+    const sequenceProbabilities = probabilityBuilder.build(sequences);
 
     // The concatenator generates the new texts and needs the chain of 
     // probability-enriched sequences for that task. 
     const sequenceConcatenator = new SequenceConcatenator({
-      sequences: sequenceProbabilities,
+      probabilities: sequenceProbabilities,
       entropy: this.entropy,
       entropyStart: this.entropyStart,
       entropyMiddle: this.entropyMiddle,
