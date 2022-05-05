@@ -173,7 +173,7 @@ export default class SequenceConcatenator {
   _pickFollowingOf(sequence) {
     const branch = this.probabilities.branches.find(it => it.sequenceChars === sequence.sequenceChars);
 
-    if (branch.branches.length > 0) {
+    if (branch !== undefined && branch.branches.length > 0) {
       return this._pickSequenceFrom(branch.branches, this.entropyMiddle);
     } else {
       return this._pickSequenceFrom(this.probabilities.branches, this.entropyMiddle);
