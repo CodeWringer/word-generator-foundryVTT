@@ -30,6 +30,8 @@ import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
  * likelihood of the next ending sequence being picked entirely at random. 
  * 
  * Default 0
+ * @property {ENDING_PICK_MODES} endingPickMode Determines how and if an ending sequence 
+ * will be picked for generated words. 
  */
 export default class WordGenerator {
   /**
@@ -106,6 +108,8 @@ export default class WordGenerator {
    * @param {AbstractSequencingStrategy} args.sequencingStrategy The sequencing strategy to use. 
    * @param {String | undefined} args.seed Optional. A seed for the randomization. 
    * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy Optional. The spelling strategy applied to generated words. 
+   * @param {ENDING_PICK_MODES | undefined} args.endingPickMode Optional. Determines how and if an ending sequence 
+   * will be picked for generated words. Default 'NONE'. 
    * 
    * @throws {Error} Thrown, if the sample set is an empty list or undefined. 
    * @throws {Error} Thrown, if the depth is less than 1 or undefined or no integer value. 
@@ -138,6 +142,7 @@ export default class WordGenerator {
     this.entropyStart = args.entropyStart;
     this.entropyMiddle = args.entropyMiddle;
     this.entropyEnd = args.entropyEnd;
+    this.endingPickMode = args.endingPickMode;
   }
 
   /**
@@ -163,6 +168,7 @@ export default class WordGenerator {
       entropyMiddle: this.entropyMiddle,
       entropyEnd: this.entropyEnd,
       seed: this._seed,
+      endingPickMode: this.endingPickMode,
     });
 
     // Generate words. 

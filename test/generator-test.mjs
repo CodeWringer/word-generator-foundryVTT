@@ -4,6 +4,7 @@ import 'should-sinon';
 import WordGenerator from '../script/generator/generator.mjs';
 import BeginningCapitalsSpellingStrategy from '../script/generator/postprocessing/beginning-capitals-strategy.mjs';
 import CharDepthSequencingStrategy from '../script/generator/sequencing/char-depth-sequencing-strategy.mjs';
+import { ENDING_PICK_MODES } from '../script/generator/concatenation/sequence-concatenator.mjs';
 
 describe('WordGenerator', function() {
   const testSeed = "Test1234567890";
@@ -25,6 +26,7 @@ describe('WordGenerator', function() {
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
+        endingPickMode: ENDING_PICK_MODES.NONE,
       });
       // When
       const generated = generator.generate(1);
@@ -48,6 +50,7 @@ describe('WordGenerator', function() {
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
+        endingPickMode: ENDING_PICK_MODES.NONE,
       });
       // When
       const generated = generator.generate(3);
@@ -73,6 +76,7 @@ describe('WordGenerator', function() {
         targetLengthMax: max,
         seed: testSeed,
         spellingStrategy: spellingStrategy,
+        endingPickMode: ENDING_PICK_MODES.NONE,
       });
       // When
       const generated = generator.generate(3);
@@ -116,6 +120,7 @@ describe('WordGenerator', function() {
         targetLengthMax: max,
         seed: testSeed,
         spellingStrategy: spellingStrategy,
+        endingPickMode: ENDING_PICK_MODES.NONE,
       });
       // When
       const generated = generator.generate(100);
