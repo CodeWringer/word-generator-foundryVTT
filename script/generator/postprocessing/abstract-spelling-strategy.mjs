@@ -2,6 +2,8 @@
  * Represents a strategy for rules of how to spell a given word. 
  * 
  * E. g. capitalization could be controlled via a concrete implementation of this class. 
+ * 
+ * Implementing types **must** override the methods `apply` and `getSettings`. 
  * @abstract
  */
 export default class AbstractSpellingStrategy {

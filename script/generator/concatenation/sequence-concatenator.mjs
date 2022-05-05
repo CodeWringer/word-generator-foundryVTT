@@ -5,7 +5,7 @@ import { isInteger } from "../../util/validation.mjs";
  * Represents the different modes of how an ending sequence may be picked. 
  * @constant
  * @type {Object}
- * @property {Number} NONE Ending sequences are not considered, at all and may 
+ * @property {Number} NONE Ending sequences are not considered at all and may 
  * even appear in the middle of a built word. 
  * @property {Number} RANDOM An ending sequence is picked entirely at random, 
  * from the set of ending sequences. 
@@ -24,24 +24,16 @@ export const ENDING_PICK_MODES = {
  * 
  * Builds new words, based on a given set of probable sequences. 
  * @property {Number} entropy A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next sequence being picked entirely at random. 
- * 
- * Default 0
+ * likelihood of the next sequence being picked entirely at random. Default `0`.
  * @property {Number} entropyStart A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next starting sequence being picked entirely at random. 
- * 
- * Default 0
+ * likelihood of the next starting sequence being picked entirely at random. Default `0`.
  * @property {Number} entropyMiddle A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next middle sequence being picked entirely at random. 
- * 
- * Default 0
+ * likelihood of the next middle sequence being picked entirely at random. Default `0`.
  * @property {Number} entropyEnd A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next ending sequence being picked entirely at random. 
- * 
- * Default 0
+ * likelihood of the next ending sequence being picked entirely at random. Default `0`.
  * @property {String} seed A randomization seed. 
  * @property {ENDING_PICK_MODES} endingPickMode Determines how and if an ending sequence 
- * will be picked for generated words. 
+ * will be picked for generated words. Default `ENDING_PICK_MODES.RANDOM`.
  */
 export default class SequenceConcatenator {
   /**
@@ -53,12 +45,17 @@ export default class SequenceConcatenator {
 
   /**
    * @param {SequenceProbabilities} probabilities
-   * @param {Number | undefined} entropy
-   * @param {Number | undefined} entropyStart
-   * @param {Number | undefined} entropyMiddle
-   * @param {Number | undefined} entropyEnd
-   * @param {String | undefined} seed
-   * @param {ENDING_PICK_MODES | undefined} endingPickMode
+   * @param {Number | undefined} entropy Optional. A number between 0 and 1 (inclusive), which determines the 
+   * likelihood of the next sequence being picked entirely at random. Default `0`.
+   * @param {Number | undefined} entropyStart Optional. A number between 0 and 1 (inclusive), which determines the 
+   * likelihood of the next starting sequence being picked entirely at random. Default `0`.
+   * @param {Number | undefined} entropyMiddle Optional. A number between 0 and 1 (inclusive), which determines the 
+   * likelihood of the next middle sequence being picked entirely at random. Default `0`.
+   * @param {Number | undefined} entropyEnd Optional. A number between 0 and 1 (inclusive), which determines the 
+   * likelihood of the next ending sequence being picked entirely at random. Default `0`.
+   * @param {String | undefined} seed Optional. A randomization seed. 
+   * @param {ENDING_PICK_MODES | undefined} endingPickMode Optional. Determines how and if an ending sequence 
+   * will be picked for generated words. Default `ENDING_PICK_MODES.RANDOM`.
    */
   constructor(args = {}) {
     this.probabilities = args.probabilities;
@@ -68,7 +65,7 @@ export default class SequenceConcatenator {
     this.entropyMiddle = args.entropyMiddle ?? 0.0;
     this.entropyEnd = args.entropyEnd ?? 0.0;
     this.seed = args.seed ?? Math.random();
-    this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.NONE,
+    this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.RANDOM,
     
     this._rng = new RandomSeeded(args.seed);
   }

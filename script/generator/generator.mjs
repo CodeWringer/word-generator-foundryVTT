@@ -14,22 +14,14 @@ import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
  * @property {Number} targetLengthMax
  * @property {AbstractSequencingStrategy} sequencingStrategy
  * @property {AbstractSpellingStrategy | undefined} spellingStrategy
- * @property {Number} entropy A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next sequence being picked entirely at random. 
- * 
- * Default 0
- * @property {Number} entropyStart A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next starting sequence being picked entirely at random. 
- * 
- * Default 0
- * @property {Number} entropyMiddle A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next middle sequence being picked entirely at random. 
- * 
- * Default 0
- * @property {Number} entropyEnd A number between 0 and 1 (inclusive), which determines the 
- * likelihood of the next ending sequence being picked entirely at random. 
- * 
- * Default 0
+ * @property {Number | undefined} entropy A number between 0 and 1 (inclusive), which determines the 
+ * randomness of words, in general. Default 0. 
+ * @property {Number | undefined} entropyStart A number between 0 and 1 (inclusive), which determines the 
+ * randomness of starting sequences. Default 0. 
+ * @property {Number | undefined} entropyMiddle A number between 0 and 1 (inclusive), which determines the 
+ * randomness of middle sequences. Default 0. 
+ * @property {Number | undefined} entropyEnd A number between 0 and 1 (inclusive), which determines the 
+ * randomness of ending sequences. Default 0. 
  * @property {ENDING_PICK_MODES} endingPickMode Determines how and if an ending sequence 
  * will be picked for generated words. 
  */
@@ -108,8 +100,16 @@ export default class WordGenerator {
    * @param {AbstractSequencingStrategy} args.sequencingStrategy The sequencing strategy to use. 
    * @param {String | undefined} args.seed Optional. A seed for the randomization. 
    * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy Optional. The spelling strategy applied to generated words. 
+   * @param {Number | undefined} args.entropy A number between 0 and 1 (inclusive), which determines the 
+   * randomness of words, in general. Default `0`. 
+   * @param {Number | undefined} args.entropyStart A number between 0 and 1 (inclusive), which determines the 
+   * randomness of starting sequences. Default `0`. 
+   * @param {Number | undefined} args.entropyMiddle A number between 0 and 1 (inclusive), which determines the 
+   * randomness of middle sequences. Default `0`. 
+   * @param {Number | undefined} args.entropyEnd A number between 0 and 1 (inclusive), which determines the 
+   * randomness of ending sequences. Default `0`. 
    * @param {ENDING_PICK_MODES | undefined} args.endingPickMode Optional. Determines how and if an ending sequence 
-   * will be picked for generated words. Default 'NONE'. 
+   * will be picked for generated words. Default `ENDING_PICK_MODES.RANDOM`.
    * 
    * @throws {Error} Thrown, if the sample set is an empty list or undefined. 
    * @throws {Error} Thrown, if the depth is less than 1 or undefined or no integer value. 

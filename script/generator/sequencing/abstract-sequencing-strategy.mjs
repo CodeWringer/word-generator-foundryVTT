@@ -1,4 +1,9 @@
 /**
+ * A sequencing strategy is responsible for 'cutting' a given sample (set) into 
+ * sequences. 
+ * 
+ * Implementing types **must** override the methods `getSequencesOfSample` and 
+ * `getSettings`. 
  * @abstract
  */
 export default class AbstractSequencingStrategy {

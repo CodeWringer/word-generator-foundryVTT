@@ -1,5 +1,6 @@
 /**
  * Used to generate seeded pseudo-random numbers. 
+ * @see https://stackoverflow.com/a/47593316 Credit goes to user 'bryc', whose code this is based on. 
  */
 export default class RandomSeeded {
   /**
@@ -34,7 +35,6 @@ export default class RandomSeeded {
   /**
    * Generates a seed. 
    * @param {String} str 
-   * @see https://stackoverflow.com/a/47593316
    */
   _xmur3(str) {
     for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
@@ -50,7 +50,6 @@ export default class RandomSeeded {
   /**
    * Generates a seeded random number. 
    * @param {Function<Any>} seed The seed. 
-   * @see https://stackoverflow.com/a/47593316
    */
   _mulberry32(seed) {
     return function () {
