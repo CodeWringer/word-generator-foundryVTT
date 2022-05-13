@@ -6,7 +6,10 @@
   "version": "1.0.0",
   "minimumCoreVersion": "0.9.269",
   "compatibleCoreVersion": "9",
-  "esmodules": ["word-generator.mjs"],
+  "esmodules": [
+    "script/init.mjs",
+    "script/presentation/word-generator-application.mjs"
+  ],
   "socket": true,
   "languages": [
     {

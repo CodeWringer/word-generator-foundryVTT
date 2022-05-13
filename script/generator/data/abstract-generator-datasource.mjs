@@ -1,5 +1,3 @@
-import GeneratorSettings from "./generator/generator-settings.mjs";
-
 /**
  * @abstract
  */

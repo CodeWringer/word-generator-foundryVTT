@@ -1,7 +1,28 @@
 {
-  "mcwg": {
-    "placeholder": {
-      "generatorName": "Generator Name"
+  "wg": {
+    "application": {
+      "title": "Word Generators",
+      "close": "Close"
+    },
+    "generator": {
+      "create": "Add New Generator",
+      "delete": "Delete Generator",
+      "generate": "Generate",
+      "targetLengthMin": "Target length minimum",
+      "targetLengthMax": "Target length maximum",
+      "sequencingStrategy": "Sequencing-Strategy",
+      "spellingStrategy": "Spelling-Strategy",
+      "entropy": "Entropy",
+      "entropyStart": "Entropy start",
+      "entropyMiddle": "Entropy middle",
+      "entropyEnd": "Entropy end",
+      "endingPickMode": "Ending pick mode",
+      "placeholder": {
+        "name": "Generator name"
+      }
+    },
+    "sampleSet": {
+      "edit": "Edit Sample-Set"
     }
   }
 }

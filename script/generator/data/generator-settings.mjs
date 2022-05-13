@@ -1,5 +1,6 @@
 import BeginningCapitalsSpellingStrategy from "../postprocessing/beginning-capitals-strategy.mjs";
 import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
+import DelimiterSequencingStrategy from "../sequencing/delimiter-sequencing-strategy.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
@@ -12,6 +13,11 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * @property {Number} targetLengthMax
  * @property {SEQUENCING_STRATEGIES} sequencingStrategy
  * @property {CAPITALIZE_FIRST_LETTER | undefined} spellingStrategy
+ * @property {Number} entropy
+ * @property {Number} entropyStart
+ * @property {Number} entropyMiddle
+ * @property {Number} entropyEnd
+ * @property {ENDING_PICK_MODES} endingPickMode
  */
 export default class GeneratorSettings {
   constructor(args = {}) {
@@ -22,6 +28,11 @@ export default class GeneratorSettings {
     this.targetLengthMax = args.targetLengthMax;
     this.sequencingStrategy = args.sequencingStrategy;
     this.spellingStrategy = args.spellingStrategy;
+    this.entropy = args.entropy;
+    this.entropyStart = args.entropyStart;
+    this.entropyMiddle = args.entropyMiddle;
+    this.entropyEnd = args.entropyEnd;
+    this.endingPickMode = args.endingPickMode;
   }
 
   static fromObject(obj) {
@@ -41,6 +52,11 @@ export default class GeneratorSettings {
         obj.spellingStrategy,
         obj.spellingStrategySettings
       ),
+      entropy: obj.entropy,
+      entropyStart: obj.entropyStart,
+      entropyMiddle: obj.entropyMiddle,
+      entropyEnd: obj.entropyEnd,
+      endingPickMode: obj.endingPickMode,
     });
   }
 
@@ -49,12 +65,22 @@ export default class GeneratorSettings {
       id: this.id,
       name: this.name,
       sampleSet: this.sampleSet,
+
       targetLengthMin: this.targetLengthMin,
       targetLengthMax: this.targetLengthMax,
+
       sequencingStrategy: SEQUENCING_STRATEGIES.CHAR_DEPTH, // TODO: Infer, somehow
       sequencingStrategySettings: this.sequencingStrategy.getSettings(),
+
       spellingStrategy: SPELLING_STRATEGIES.CAPITALIZE_FIRST_LETTER, // TODO: Infer, somehow
       spellingStrategySettings: this.spellingStrategy.getSettings(),
+
+      entropy: this.entropy,
+      entropyStart: this.entropyStart,
+      entropyMiddle: this.entropyMiddle,
+      entropyEnd: this.entropyEnd,
+      
+      endingPickMode: this.endingPickMode,
     };
   }
 
@@ -69,6 +95,12 @@ export default class GeneratorSettings {
         settings.depth,
         settings.preserveCase
       );
+    } else if (strategy === SEQUENCING_STRATEGIES.DELIMITER) {
+      return new DelimiterSequencingStrategy(
+        settings.delimiter,
+      );
+    } else {
+      throw new Error(`Cannot get sequencing strategy for '${strategy}'`);
     }
   }
 
@@ -86,6 +118,7 @@ export default class GeneratorSettings {
 
 export const SEQUENCING_STRATEGIES = {
   CHAR_DEPTH: "CHAR_DEPTH",
+  DELIMITER: "DELIMITER",
 }
 
 export const SPELLING_STRATEGIES = {

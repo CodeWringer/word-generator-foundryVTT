@@ -1,9 +1,16 @@
+import { TEMPLATES } from "../../../../systems/ambersteel/module/templatePreloader.mjs";
 import UserFlagGeneratorSettingsDataSource from "../generator/data/user-flag-datasource.mjs";
 
 export default class ListDialog {
   constructor() {
     const dataSource = new UserFlagGeneratorSettingsDataSource();
     const settingsList = dataSource.getAll(game.user.id);
+  }
+
+  show() {
+    showDialog({
+      dialogTemplate: TEMPLATES.LIST_DIALOG,
+    });
   }
 }
 
@@ -29,7 +36,6 @@ export async function showDialog(args = {}, dialogData) {
   };
   const mergedDialogData = {
     confirmed: false,
-    CONFIG: CONFIG,
     ...dialogData
   };
 
@@ -41,22 +47,14 @@ export async function showDialog(args = {}, dialogData) {
       title: game.i18n.localize(args.localizableTitle),
       content: renderedContent,
       buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize("ambersteel.labels.confirm"),
-          callback: () => {
-            mergedDialogData.confirmed = true;
-          }
-        },
         cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize("ambersteel.labels.cancel"),
+          icon: '',
+          label: game.i18n.localize("wg.close"),
           callback: () => { }
         }
       },
       default: "cancel",
       render: html => {
-        // TODO: Activate DOM event listeners using the view model system. 
         args.render(html);
       },
       close: html => {
