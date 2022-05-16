@@ -7,9 +7,85 @@
   }
 
   &-setting-entry {
-    display: block;
+    display: flex;
+    background-color: #0000001a;
+    margin-bottom: 0.5rem;
+    border-radius: 0.3rem;
+    border-color: #8d8d8d;
+    border-width: 1px;
+    border-style: solid;
+    border-top-width: 6px;
   }
 
   &-input-textfield {
+    display: inline-block;
+    min-height: 1.8rem;
+  }
+
+  &-square-button {
+    width: 1.8rem;
+    height: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    max-width: 1.8rem;
+    min-width: 1.8rem;
+    margin: 0;
+
+    &.flat-v {
+      height: 1.5rem;
+    }
+
+    &.light {
+      background-color: transparent;
+      border: none;
+    }
+
+    &.danger {
+      background-color: #b762626b;
+      border: solid 1px #9f393969;
+    }
+
+    &.fill-h {
+      min-height: 100%;
+      height: 100%;
+    }
+
+    & > i {
+      margin: 0;
+    }
+  }
+
+  &-move-controls {
+    display: flex;
+    flex-direction: column;
+    width: 1.8rem;
+    border-right: solid 1px #8d8d8d;
+    height: 100%;
+
+    &-container {
+      display: inline-block;
+    }
+  }
+
+  &-grab-handle {
+    display: inline-flex;
+    flex-grow: 1;
+    min-width: 1.8rem;
+    min-height: 1.8rem;
+    align-items: center;
+    justify-content: center;
+    cursor: row-resize;
+  }
+
+  &-flex-container-h {
+    display: flex;
+    align-items: flex-end;
+    height: 1.8rem;
+  }
+
+  &-flex-grow {
+    flex-grow: 1;
   }
 }

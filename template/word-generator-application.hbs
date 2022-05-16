@@ -3,49 +3,195 @@ settings: {Array<GeneratorSettings>}
 cssClass: {undefined | String}
 --}}
 <form class="{{cssClass}}">
-  <div>
-    <button type="button" data-action="create">
-      <i class="fas fa-plus"></i>{{localize "wg.generator.create"}}
+  <div class="word-generator-flex-container-h">
+    {{!-- Creation control --}}
+    <button
+      class="word-generator-square-button light"
+      type="button"
+      data-action="create"
+      title="{{localize "wg.generator.create"}}"
+      >
+      <i class="fas fa-plus"></i>
+    </button>
+    <div class="word-generator-flex-grow"></div>
+    {{!-- Sorting controls --}}
+    <button
+      class="word-generator-square-button light"
+      type="button"
+      data-action="move-sort-alpha-desc"
+      title="{{localize "wg.generator.sortAlphaDesc"}}"
+      >
+      <i class="fas fa-sort-alpha-down"></i>
+    </button>
+    <button
+      class="word-generator-square-button light"
+      type="button"
+      data-action="move-sort-alpha-asc"
+      title="{{localize "wg.generator.sortAlphaAsc"}}"
+      >
+      <i class="fas fa-sort-alpha-up"></i>
     </button>
   </div>
   <ul class="word-generator-unstyled-list">
     {{#each settings as |setting index|}}
       <li class="word-generator-setting-entry">
-        <button 
-          type="button" 
-          data-action="delete" 
-          data-id="{{setting.id}}"
-          title="{{localize "wg.generator.delete"}}"
-          >
-          <i class="fas fa-edit"></i>
-        </button>
-        <div class="flexcol">
-          <input 
-            class="word-generator-input-textfield"
-            type="text"
-            id="{{setting.id}}"
-            placeholder="{{localize "wg.generator.placeholder.name"}}"
-            value="{{setting.name}}"
-          />
+        {{!-- Move controls --}}
+        <div class="word-generator-move-controls-container">
+          <div class="word-generator-move-controls">
+            <button
+              class="word-generator-square-button flat-v light"
+              type="button"
+              data-action="move-top"
+              title="{{localize "wg.generator.moveTop"}}"
+              >
+              <i class="fas fa-angle-double-up"></i>
+            </button>
+            <button
+              class="word-generator-square-button flat-v light"
+              type="button"
+              data-action="move-up"
+              title="{{localize "wg.generator.moveUp"}}"
+              >
+              <i class="fas fa-angle-up"></i>
+            </button>
+            <a 
+              class="word-generator-grab-handle"
+              >
+              <i class="fas fa-grip-vertical"></i>
+            </a>
+            <button
+              class="word-generator-square-button flat-v light"
+              type="button"
+              data-action="move-down"
+              title="{{localize "wg.generator.moveDown"}}"
+              >
+              <i class="fas fa-angle-down"></i>
+            </button>
+            <button
+              class="word-generator-square-button flat-v light"
+              type="button"
+              data-action="move-bottom"
+              title="{{localize "wg.generator.moveBottom"}}"
+              >
+              <i class="fas fa-angle-double-down"></i>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="word-generator-flex-container-h">
+            <button 
+              class="word-generator-square-button danger"
+              type="button" 
+              data-action="delete" 
+              data-id="{{setting.id}}"
+              title="{{localize "wg.generator.delete"}}"
+              >
+              <i class="fas fa-trash"></i>
+            </button>
+            <div class="word-generator-flex-grow"></div>
+          </div>
           <div class="flexcol">
-            <div class="flexrow">
-              <label for="{{setting.id}}-targetLengthMin">
-                {{localize "wg.generator.targetLengthMin"}}
-              </label>
-              <input id="{{setting.id}}-targetLengthMin" type="number" min="1" value="1" />
+            <input 
+              class="word-generator-input-textfield"
+              type="text"
+              id="{{setting.id}}"
+              placeholder="{{localize "wg.generator.placeholder.name"}}"
+              value="{{setting.name}}"
+            />
+            <div class="flexcol">
+              {{!-- 1Set --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-sampleSet">
+                  {{localize "wg.generator.sampleSet"}}
+                </label>
+                <span>{{localize "wg.generator.sampleSize"}}: {{setting.sampleSet.length}}</span>
+                <button 
+                  class="word-generator-square-button"
+                  type="button" 
+                  data-action="edit-sample-set" 
+                  data-id="{{setting.id}}"
+                  title="{{localize "wg.sampleSet.edit"}}"
+                  >
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+              {{!-- targetLengthMin --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-targetLengthMin">
+                  {{localize "wg.generator.targetLengthMin"}}
+                </label>
+                <input id="{{setting.id}}-targetLengthMin" type="number" min="1" value="1" />
+              </div>
+              {{!-- targetLengthMax --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-targetLengthMax">
+                  {{localize "wg.generator.targetLengthMax"}}
+                </label>
+                <input id="{{setting.id}}-targetLengthMax" type="number" min="1" value="1" />
+              </div>
+              {{!-- entropy --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-entropy">
+                  {{localize "wg.generator.entropy"}}
+                </label>
+                <input id="{{setting.id}}-entropy" type="number" min="0" max="1" value="1" />
+              </div>
+              {{!-- entropyStart --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-entropyStart">
+                  {{localize "wg.generator.entropyStart"}}
+                </label>
+                <input id="{{setting.id}}-entropyStart" type="number" min="0" max="1" value="1" />
+              </div>
+              {{!-- entropyMiddle --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-entropyMiddle">
+                  {{localize "wg.generator.entropyMiddle"}}
+                </label>
+                <input id="{{setting.id}}-entropyMiddle" type="number" min="0" max="1" value="1" />
+              </div>
+              {{!-- entropyEnd --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-entropyEnd">
+                  {{localize "wg.generator.entropyEnd"}}
+                </label>
+                <input id="{{setting.id}}-entropyEnd" type="number" min="0" max="1" value="1" />
+              </div>
+              {{!-- endingPickMode --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-endingPickMode">
+                  {{localize "wg.generator.endingPickMode"}}
+                </label>
+                {{!-- TODO --}}
+              </div>
+              {{!-- sequencingStrategy --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-sequencingStrategy">
+                  {{localize "wg.generator.sequencingStrategy"}}
+                </label>
+                {{!-- TODO --}}
+              </div>
+              {{!-- depth --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-depth">
+                  {{localize "wg.generator.depth"}}
+                </label>
+                <input id="{{setting.id}}-depth" type="number" min="0" max="1" value="1" />
+              </div>
+              {{!-- spellingStrategy --}}
+              <div class="flexrow">
+                <label for="{{setting.id}}-spellingStrategy">
+                  {{localize "wg.generator.spellingStrategy"}}
+                </label>
+                {{!-- TODO --}}
+              </div>
             </div>
           </div>
         </div>
-        <div class="flexrow">
+        {{!-- Generate --}}
+        <div>
           <button 
-            type="button" 
-            data-action="edit-sample-set" 
-            data-id="{{setting.id}}"
-            title="{{localize "wg.sampleSet.edit"}}"
-            >
-            <i class="fas fa-edit"></i>
-          </button>
-          <button 
+            class="word-generator-square-button fill-h"
             type="button" 
             data-action="generate" 
             data-id="{{setting.id}}"

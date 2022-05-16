@@ -1,0 +1,69 @@
+.word-generator-unstyled-list {
+  list-style: none;
+  text-decoration: none;
+  padding: 0;
+  margin: 0; }
+
+.word-generator-setting-entry {
+  display: flex;
+  background-color: #0000001a;
+  margin-bottom: 0.5rem;
+  border-radius: 0.3rem;
+  border-color: #8d8d8d;
+  border-width: 1px;
+  border-style: solid;
+  border-top-width: 6px; }
+
+.word-generator-input-textfield {
+  display: inline-block;
+  min-height: 1.8rem; }
+
+.word-generator-square-button {
+  width: 1.8rem;
+  height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  max-width: 1.8rem;
+  min-width: 1.8rem;
+  margin: 0; }
+  .word-generator-square-button.flat-v {
+    height: 1.5rem; }
+  .word-generator-square-button.light {
+    background-color: transparent;
+    border: none; }
+  .word-generator-square-button.danger {
+    background-color: #b762626b;
+    border: solid 1px #9f393969; }
+  .word-generator-square-button.fill-h {
+    min-height: 100%;
+    height: 100%; }
+  .word-generator-square-button > i {
+    margin: 0; }
+
+.word-generator-move-controls {
+  display: flex;
+  flex-direction: column;
+  width: 1.8rem;
+  border-right: solid 1px #8d8d8d;
+  height: 100%; }
+  .word-generator-move-controls-container {
+    display: inline-block; }
+
+.word-generator-grab-handle {
+  display: inline-flex;
+  flex-grow: 1;
+  min-width: 1.8rem;
+  min-height: 1.8rem;
+  align-items: center;
+  justify-content: center;
+  cursor: row-resize; }
+
+.word-generator-flex-container-h {
+  display: flex;
+  align-items: flex-end;
+  height: 1.8rem; }
+
+.word-generator-flex-grow {
+  flex-grow: 1; }

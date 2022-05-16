@@ -1,3 +1,4 @@
+import MockGeneratorDataSource from "../generator/data/mock-generator-datasource.mjs";
 import UserFlagGeneratorSettingsDataSource from "../generator/data/user-flag-datasource.mjs";
 import { TEMPLATES } from "./templates.mjs";
 
@@ -20,9 +21,10 @@ export default class WordGeneratorApplication extends FormApplication {
   }
 
   /** @override */
-  getData(options) {
-    const ds = new UserFlagGeneratorSettingsDataSource();
-    const settings = ds.getAll(game.userId);
+  async getData(options) {
+    const mock = true; // TODO: Make configurable at a higher level, somehow.
+    const ds = mock ? new MockGeneratorDataSource() : new UserFlagGeneratorSettingsDataSource();
+    const settings = await ds.getAll(game.userId);
 
     return {
       settings: settings,

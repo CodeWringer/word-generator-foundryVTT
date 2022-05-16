@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node build.js",
     "sass": "node-sass ./styles/main.scss ./styles/main.css",
+    "sass:watch": "node-sass ./styles/main.scss -w -o ./styles/main.css",
     "test": "mocha ./test/**/*.[m]js"
   },
   "repository": {

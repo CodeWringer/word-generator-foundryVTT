@@ -17,9 +17,19 @@
       "entropyMiddle": "Entropy middle",
       "entropyEnd": "Entropy end",
       "endingPickMode": "Ending pick mode",
+      "sampleSize": "Size",
+      "sampleSet": "Sample Set",
       "placeholder": {
         "name": "Generator name"
-      }
+      },
+      "moveTop": "Move to top",
+      "moveUp": "Move up",
+      "moveBottom": "Move to bottom",
+      "moveDown": "Move down",
+      "moveDrag": "Drag to move",
+      "sortAlphaDesc": "Sort down, alphabetically",
+      "sortAlphaAsc": "Sort up, alphabetically",
+      "depth": "Depth"
     },
     "sampleSet": {
       "edit": "Edit Sample-Set"
