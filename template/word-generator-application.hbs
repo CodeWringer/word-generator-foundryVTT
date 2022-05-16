@@ -120,42 +120,42 @@ cssClass: {undefined | String}
                 <label for="{{setting.id}}-targetLengthMin">
                   {{localize "wg.generator.targetLengthMin"}}
                 </label>
-                <input id="{{setting.id}}-targetLengthMin" type="number" min="1" value="1" />
+                <input id="{{setting.id}}-targetLengthMin" type="number" min="1" value="{{setting.targetLengthMin}}" />
               </div>
               {{!-- targetLengthMax --}}
               <div class="flexrow">
                 <label for="{{setting.id}}-targetLengthMax">
                   {{localize "wg.generator.targetLengthMax"}}
                 </label>
-                <input id="{{setting.id}}-targetLengthMax" type="number" min="1" value="1" />
+                <input id="{{setting.id}}-targetLengthMax" type="number" min="1" value="{{setting.targetLengthMax}}" />
               </div>
               {{!-- entropy --}}
               <div class="flexrow">
                 <label for="{{setting.id}}-entropy">
                   {{localize "wg.generator.entropy"}}
                 </label>
-                <input id="{{setting.id}}-entropy" type="number" min="0" max="1" value="1" />
+                <input id="{{setting.id}}-entropy" type="number" min="0" max="1" value="{{setting.entropy}}" />
               </div>
               {{!-- entropyStart --}}
               <div class="flexrow">
                 <label for="{{setting.id}}-entropyStart">
                   {{localize "wg.generator.entropyStart"}}
                 </label>
-                <input id="{{setting.id}}-entropyStart" type="number" min="0" max="1" value="1" />
+                <input id="{{setting.id}}-entropyStart" type="number" min="0" max="1" value="{{setting.entropyStart}}" />
               </div>
               {{!-- entropyMiddle --}}
               <div class="flexrow">
                 <label for="{{setting.id}}-entropyMiddle">
                   {{localize "wg.generator.entropyMiddle"}}
                 </label>
-                <input id="{{setting.id}}-entropyMiddle" type="number" min="0" max="1" value="1" />
+                <input id="{{setting.id}}-entropyMiddle" type="number" min="0" max="1" value="{{setting.entropyMiddle}}" />
               </div>
               {{!-- entropyEnd --}}
               <div class="flexrow">
                 <label for="{{setting.id}}-entropyEnd">
                   {{localize "wg.generator.entropyEnd"}}
                 </label>
-                <input id="{{setting.id}}-entropyEnd" type="number" min="0" max="1" value="1" />
+                <input id="{{setting.id}}-entropyEnd" type="number" min="0" max="1" value="{{setting.entropyEnd}}" />
               </div>
               {{!-- endingPickMode --}}
               <div class="flexrow">
@@ -176,7 +176,7 @@ cssClass: {undefined | String}
                 <label for="{{setting.id}}-depth">
                   {{localize "wg.generator.depth"}}
                 </label>
-                <input id="{{setting.id}}-depth" type="number" min="0" max="1" value="1" />
+                <input id="{{setting.id}}-depth" type="number" min="0" max="1" value="{{setting.depth}}" />
               </div>
               {{!-- spellingStrategy --}}
               <div class="flexrow">
