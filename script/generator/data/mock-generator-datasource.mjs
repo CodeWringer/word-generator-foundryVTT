@@ -44,10 +44,10 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
       targetLengthMax: 10,
       sequencingStrategy: SEQUENCING_STRATEGIES.CHAR_DEPTH,
       spellingStrategy: SPELLING_STRATEGIES.CAPITALIZE_FIRST_LETTER,
-      entropy: 0,
-      entropyStart: 0.1,
+      entropy: 0.4,
+      entropyStart: 0.3,
       entropyMiddle: 0.2,
-      entropyEnd: 0.3,
+      entropyEnd: 0.1,
       endingPickMode: ENDING_PICK_MODES.FOLLOW_BRANCH,
     }),
   ];
