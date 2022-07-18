@@ -3,54 +3,57 @@
  */
 export default class AbstractGeneratorDataSource {
   /**
-   * 
-   * @param {String} userId 
+   * Returns a single generator setting of a user. 
+   * @param {String} userId ID of a user. 
    * @param {String} id 
    * @returns {GeneratorSettings}
-   * @async
    */
-  async get(userId, id) {
+  get(userId, id) {
     throw new Error("Not implemented");
   }
 
   /**
-   * 
-   * @param {String} userId 
+   * Returns all generator settings of a user. 
+   * @param {String} userId ID of a user. 
    * @returns {Array<GeneratorSettings>}
-   * @async
    */
-  async getAll(userId) {
+  getAll(userId) {
     throw new Error("Not implemented");
   }
   
   /**
-   * 
-   * @param {String} userId 
-   * @param {String} id 
-   * @param {GeneratorSettings} generatorSettings 
-   * @async
+   * Adds or overwrites a generator setting of a user. 
+   * @param {String} userId ID of a user. 
+   * @param {GeneratorSettings} generatorSetting The generator setting to set. 
    */
-  async set(userId, id, generatorSettings) {
+  set(userId, generatorSetting) {
     throw new Error("Not implemented");
   }
 
   /**
-   * 
-   * @param {String} userId 
-   * @param {String} id 
-   * @returns {Boolean} True, if an entry with the given id was removed. 
-   * @async
+   * Overwrites all generator setting of a user with the given array of settings. 
+   * @param {String} userId ID of a user. 
+   * @param {Array<GeneratorSettings>} generatorSettings The generator settings to set. 
    */
-  async remove(userId, id) {
+  setAll(userId, generatorSettings) {
+    throw new Error("Not implemented");
+  }
+
+  /**
+   * Removes a generator whose ID matches with the given ID of a user. 
+   * @param {String} userId ID of a user. 
+   * @param {String} id ID of the generator setting to remove. 
+   * @returns {Boolean} True, if an entry with the given id was removed. 
+   */
+  remove(userId, id) {
     throw new Error("Not implemented");
   }
   
   /**
-   * 
-   * @param {String} userId 
-   * @async
+   * Removes all generator settings of a user. 
+   * @param {String} userId ID of a user. 
    */
-  async clear(userId) {
+  clear(userId) {
     throw new Error("Not implemented");
   }
 }

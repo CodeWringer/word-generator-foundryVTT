@@ -9,7 +9,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
   static KEY_FLAG = "word-generator-settings";
 
   /** @override */
-  async get(userId, id) {
+  get(userId, id) {
     const user = game.users.get(userId);
     
     if (user === undefined) return undefined;
@@ -23,7 +23,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
   }
   
   /** @override */
-  async getAll(userId) {
+  getAll(userId) {
     const user = game.users.get(userId);
     
     if (user === undefined) return undefined;
@@ -35,7 +35,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
   }
   
   /** @override */
-  async set(userId, generatorSettings) {
+  set(userId, generatorSetting) {
     const user = game.users.get(userId);
 
     if (user === undefined) return;
@@ -45,8 +45,8 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
     ) ?? [];
 
-    const objectifiedSettings = generatorSettings.toObject();
-    const index = arr.findIndex(it => it.id === generatorSettings.id);
+    const objectifiedSettings = generatorSetting.toObject();
+    const index = arr.findIndex(it => it.id === generatorSetting.id);
     if (index >= 0) {
       arr.splice(index, 1, objectifiedSettings);
     } else {
@@ -59,9 +59,22 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
       arr
     );
   }
+
+    /** @override */
+    setAll(userId, generatorSettings) {
+      const user = game.users.get(userId);
+
+      if (user === undefined) return;
+
+      user.setFlag(
+        UserFlagGeneratorSettingsDataSource.FLAG_SCOPE,
+        UserFlagGeneratorSettingsDataSource.KEY_FLAG,
+        generatorSettings ?? []
+      );
+    }
   
   /** @override */
-  async remove(userId, id) {
+  remove(userId, id) {
     const user = game.users.get(userId);
     
     if (user === undefined) return undefined;
@@ -71,7 +84,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
     ) ?? [];
 
-    const index = arr.findIndex(it => it.id === generatorSettings.id);
+    const index = arr.findIndex(it => it.id === id);
     if (index >= 0) {
       arr.splice(index, 1);
     }
@@ -84,7 +97,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
   }
   
   /** @override */
-  async clear(userId) {
+  clear(userId) {
     const user = game.users.get(userId);
     
     if (user === undefined) return undefined;

@@ -33,6 +33,16 @@
     },
     "sampleSet": {
       "edit": "Edit Sample-Set"
+    },
+    "settings": {
+      "toggleMock": {
+        "name": "Toggle Mock Data",
+        "hint": "Toggle Mock Data"
+      },
+      "toggleDebug": {
+        "name": "Toggle Debug Mode",
+        "hint": "Toggle Debug Mode"
+      }
     }
   }
 }

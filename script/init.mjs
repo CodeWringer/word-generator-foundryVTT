@@ -1,16 +1,9 @@
 import { preloadHandlebarsTemplates } from "./presentation/templates.mjs";
-import WordGeneratorApplication from "./presentation/word-generator-application.mjs";
+import CustomUserSettings from "./settings/custom-user-settings.mjs";
 
 Hooks.once('init', async function() {
+  // Settings initialization.
+  new CustomUserSettings().ensureAllSettings();
+
   preloadHandlebarsTemplates();
 });
-
-Hooks.once("ready", async function() {
-  console.log("Init word generator");
-  showWordGeneratorDialog();
-});
-
-function showWordGeneratorDialog() {
-  const dialog = new WordGeneratorApplication();
-  dialog.render(true, { userId: game.userId });
-}
