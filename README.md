@@ -2,9 +2,15 @@
 This module for FoundryVTT adds a means of randomly generating names, based on a given sample set and parameters. 
 
 ## Usage (Macro)
-TODO
+This section explains how to make use of the module as it comes out of the box. 
+
+1. Add a new Macro of type `script`. 
+2. Paste the following code snippet and save: `new WordGeneratorApplication().render(true);`
+3. That's it! When executing the macro, the word generator dialog should now pop up!
 
 ## Usage (Code)
+This section explains how to incorporate the business-logic of the word generator. This section is useful to those who'd like to use the generator, but with their own user interface. 
+
 ```JS
 const sampleSet = [
   "Bob",
@@ -15,7 +21,7 @@ const sampleSet = [
   "Abe",
   "Albert",
 ];
-// The only mandatory constructor parameter-object properties are: 
+// The mandatory constructor parameter-object properties are: 
 // `sampleSet`, `targetLengthMin`, `targetLengthMax` and `sequencingStrategy`
 const generator = new WordGenerator({
   // A string array of the words to base word generation on. 
