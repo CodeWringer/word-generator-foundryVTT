@@ -1,7 +1,5 @@
-import MockGeneratorDataSource from "../generator/data/mock-generator-datasource.mjs";
-import UserFlagGeneratorSettingsDataSource from "../generator/data/user-flag-datasource.mjs";
+import GeneratorRepository from "../generator/data/generator-repository.mjs";
 import AbstractUseCase from "./abstract-use-case.mjs";
-import LoadMockSettingUseCase from "./load-mock-setting-use-case.mjs";
 
 export default class AddGeneratorUseCase extends AbstractUseCase {
   /**
@@ -9,14 +7,7 @@ export default class AddGeneratorUseCase extends AbstractUseCase {
    * @param {GeneratorSettings} args.generatorSettings
    */
   invoke(args) {
-    const mock = new LoadMockSettingUseCase().invoke();
-
-    let ds = undefined;
-    if (mock === true) {
-      ds = new MockGeneratorDataSource();
-    } else {
-      ds = new UserFlagGeneratorSettingsDataSource();
-    }
+    const ds = new GeneratorRepository().dataSource;
     ds.set(args.userId, args.generatorSettings);
   }
 }

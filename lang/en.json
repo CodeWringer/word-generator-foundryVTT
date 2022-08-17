@@ -10,13 +10,26 @@
       "generate": "Generate",
       "targetLengthMin": "Target length minimum",
       "targetLengthMax": "Target length maximum",
-      "sequencingStrategy": "Sequencing-Strategy",
-      "spellingStrategy": "Spelling-Strategy",
+      "sequencingStrategy": "Sequencing strategy",
+      "sequencingStrategies": {
+        "charDepth": "Character depth",
+        "delimiter": "Delimiter"
+      },
+      "spellingStrategy": "Spelling strategy",
+      "spellingStrategies": {
+        "none": "None",
+        "capitalizeFirstLetter": "Capitalize first letter"
+      },
       "entropy": "Entropy",
       "entropyStart": "Entropy start",
       "entropyMiddle": "Entropy middle",
       "entropyEnd": "Entropy end",
       "endingPickMode": "Ending pick mode",
+      "endingPickModes": {
+        "none": "None",
+        "random": "Random",
+        "followBranch": "Follow Branch"
+      },
       "sampleSize": "Size",
       "sampleSet": "Sample Set",
       "placeholder": {

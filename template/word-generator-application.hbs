@@ -5,14 +5,14 @@ cssClass: {undefined | String}
 <form class="{{cssClass}}">
   <div class="word-generator-flex-container-h">
     {{!-- Creation control --}}
-    <button
-      class="word-generator-square-button light"
-      type="button"
-      title="{{localize "wg.generator.create"}}"
+    <a class="flex flex-middle" 
       id="create-generator"
-      >
-      <i class="fas fa-plus"></i>
-    </button>
+    >
+      <div class="word-generator-square-button light flex flex-center">
+        <i class="fas fa-plus"></i>
+      </div>
+      <span>{{localize "wg.generator.create"}}</span>
+    </a>
     <div class="word-generator-flex-grow"></div>
     {{!-- Sorting controls --}}
     <button

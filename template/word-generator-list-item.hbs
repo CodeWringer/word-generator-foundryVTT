@@ -93,14 +93,21 @@ listItem: GeneratorSettings
           <label for="{{listItem.id}}-endingPickMode">
             {{localize "wg.generator.endingPickMode"}}
           </label>
-          {{!-- TODO --}}
+          <select id="{{listItem.id}}-endingPickMode">
+            <option value="0">{{localize "wg.generator.endingPickModes.none"}}</option>
+            <option value="1">{{localize "wg.generator.endingPickModes.random"}}</option>
+            <option value="2">{{localize "wg.generator.endingPickModes.followBranch"}}</option>
+          </select>
         </div>
         {{!-- sequencingStrategy --}}
         <div class="flexrow">
           <label for="{{listItem.id}}-sequencingStrategy">
             {{localize "wg.generator.sequencingStrategy"}}
           </label>
-          {{!-- TODO --}}
+          <select id="{{listItem.id}}-sequencingStrategy">
+            <option value="CHAR_DEPTH">{{localize "wg.generator.sequencingStrategies.charDepth"}}</option>
+            <option value="DELIMITER">{{localize "wg.generator.sequencingStrategies.delimiter"}}</option>
+          </select>
         </div>
         {{!-- depth --}}
         <div class="flexrow">
@@ -114,7 +121,10 @@ listItem: GeneratorSettings
           <label for="{{listItem.id}}-spellingStrategy">
             {{localize "wg.generator.spellingStrategy"}}
           </label>
-          {{!-- TODO --}}
+          <select id="{{listItem.id}}-sequencingStrategy">
+            <option value="NONE">{{localize "wg.generator.spellingStrategies.none"}}</option>
+            <option value="CAPITALIZE_FIRST_LETTER">{{localize "wg.generator.spellingStrategies.capitalizeFirstLetter"}}</option>
+          </select>
         </div>
       </div>
     </div>
