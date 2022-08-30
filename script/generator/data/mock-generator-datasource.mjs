@@ -1,8 +1,8 @@
 import { ENDING_PICK_MODES } from "../concatenation/sequence-concatenator.mjs";
+import BeginningCapitalsSpellingStrategy from "../postprocessing/beginning-capitals-strategy.mjs";
+import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
 import AbstractGeneratorDataSource from "./abstract-generator-datasource.mjs";
 import GeneratorSettings from "./generator-settings.mjs";
-import { SPELLING_STRATEGIES } from "./generator-settings.mjs";
-import { SEQUENCING_STRATEGIES } from "./generator-settings.mjs";
 
 export default class MockGeneratorDataSource extends AbstractGeneratorDataSource {
   /**
@@ -33,14 +33,14 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
           ],
           targetLengthMin: 3,
           targetLengthMax: 7,
-          sequencingStrategy: SEQUENCING_STRATEGIES.CHAR_DEPTH,
-          spellingStrategy: SPELLING_STRATEGIES.CAPITALIZE_FIRST_LETTER,
+          sequencingStrategy: new CharDepthSequencingStrategy(),
+          spellingStrategy: new BeginningCapitalsSpellingStrategy(),
           entropy: 0,
           entropyStart: 0.1,
           entropyMiddle: 0.2,
           entropyEnd: 0.3,
           endingPickMode: ENDING_PICK_MODES.FOLLOW_BRANCH,
-        }),
+        }).toObject(),
         new GeneratorSettings({
           id: "abc-0124",
           name: "Simple Generator 2",
@@ -54,14 +54,14 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
           ],
           targetLengthMin: 3,
           targetLengthMax: 10,
-          sequencingStrategy: SEQUENCING_STRATEGIES.CHAR_DEPTH,
+          sequencingStrategy: new CharDepthSequencingStrategy(),
           spellingStrategy: undefined,
           entropy: 0.4,
           entropyStart: 0.3,
           entropyMiddle: 0.2,
           entropyEnd: 0.1,
           endingPickMode: ENDING_PICK_MODES.FOLLOW_BRANCH,
-        }),
+        }).toObject(),
       ];
       window.wg = {
         _mockList: this._list

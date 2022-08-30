@@ -10,7 +10,6 @@ listItem: GeneratorSettings
       <button 
         class="word-generator-square-button danger"
         type="button" 
-        data-action="delete" 
         id="{{listItem.id}}-delete"
         data-id="{{listItem.id}}"
         title="{{localize "wg.generator.delete"}}"
@@ -134,7 +133,7 @@ listItem: GeneratorSettings
     <button 
       class="word-generator-square-button fill-h"
       type="button" 
-      data-action="generate" 
+      id="{{listItem.id}}-generate"
       data-id="{{listItem.id}}"
       title="{{localize "wg.generator.generate"}}"
       >

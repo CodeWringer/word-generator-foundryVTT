@@ -1,40 +1,58 @@
 {{!-- Parameters:
 settings: {Array<GeneratorSettings>}
+generatedWords: {Array<String>}
 cssClass: {undefined | String}
 --}}
 <form class="{{cssClass}}">
-  <div class="word-generator-flex-container-h">
-    {{!-- Creation control --}}
-    <a class="flex flex-middle" 
-      id="create-generator"
-    >
-      <div class="word-generator-square-button light flex flex-center">
-        <i class="fas fa-plus"></i>
+  <div class="word-generator-flex row">
+    {{!-- List of generators --}}
+    <div class="word-generator-flex column">
+      <div class="word-generator-controls-bar word-generator-flex row">
+        {{!-- Creation control --}}
+        <a class="flex flex-middle" 
+          id="create-generator"
+        >
+          <div class="word-generator-square-button light flex flex-center">
+            <i class="fas fa-plus"></i>
+          </div>
+          <span>{{localize "wg.generator.create"}}</span>
+        </a>
+        <div class="word-generator-flex-grow"></div>
+        {{!-- Spacer --}}
+        <div class="word-generator-flex grow"></div>
+        {{!-- Sorting controls --}}
+        <button
+          class="word-generator-square-button light"
+          type="button"
+          title="{{localize "wg.generator.sortAlphaDesc"}}"
+          id="move-sort-alpha-desc"
+          >
+          <i class="fas fa-sort-alpha-down"></i>
+        </button>
+        <button
+          class="word-generator-square-button light"
+          type="button"
+          title="{{localize "wg.generator.sortAlphaAsc"}}"
+          id="move-sort-alpha-asc"
+          >
+          <i class="fas fa-sort-alpha-up"></i>
+        </button>
       </div>
-      <span>{{localize "wg.generator.create"}}</span>
-    </a>
-    <div class="word-generator-flex-grow"></div>
-    {{!-- Sorting controls --}}
-    <button
-      class="word-generator-square-button light"
-      type="button"
-      title="{{localize "wg.generator.sortAlphaDesc"}}"
-      id="move-sort-alpha-desc"
-      >
-      <i class="fas fa-sort-alpha-down"></i>
-    </button>
-    <button
-      class="word-generator-square-button light"
-      type="button"
-      title="{{localize "wg.generator.sortAlphaAsc"}}"
-      id="move-sort-alpha-asc"
-      >
-      <i class="fas fa-sort-alpha-up"></i>
-    </button>
+      <ul class="word-generator-unstyled-list">
+        {{#each settings as |setting index|}}
+          {{> "modules/word-generator/template/word-generator-list-item.hbs" listItem=setting}}
+        {{/each}}
+      </ul>
+    </div>
+    {{!-- Spacer --}}
+    <div style="width: 1rem;"></div>
+    {{!-- List of generated results --}}
+    <div class="word-generator-flex column grow">
+      <ul id="word-generator-results-list" class="word-generator-unstyled-list">
+        {{#each generatedWords as |generatedWord index|}}
+          {{generatedWord}}
+        {{/each}}
+      </ul>
+    </div>
   </div>
-  <ul class="word-generator-unstyled-list">
-    {{#each settings as |setting index|}}
-      {{> "modules/word-generator/template/word-generator-list-item.hbs" listItem=setting}}
-    {{/each}}
-  </ul>
 </form>

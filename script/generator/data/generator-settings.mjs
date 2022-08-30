@@ -1,4 +1,5 @@
 import { ENDING_PICK_MODES } from "../concatenation/sequence-concatenator.mjs";
+import WordGenerator from "../generator.mjs";
 import BeginningCapitalsSpellingStrategy from "../postprocessing/beginning-capitals-strategy.mjs";
 import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
 import DelimiterSequencingStrategy from "../sequencing/delimiter-sequencing-strategy.mjs";
@@ -52,6 +53,11 @@ export default class GeneratorSettings {
     this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.RANDOM;
   }
 
+  /**
+   * Returns an instance of this type, converted from the given plain object. 
+   * @param {Object} obj 
+   * @returns {GeneratorSettings}
+   */
   static fromObject(obj) {
     if (obj === undefined) return undefined;
 
@@ -77,6 +83,10 @@ export default class GeneratorSettings {
     });
   }
 
+  /**
+   * Returns a plain object representation of this type. 
+   * @returns {Object}
+   */
   toObject() {
     return {
       id: this.id,
@@ -87,7 +97,9 @@ export default class GeneratorSettings {
       targetLengthMax: this.targetLengthMax,
 
       sequencingStrategy: this.sequencingStrategy,
-      sequencingStrategySettings: this.sequencingStrategy.getSettings(),
+      // ERROR - this can't work!
+      // Reason: this.sequencingStrategy is a string, not an object with a function called `getSettings`!
+      sequencingStrategySettings: this.sequencingStrategy.getSettings(), 
 
       spellingStrategy: this.spellingStrategy,
       spellingStrategySettings: (this.spellingStrategy !== undefined) ? this.spellingStrategy.getSettings() : undefined,
@@ -99,6 +111,26 @@ export default class GeneratorSettings {
       
       endingPickMode: this.endingPickMode,
     };
+  }
+
+  /**
+   * Creates a new word generator instance, using this settings object. 
+   * @returns {WordGenerator}
+   */
+  toGenerator() {
+    return new WordGenerator({
+      sampleSet: this.sampleSet,
+      targetLengthMin: this.targetLengthMin,
+      targetLengthMax: this.targetLengthMax,
+      sequencingStrategy: this.sequencingStrategy,
+      seed: this.seed,
+      spellingStrategy: this.spellingStrategy,
+      entropy: this.entropy,
+      entropyStart: this.entropyStart,
+      entropyMiddle: this.entropyMiddle,
+      entropyEnd: this.entropyEnd,
+      endingPickMode: this.endingPickMode,
+    });
   }
 
   /**

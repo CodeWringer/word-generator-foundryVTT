@@ -1,7 +1,3 @@
-import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
-import { SEQUENCING_STRATEGIES } from "../generator/data/generator-settings.mjs";
-import { SPELLING_STRATEGIES } from "../generator/data/generator-settings.mjs";
-
 export class ListItemPresenter {
   /**
    * @param {GeneratorSettings} args.listItem
@@ -12,6 +8,11 @@ export class ListItemPresenter {
     this.userId = args.userId;
   }
 
+  /**
+   * 
+   * @param {HTMLElement} html 
+   * @param {WordGeneratorApplication} application 
+   */
   activateListeners(html, application) {
     const thiz = this;
     const id = this.listItem.id;
@@ -64,6 +65,12 @@ export class ListItemPresenter {
     html.find(`#${id}-spellingStrategy`).change(() => {
       thiz.listItem.spellingStrategy = $(this).val();
       application._setGenerator(thiz.listItem);
+    });
+
+    // Generate
+    html.find(`#${id}-generate`).click(() => {
+      const generator = this.listItem.toGenerator();
+      application._generate(generator);
     });
   }
 

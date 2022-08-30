@@ -30,7 +30,7 @@ export default class WordGeneratorApplication extends Application {
       template: TEMPLATES.WORD_GENERATOR_APPLICATION,
       title: game.i18n.localize("wg.application.title"),
       userId: game.userId,
-      width: 500,
+      width: 700,
       height: 700,
       resizable: true,
     };
@@ -51,6 +51,13 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _generatorPresenters = [];
+
+  /**
+   * An array of the last generated words. 
+   * @type {Array<String>}
+   * @private
+   */
+  _generatedWords = [];
 
   constructor() {
     super();
@@ -89,12 +96,12 @@ export default class WordGeneratorApplication extends Application {
   async getData(options) {
     return {
       settings: this._generators,
+      generatedWords: this._generatedWords,
     }
   }
 
   /**
-   * Click-Handler to create a new generator. 
-   * @private
+   * Click-handler to create a new generator. 
    */
   _createGenerator() {
     const newSetting = new GeneratorSettings();
@@ -113,10 +120,9 @@ export default class WordGeneratorApplication extends Application {
     this.render();
   }
   
-  
   /**
-   * Click-Handler to remove a generator. 
-   * @private
+   * Click-handler to remove a generator. 
+   * @param {String} id Id of a generator to remove. 
    */
   _removeGenerator(id) {
     const index = this._generators.findIndex(it => it.id === id);
@@ -131,8 +137,8 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-Handler to override/update a generator. 
-   * @private
+   * Click-handler to override/update a generator. 
+   * @param {WordGenerator} generator The generator instance to update. 
    */
   _setGenerator(generator) {
     const indexGenerator = this._generators.findIndex(it => it.id === generator.id);
@@ -148,9 +154,8 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-Handler to sort generators. 
+   * Click-handler to sort generators. 
    * @param {SORTING_ORDERS} sortingOrder 
-   * @private
    */
   _sort(sortingOrder = SORTING_ORDERS.DESC) {
     const sorted = new SortGeneratorsUseCase().invoke({
@@ -165,6 +170,21 @@ export default class WordGeneratorApplication extends Application {
     this._generators = sorted;
     
     this.render();
+  }
+
+  /**
+   * Click-handler to generate words, using a given generator. 
+   * @param {WordGenerator} generator The generator instance to utilize. 
+   */
+  _generate(generator) {
+    try {
+      const generatedWords = generator.generate(50);
+      this._generatedWords = generatedWords;
+    } catch (error) {
+      console.error(error);
+    }
+
+    this.render(); // TODO: Re-rendering should happen automatically and implicitly, whenever the dataset changes. Like how VueJs or ReactJs do it. 
   }
 }
 

@@ -28,7 +28,8 @@
   max-width: 1.8rem;
   min-width: 1.8rem;
   margin: 0;
-  border: solid 1px #7a7971; }
+  border: solid 1px #7a7971;
+  border-radius: 3px; }
   .word-generator-square-button.flat-v {
     height: 1.5rem; }
   .word-generator-square-button.light {
@@ -61,10 +62,16 @@
   justify-content: center;
   cursor: row-resize; }
 
-.word-generator-flex-container-h {
-  display: flex;
-  align-items: flex-end;
-  height: 1.8rem; }
+.word-generator-flex {
+  display: flex; }
+  .word-generator-flex.row {
+    flex-direction: row; }
+  .word-generator-flex.column {
+    flex-direction: column; }
+  .word-generator-flex.align-end {
+    align-items: flex-end; }
+  .word-generator-flex.grow {
+    flex-grow: 1; }
 
-.word-generator-flex-grow {
-  flex-grow: 1; }
+.word-generator-controls-bar {
+  height: 1.8rem; }

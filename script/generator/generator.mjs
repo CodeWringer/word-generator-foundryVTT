@@ -9,9 +9,9 @@ import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
  * then make them available them via the `results` getter. 
  * @property {Array<String>} results
  * @property {Array<String>} sampleSet
- * @property {Number} depth
- * @property {Number} targetLengthMin
- * @property {Number} targetLengthMax
+ * @property {Number} depth The depth to use with the sequencing strategy. 
+ * @property {Number} targetLengthMin The target minimum length that generated texts should be. 
+ * @property {Number} targetLengthMax The target maximum length that generated texts should be. 
  * @property {AbstractSequencingStrategy} sequencingStrategy
  * @property {AbstractSpellingStrategy | undefined} spellingStrategy
  * @property {Number | undefined} entropy A number between 0 and 1 (inclusive), which determines the 
@@ -94,6 +94,8 @@ export default class WordGenerator {
 
   /**
    * @param {Object} args Parameter object. 
+   * @param {Number} args.depth The depth to use with the sequencing strategy. 
+   * * Minimum `1`. 
    * @param {Array<String>} args.sampleSet The sample set this generator will work with. 
    * @param {Number} args.targetLengthMin The minimum length the results *should* have. 
    * @param {Number} args.targetLengthMax The maximum length the results *should* have. 
