@@ -191,7 +191,7 @@ export default class SequenceConcatenator {
     if (rnd <= this.entropy || entropy) {
       // Pick a sequence entirely at random. 
       rnd = this._rng.generate();
-      return this._getMatchingSequenceFrom(this.probabilities.sequences, rnd);
+      return this._getMatchingSequenceFrom(this.probabilities.branches, rnd);
     } else {
       // Pick a probable sequence. 
       rnd = this._rng.generate();
