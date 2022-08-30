@@ -2,11 +2,11 @@ import { ENDING_PICK_MODES } from "../concatenation/sequence-concatenator.mjs";
 import BeginningCapitalsSpellingStrategy from "../postprocessing/beginning-capitals-strategy.mjs";
 import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
 import AbstractGeneratorDataSource from "./abstract-generator-datasource.mjs";
-import GeneratorSettings from "./generator-settings.mjs";
+import WordGeneratorSettings from "./word-generator-settings.mjs";
 
 export default class MockGeneratorDataSource extends AbstractGeneratorDataSource {
   /**
-   * @type {Array<GeneratorSettings>}
+   * @type {Array<WordGeneratorSettings>}
    * @private
    */
   _list = [];
@@ -17,8 +17,11 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
     if (window.wg !== undefined && window.wg._mockList !== undefined) {
       this._list = window.wg._mockList;
     } else {
+      const charDepth = new CharDepthSequencingStrategy();
+      const capitalize = new BeginningCapitalsSpellingStrategy();
+
       this._list = [
-        new GeneratorSettings({
+        new WordGeneratorSettings({
           id: "abc-0123",
           name: "Simple Generator 1",
           sampleSet: [
@@ -31,17 +34,21 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
             "Albert",
             "Annie",
           ],
+          depth: 1,
           targetLengthMin: 3,
           targetLengthMax: 7,
-          sequencingStrategy: new CharDepthSequencingStrategy(),
-          spellingStrategy: new BeginningCapitalsSpellingStrategy(),
+          sequencingStrategyId: charDepth.getDefinitionID(),
+          sequencingStrategySettings: charDepth.getSettings(),
+          spellingStrategyId: undefined,
+          spellingStrategySettings: undefined,
+          seed: "0123456789",
           entropy: 0,
           entropyStart: 0.1,
           entropyMiddle: 0.2,
           entropyEnd: 0.3,
-          endingPickMode: ENDING_PICK_MODES.FOLLOW_BRANCH,
+          endingPickMode: ENDING_PICK_MODES.RANDOM,
         }).toObject(),
-        new GeneratorSettings({
+        new WordGeneratorSettings({
           id: "abc-0124",
           name: "Simple Generator 2",
           sampleSet: [
@@ -52,10 +59,14 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
             "Albert",
             "Annie",
           ],
+          depth: 2,
           targetLengthMin: 3,
           targetLengthMax: 10,
-          sequencingStrategy: new CharDepthSequencingStrategy(),
-          spellingStrategy: undefined,
+          sequencingStrategyId: charDepth.getDefinitionID(),
+          sequencingStrategySettings: charDepth.getSettings(),
+          spellingStrategyId: capitalize.getDefinitionID(),
+          spellingStrategySettings: capitalize.getSettings(),
+          seed: "Abc123",
           entropy: 0.4,
           entropyStart: 0.3,
           entropyMiddle: 0.2,

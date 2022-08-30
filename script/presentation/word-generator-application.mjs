@@ -1,4 +1,6 @@
-import GeneratorSettings from "../generator/data/generator-settings.mjs";
+import WordGeneratorSettings from "../generator/data/word-generator-settings.mjs";
+import WordGenerator from "../generator/generator.mjs";
+import TypeRegistrar from "../generator/type-registrar.mjs";
 import AddGeneratorUseCase from "../use_case/add-generator-use-case.mjs";
 import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
 import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
@@ -41,7 +43,21 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * @type {Array<GeneratorSettings>}
+   * Holds all registered sequencing strategy definitons. 
+   * @type {TypeRegistrar}
+   * @static
+   */
+  static registeredSequencingStrategies = new TypeRegistrar();
+
+  /**
+   * Holds all registered spelling strategy definitons. 
+   * @type {TypeRegistrar}
+   * @static
+   */
+  static registeredSpellingStrategies = new TypeRegistrar();
+
+  /**
+   * @type {Array<WordGeneratorSettings>}
    * @private
    */
   _generators = [];
@@ -104,7 +120,9 @@ export default class WordGeneratorApplication extends Application {
    * Click-handler to create a new generator. 
    */
   _createGenerator() {
-    const newSetting = new GeneratorSettings();
+    const newSetting = new WordGeneratorSettings({
+      name: game.i18n.localize("wg.generator.defaultName"),
+    });
 
     this._generators.push(newSetting);
     this._generatorPresenters.push(new ListItemPresenter({

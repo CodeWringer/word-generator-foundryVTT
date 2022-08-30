@@ -6,7 +6,7 @@ export default class AbstractGeneratorDataSource {
    * Returns a single generator setting of a user. 
    * @param {String} userId ID of a user. 
    * @param {String} id 
-   * @returns {GeneratorSettings}
+   * @returns {WordGeneratorSettings}
    */
   get(userId, id) {
     throw new Error("Not implemented");
@@ -15,7 +15,7 @@ export default class AbstractGeneratorDataSource {
   /**
    * Returns all generator settings of a user. 
    * @param {String} userId ID of a user. 
-   * @returns {Array<GeneratorSettings>}
+   * @returns {Array<WordGeneratorSettings>}
    */
   getAll(userId) {
     throw new Error("Not implemented");
@@ -24,7 +24,7 @@ export default class AbstractGeneratorDataSource {
   /**
    * Adds or overwrites a generator setting of a user. 
    * @param {String} userId ID of a user. 
-   * @param {GeneratorSettings} generatorSetting The generator setting to set. 
+   * @param {WordGeneratorSettings} generatorSetting The generator setting to set. 
    */
   set(userId, generatorSetting) {
     throw new Error("Not implemented");
@@ -33,7 +33,7 @@ export default class AbstractGeneratorDataSource {
   /**
    * Overwrites all generator setting of a user with the given array of settings. 
    * @param {String} userId ID of a user. 
-   * @param {Array<GeneratorSettings>} generatorSettings The generator settings to set. 
+   * @param {Array<WordGeneratorSettings>} generatorSettings The generator settings to set. 
    */
   setAll(userId, generatorSettings) {
     throw new Error("Not implemented");

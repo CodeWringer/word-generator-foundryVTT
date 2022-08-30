@@ -4,7 +4,7 @@ import AbstractUseCase from "./abstract-use-case.mjs";
 export default class SetGeneratorsUseCase extends AbstractUseCase {
   /**
    * @param {String} args.userId
-   * @param {Array<GeneratorSettings>} args.generatorSettings
+   * @param {Array<WordGeneratorSettings>} args.generatorSettings
    */
   invoke(args) {
     const ds = new GeneratorRepository().dataSource;

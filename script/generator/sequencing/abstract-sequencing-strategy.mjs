@@ -2,11 +2,41 @@
  * A sequencing strategy is responsible for 'cutting' a given sample (set) into 
  * sequences. 
  * 
- * Implementing types **must** override the methods `getSequencesOfSample` and 
- * `getSettings`. 
+ * Implementing types **must** override these methods:
+ * * `getDefinitionID`
+ * * `getHumanReadableName`
+ * * `getSequencesOfSample`
+ * * `getSettings`
+ * 
  * @abstract
  */
 export default class AbstractSequencingStrategy {
+  /**
+   * Returns the ID by which to uniquely identify this sequencing strategy's **definition**. 
+   * 
+   * This is **not** meant to be the ID of an instance, but rather, of the 'type' of definition this represents. 
+   * 
+   * @returns {String} ID of this sequencing strategy's definition. 
+   * 
+   * @abstract
+   */
+  getDefinitionID() {
+    throw new Error("Not implemented");
+  }
+  
+  /**
+   * Returns a human readable name to display as the name of this type of sequencing strategy. 
+   * 
+   * This is **not** meant to be the name of an instance, but rather, of the 'type' of definition this represents. 
+   * 
+   * @returns {String} Human readable name of this sequencing strategy's definition. 
+   * 
+   * @abstract
+   */
+  getHumanReadableName() {
+    throw new Error("Not implemented");
+  }
+
   /**
    * Returns sequences for the given sample set. 
    * @param {Array<String>} sampleSet An array of strings that are to be broken down 
@@ -21,6 +51,8 @@ export default class AbstractSequencingStrategy {
    *   ["S", "t", "e", "v", "e"]
    * ]
    * ```
+   * 
+   * @virtual
    */
   getSequencesOfSet(sampleSet) {
     const sequencesOfSet = [];
@@ -34,7 +66,10 @@ export default class AbstractSequencingStrategy {
   /**
    * Returns sequences for the given sample. 
    * @param {String} sample
+   * 
    * @returns {Array<Sequence>}
+   * 
+   * @abstract
    */
   getSequencesOfSample(sample) {
     throw new Error("Not implemented");
@@ -42,9 +77,25 @@ export default class AbstractSequencingStrategy {
   
   /**
    * Returns the current settings of this sequencing strategy. 
+   * 
    * @returns {Object}
+   * 
+   * @abstract
    */
   getSettings() {
+    throw new Error("Not implemented");
+  }
+  
+  /**
+   * Returns a new instance of **this type**, with the given arguments applied. 
+   * 
+   * @param {Object} args 
+   * 
+   * @returns {AbstractSequencingStrategy}
+   * 
+   * @abstract
+   */
+  newInstanceWithArgs(args) {
     throw new Error("Not implemented");
   }
 }

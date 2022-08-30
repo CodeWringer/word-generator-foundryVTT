@@ -14,6 +14,7 @@ import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
  * @property {Number} targetLengthMax The target maximum length that generated texts should be. 
  * @property {AbstractSequencingStrategy} sequencingStrategy
  * @property {AbstractSpellingStrategy | undefined} spellingStrategy
+ * @property {String} seed A seed for the randomization. 
  * @property {Number | undefined} entropy A number between 0 and 1 (inclusive), which determines the 
  * randomness of words, in general. Default 0. 
  * @property {Number | undefined} entropyStart A number between 0 and 1 (inclusive), which determines the 
@@ -94,14 +95,15 @@ export default class WordGenerator {
 
   /**
    * @param {Object} args Parameter object. 
-   * @param {Number} args.depth The depth to use with the sequencing strategy. 
-   * * Minimum `1`. 
    * @param {Array<String>} args.sampleSet The sample set this generator will work with. 
    * @param {Number} args.targetLengthMin The minimum length the results *should* have. 
    * @param {Number} args.targetLengthMax The maximum length the results *should* have. 
    * @param {AbstractSequencingStrategy} args.sequencingStrategy The sequencing strategy to use. 
-   * @param {String | undefined} args.seed Optional. A seed for the randomization. 
    * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy Optional. The spelling strategy applied to generated words. 
+   * @param {Number | undefined} args.depth The depth to use with the sequencing strategy. 
+   * * Minimum `1`. 
+   * * Default `1`. 
+   * @param {String | undefined} args.seed Optional. A seed for the randomization. 
    * @param {Number | undefined} args.entropy A number between 0 and 1 (inclusive), which determines the 
    * randomness of words, in general. Default `0`. 
    * @param {Number | undefined} args.entropyStart A number between 0 and 1 (inclusive), which determines the 
@@ -132,14 +134,17 @@ export default class WordGenerator {
     }
     
     this._sampleSet = args.sampleSet;
-    this._depth = args.depth;
+    this._depth = args.depth ?? 1;
+
     this.targetLengthMin = args.targetLengthMin;
     this.targetLengthMax = args.targetLengthMax;
-    this._seed = args.seed;
+
     this.sequencingStrategy = args.sequencingStrategy;
     this.spellingStrategy = args.spellingStrategy;
-
+    
     // These settings will be passed through to the concatenator. 
+    this._seed = args.seed ?? foundry.utils.randomID(32);
+
     this.entropy = args.entropy;
     this.entropyStart = args.entropyStart;
     this.entropyMiddle = args.entropyMiddle;

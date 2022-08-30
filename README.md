@@ -73,19 +73,77 @@ const generatedWords = generator.generate(10);
 ## Extending Functionality
 The generator was designed with easy extensibility in mind, for when greater control over its behavior is needed. 
 
+There are currently two intended ways to extend functionality:
+1. Defining new sequencing strategies. 
+2. Defining new spelling strategies. 
+
+Both of these are a bit quirky, in that a type that represents a sequencing/spelling strategy acts as both its abstract **definition** and its concrete **implementation**. 
+
+They must both implement the following methods, which act as the 'definition' part of the type: 
+* `getDefinitionID`
+* `newInstanceWithArgs`
+
+Additionally, **sequencing** strategies must implement:
+* `getSequencesOfSample`
+* `getSettings`
+
+Additionally, **spelling** strategies must implement:
+* `apply`
+* `getSettings`
+
+For a description of what these methods are expected to do and return, see the documentation of: 
+* `AbstractSequencingStrategy`
+* `AbstractSpellingStrategy`
+
 ### Sequencing Strategy
-A sequencing strategy is the piece of logic that 'cuts' a given sample into sequences. A sequence can be as short as a character or as long as several sentences. 
+A sequencing strategy is the piece of logic that 'cuts' a given sample into sequences. A sequence can be as short as a single character or as long as several sentences. 
 
-All sequencing strategies inherit from `AbstractSequencingStrategy`. 
+All sequencing strategies must inherit from `AbstractSequencingStrategy` or at least implement all its members. 
 
-An example implementation is the `CharDepthSequencingStrategy`, which creates sequences of a defined length. 
+An example implementation is the `CharDepthSequencingStrategy`, which creates sequences of a defined length, based on character-count. 
+
+#### Custom Sequencing Strategy
+Once you've defined your custom sequencing strategy, you must register it with the word generator application, so that it may be selectable in the UI. 
+
+The following code must be run **once** for every custom sequencing strategy you've defined. 
+
+```JS
+WordGeneratorApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
+```
+
+An exception is thrown, if you attempt to register the same type of sequencing strategy more than once. When registering your custom type from a macro script, you can simply 'catch' and disregard the exception: 
+
+```JS
+try {
+WordGeneratorApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
+} catch (e) { /* ignore */ }
+
+```
 
 ### Spelling Strategy
 A spelling strategy is a piece of logic to apply to generated words, in order to enforce some kind of spelling. 
 
-All spelling strategies inherit from `AbstractSpellingStrategy`. 
+All spelling strategies must inherit from `AbstractSpellingStrategy` or at least implement all its members. 
 
 An example implementation is the `BeginningCapitalsSpellingStrategy`, which capitalizes the first letter of every word. 
+
+#### Custom Spelling Strategy
+Once you've defined your custom spelling strategy, you must register it with the word generator application, so that it may be selectable in the UI. 
+
+The following code must be run **once** for every custom spelling strategy you've defined. 
+
+```JS
+WordGeneratorApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
+```
+
+An exception is thrown, if you attempt to register the same type of spelling strategy more than once. When registering your custom type from a macro script, you can simply 'catch' and disregard the exception: 
+
+```JS
+try {
+WordGeneratorApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
+} catch (e) { /* ignore */ }
+
+```
 
 ## No Dependencies?
 No npm packages or other dependencies have been included. This was at least partly a deliberate decision: 

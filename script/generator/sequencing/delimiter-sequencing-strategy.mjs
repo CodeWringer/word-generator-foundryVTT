@@ -39,6 +39,16 @@ export default class DelimiterSequencingStrategy extends AbstractSequencingStrat
   }
 
   /** @override */
+  getDefinitionID() {
+    return "DelimiterSequencingStrategy";
+  }
+
+  /** @override */
+  getHumanReadableName() {
+    return game.i18n.localize("wg.generator.sequencingStrategies.delimiter");
+  }
+
+  /** @override */
   getSequencesOfSet(sampleSet) {
     return super.getSequencesOfSet(sampleSet);
   }
@@ -69,5 +79,10 @@ export default class DelimiterSequencingStrategy extends AbstractSequencingStrat
     return {
       delimiter: this.delimiter,
     };
+  }
+
+  /** @override */
+  newInstanceWithArgs(args) {
+    return new DelimiterSequencingStrategy(args.delimiter, args.preserveCase);
   }
 }

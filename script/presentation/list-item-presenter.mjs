@@ -1,6 +1,6 @@
 export class ListItemPresenter {
   /**
-   * @param {GeneratorSettings} args.listItem
+   * @param {WordGeneratorSettings} args.listItem
    * @param {String} args.userId
    */
   constructor(args) {

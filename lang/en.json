@@ -7,6 +7,7 @@
     "generator": {
       "create": "Add New Generator",
       "delete": "Delete Generator",
+      "defaultName": "New Generator",
       "generate": "Generate",
       "targetLengthMin": "Target length minimum",
       "targetLengthMax": "Target length maximum",

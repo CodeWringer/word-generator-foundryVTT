@@ -64,7 +64,7 @@ export default class SequenceConcatenator {
     this.entropyStart = args.entropyStart ?? 0.0;
     this.entropyMiddle = args.entropyMiddle ?? 0.0;
     this.entropyEnd = args.entropyEnd ?? 0.0;
-    this.seed = args.seed ?? Math.random();
+    this.seed = args.seed ?? foundry.utils.randomID(32);
     this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.RANDOM,
     
     this._rng = new RandomSeeded(args.seed);

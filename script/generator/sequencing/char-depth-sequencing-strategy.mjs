@@ -25,7 +25,7 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
 
   /**
    * If true, will not transform found sequences to lower case, but instead preserve 
-   * the casing found in the sequence. 
+   * the casing found in the sequences. 
    * @type {Boolean}
    * @default false
    */
@@ -51,6 +51,16 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
 
     this._depth = depth;
     this.preserveCase = preserveCase ?? false;
+  }
+
+  /** @override */
+  getDefinitionID() {
+    return "CharDepthSequencingStrategy";
+  }
+
+  /** @override */
+  getHumanReadableName() {
+    return game.i18n.localize("wg.generator.sequencingStrategies.charDepth");
   }
 
   /** @override */
@@ -89,5 +99,10 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
       depth: this.depth,
       preserveCase: this.preserveCase,
     };
+  }
+
+  /** @override */
+  newInstanceWithArgs(args) {
+    return new CharDepthSequencingStrategy(args.depth, args.preserveCase);
   }
 }
