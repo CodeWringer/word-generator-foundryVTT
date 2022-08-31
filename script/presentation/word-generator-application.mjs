@@ -202,7 +202,7 @@ export default class WordGeneratorApplication extends Application {
       console.error(error);
     }
 
-    this.render(); // TODO: Re-rendering should happen automatically and implicitly, whenever the dataset changes. Like how VueJs or ReactJs do it. 
+    this.render();
   }
 }
 

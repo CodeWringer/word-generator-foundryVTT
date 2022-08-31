@@ -1,3 +1,8 @@
+.word-generator-application-form {
+  display: grid;
+  grid-template-columns: minmax(25rem, 1fr) 2fr;
+  gap: 1rem; }
+
 .word-generator-unstyled-list {
   list-style: none;
   text-decoration: none;
@@ -75,3 +80,11 @@
 
 .word-generator-controls-bar {
   height: 1.8rem; }
+
+.word-generator-results-textarea {
+  display: block;
+  width: 100%;
+  height: 100%; }
+
+.word-generator-scrollable {
+  overflow-y: scroll; }
