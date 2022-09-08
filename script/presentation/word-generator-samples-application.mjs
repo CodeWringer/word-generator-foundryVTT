@@ -31,6 +31,9 @@ export default class WordGeneratorSamplesApplication extends Application {
       resizable: true,
       popOut: true,
       minimizable: false,
+      classes: [
+        "word-generator-modal"
+      ],
     };
   
     const mergedOptions = foundry.utils.mergeObject(defaults, overrides);

@@ -105,3 +105,6 @@
   color: var(--color-text-light-highlight);
   z-index: 6;
   padding: 0.25rem; }
+
+.word-generator-modal {
+  z-index: 99999 !important; }
