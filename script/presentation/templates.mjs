@@ -1,7 +1,6 @@
 export const TEMPLATES = {
   WORD_GENERATOR_APPLICATION: "modules/word-generator/template/word-generator-application.hbs",
   WORD_GENERATOR_LIST_ITEM: "modules/word-generator/template/word-generator-list-item.hbs",
-  LIST_DIALOG: "modules/word-generator/template/dialog-plain.hbs",
   MOVE_CONTROLS: "modules/word-generator/template/move-controls.hbs",
 };
 
