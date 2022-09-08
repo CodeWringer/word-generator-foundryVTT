@@ -1,10 +1,17 @@
-export class ListItemPresenter {
+/**
+ * This presenter handles a singular list item. 
+ * 
+ * It activates event listeners, sets initial states and performs other such presentation logic. 
+ */
+export class WordGeneratorListItemPresenter {
   /**
-   * @param {WordGeneratorSettings} args.listItem
-   * @param {String} args.userId
+   * @param {WordGeneratorSettings} args.listItem The represented item. 
+   * @param {Number} args.listIndex Index of this item in the list. 
+   * @param {String} args.userId ID of the user that owns the list. 
    */
   constructor(args) {
     this.listItem = args.listItem;
+    this.listIndex = args.listIndex;
     this.userId = args.userId;
   }
 

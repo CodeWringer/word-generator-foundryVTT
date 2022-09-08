@@ -57,6 +57,10 @@
         "name": "Toggle Debug Mode",
         "hint": "Toggle Debug Mode"
       }
+    },
+    "copy": {
+      "toClipboard": "Copy to clipboard",
+      "success": "Copied!"
     }
   }
 }

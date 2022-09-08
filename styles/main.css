@@ -34,7 +34,8 @@
   min-width: 1.8rem;
   margin: 0;
   border: solid 1px #7a7971;
-  border-radius: 3px; }
+  border-radius: 3px;
+  cursor: pointer; }
   .word-generator-square-button.flat-v {
     height: 1.5rem; }
   .word-generator-square-button.light {
@@ -88,3 +89,16 @@
 
 .word-generator-scrollable {
   overflow-y: scroll; }
+
+.word-generator-generated-word-input {
+  min-height: 1.8rem; }
+
+.word-generator-info-bubble {
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  border-radius: 1.8rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-light-highlight);
+  z-index: 6;
+  padding: 0.25rem; }

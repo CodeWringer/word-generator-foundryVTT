@@ -48,7 +48,23 @@ generatedWords: {Array<String>}
   <div class="word-generator-flex column grow scrollable">
     <ul class="word-generator-unstyled-list">
       {{#each generatedWords as |generatedWord index|}}
-        <input type="text" readonly="true" value="{{generatedWord}}">
+      <div id="generated-word-{{index}}" class="word-generator-flex row word-generator-generated-word">
+        <button 
+          id="word-generator-clipboard-{{index}}" 
+          class="word-generator-square-button hidden" 
+          type="button"
+          title="{{localize "wg.copy.toClipboard"}}"
+        >
+          <i class="far fa-clipboard"></i>
+        </button>
+        <input 
+          type="text"
+          readonly="true"
+          id="{{index}}"
+          value="{{generatedWord}}"
+          class="word-generator-generated-word-input"
+        >
+      </div>
       {{/each}}
     </ul>
   </div>

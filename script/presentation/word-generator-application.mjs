@@ -6,7 +6,7 @@ import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
 import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
 import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
 import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
-import { ListItemPresenter } from "./list-item-presenter.mjs";
+import { WordGeneratorListItemPresenter } from "./list-item-presenter.mjs";
 import { SORTING_ORDERS } from "./sorting-orders.mjs";
 import { TEMPLATES } from "./templates.mjs";
 
@@ -63,7 +63,7 @@ export default class WordGeneratorApplication extends Application {
   _generators = [];
 
   /**
-   * @type {Array<ListItemPresenter>}
+   * @type {Array<WordGeneratorListItemPresenter>}
    * @private
    */
   _generatorPresenters = [];
@@ -79,12 +79,22 @@ export default class WordGeneratorApplication extends Application {
     super();
 
     this._generators = new LoadGeneratorsUseCase().invoke(game.userId);
-    this._generatorPresenters = this._generators.map(it => new ListItemPresenter({
-      listItem: it,
-      userId: game.userId,
-    }));
+    this._generatorPresenters = [];
+
+    for (let i = 0; i < this._generators.length; i++) {
+      const generator = this._generators[i];
+
+      this._generatorPresenters.push(
+        new WordGeneratorListItemPresenter({
+          listItem: generator,
+          listIndex: i,
+          userId: game.userId,
+        })
+      );
+    }
   }
 
+  /** @override */
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -106,6 +116,37 @@ export default class WordGeneratorApplication extends Application {
     for (const generator of this._generatorPresenters) {
       generator.activateListeners(html, thiz);
     }
+
+    // Generated word event handling.
+    this._activateListenersClipboardButtons(html);
+  }
+
+  /**
+   * Activates event listeners for the copy to cliboard buttons. 
+   * 
+   * @param {JQuery} html
+   * 
+   * @private
+   */
+  _activateListenersClipboardButtons(html) {
+    html.find(".word-generator-generated-word").each((index, element) => {
+      const jElement = $(element);
+      const cliboardButton = html.find(`#word-generator-clipboard-${index}`);
+      const jInput = jElement.find(".word-generator-generated-word-input");
+      jElement.mouseenter(() => {
+        cliboardButton.removeClass("hidden");
+      });
+      jElement.mouseleave(() => {
+        cliboardButton.addClass("hidden");
+      });
+      cliboardButton.click(() => {
+        this._textToClipboard(html, jInput.val()).then((success) => {
+          if (success === true) {
+            this._showInfoBubble(html, cliboardButton, game.i18n.localize("wg.copy.success"));
+          }
+        });
+      });
+    });
   }
 
   /** @override */
@@ -125,8 +166,9 @@ export default class WordGeneratorApplication extends Application {
     });
 
     this._generators.push(newSetting);
-    this._generatorPresenters.push(new ListItemPresenter({
+    this._generatorPresenters.push(new WordGeneratorListItemPresenter({
       listItem: newSetting,
+      listIndex: this._generatorPresenters.length,
       userId: game.userId,
     }));
 
@@ -163,8 +205,9 @@ export default class WordGeneratorApplication extends Application {
     this._generators.splice(indexGenerator, 1, generator);
     
     const indexPresenter = this._generatorPresenters.findIndex(it => it.listItem.id === generator.id);
-    this._generators.splice(indexPresenter, 1, new ListItemPresenter({
+    this._generators.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
       listItem: newSetting,
+      listIndex: indexPresenter,
       userId: game.userId,
     }));
 
@@ -203,6 +246,97 @@ export default class WordGeneratorApplication extends Application {
     }
 
     this.render();
+  }
+
+  /**
+   * Copies the given text to the clipboard. 
+   * @param {JQuery} html 
+   * @param {String} text 
+   * 
+   * @returns {Boolean} True, if successfully copied. 
+   * 
+   * @async
+   * @private
+   */
+  async _textToClipboard(html, text) {
+    if (!navigator.clipboard) { // This uses a deprecated API as a fallback solution. 
+      // A temporary element is created for the sole purpose of holding the text to copy to clipboard. 
+      const textArea = html.createElement("textarea");
+      textArea.value = text;
+      
+      // This avoids scrolling to the bottom.
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+
+      // The element must be added and focused. 
+      html.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      // Try the copy. 
+      let success = false;
+      try {
+        html.execCommand('copy');
+        html.removeChild(textArea);
+        success = true;
+      } catch (err) {
+        console.error('Error copying to clipboard: ', err);
+      }
+
+      // Ensure the element is removed again. 
+      html.removeChild(textArea);
+      return success;
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+
+        return true;
+      } catch (err) {
+        console.error('Error copying to clipboard: ', err);
+
+        return false;
+      }
+    }
+  }
+
+  /**
+   * Adds an info bubble beneath the given parent element. 
+   * 
+   * Event handlers are added to remove the element again, when the cursor moves or any other input is made. 
+   * @param {JQuery} html Root element of the `FormApplication`. 
+   * @param {JQuery} parent The element beneath which to show the info bubble. 
+   * @param {String} text The text to show in the info bubble. 
+   * 
+   * @private
+   */
+  _showInfoBubble(html, parent, text) {
+    const bubbleElement = html.add(`<span>${text}</span>`)[1];
+    const jBubbleElement = $(bubbleElement);
+    jBubbleElement.addClass("word-generator-info-bubble");
+    html.append(jBubbleElement);
+
+    const parentPos = parent.position();
+    const parentSize = { width: parent.outerWidth(), height: parent.outerHeight() };
+    
+    const bubbleSize = { width: jBubbleElement.outerWidth(), height: jBubbleElement.outerHeight() };
+
+    const x = parentPos.left + (parentSize.width / 2) - (bubbleSize.width / 2);
+    const y = parentPos.top - bubbleSize.height;
+
+    bubbleElement.style = `left: ${x}px; top: ${y}px;`;
+
+    const eventNameSpace = "wg-info-bubble";
+    html.on(`mousemove.${eventNameSpace}`, () => {
+      jBubbleElement.remove();
+      html.off(`mousemove.${eventNameSpace}`);
+      html.off(`keydown.${eventNameSpace}`);
+    });
+    html.on(`keydown.${eventNameSpace}`, () => {
+      jBubbleElement.remove();
+      html.off(`mousemove.${eventNameSpace}`);
+      html.off(`keydown.${eventNameSpace}`);
+    });
   }
 }
 
