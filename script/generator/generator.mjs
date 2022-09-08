@@ -82,16 +82,12 @@ export default class WordGenerator {
   spellingStrategy = undefined;
 
   /**
-   * @type {String}
-   * @private
+   * Returns the seed used in randomization. 
+   * 
+   * If undefined, a new random seed will be generated before every invocation of `generate`;
+   * @type {String | undefined}
    */
-  _seed = undefined;
-  /**
-   * Returns seed used in randomization. 
-   * @type {String}
-   * @readonly
-   */
-  get seed() { return this._seed; }
+  seed = undefined;
 
   /**
    * @param {Object} args Parameter object. 
@@ -143,7 +139,8 @@ export default class WordGenerator {
     this.spellingStrategy = args.spellingStrategy;
     
     // These settings will be passed through to the concatenator. 
-    this._seed = args.seed ?? foundry.utils.randomID(32);
+    
+    this.seed = args.seed;
 
     this.entropy = args.entropy;
     this.entropyStart = args.entropyStart;
@@ -166,6 +163,8 @@ export default class WordGenerator {
     const probabilityBuilder = new SequenceProbabilityBuilder();
     const sequenceProbabilities = probabilityBuilder.build(sequences);
 
+    const seed = this.seed ?? foundry.utils.randomID(32);
+
     // The concatenator generates the new texts and needs the chain of 
     // probability-enriched sequences for that task. 
     const sequenceConcatenator = new SequenceConcatenator({
@@ -174,7 +173,7 @@ export default class WordGenerator {
       entropyStart: this.entropyStart,
       entropyMiddle: this.entropyMiddle,
       entropyEnd: this.entropyEnd,
-      seed: this._seed,
+      seed: seed,
       endingPickMode: this.endingPickMode,
     });
 

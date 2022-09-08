@@ -41,7 +41,7 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
           sequencingStrategySettings: charDepth.getSettings(),
           spellingStrategyId: undefined,
           spellingStrategySettings: undefined,
-          seed: "0123456789",
+          seed: undefined,
           entropy: 0,
           entropyStart: 0.1,
           entropyMiddle: 0.2,
