@@ -27,52 +27,61 @@ export class WordGeneratorListItemPresenter {
     html.find(`#${id}-delete`).click(() => {
       application._removeGenerator(id);
     });
-    html.find(`#${id}-name`).change(() => {
-      thiz.listItem.name = $(this).val();
+
+    html.find(`#${id}-name`).change((data) => {
+      thiz.listItem.name = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-targetLengthMin`).change(() => {
-      thiz.listItem.targetLengthMin = $(this).val();
+    html.find(`#${id}-targetLengthMin`).change((data) => {
+      thiz.listItem.targetLengthMin = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-targetLengthMax`).change(() => {
-      thiz.listItem.targetLengthMax = $(this).val();
+    html.find(`#${id}-targetLengthMax`).change((data) => {
+      thiz.listItem.targetLengthMax = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-entropy`).change(() => {
-      thiz.listItem.entropy = $(this).val();
+    html.find(`#${id}-entropy`).change((data) => {
+      thiz.listItem.entropy = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-entropyStart`).change(() => {
-      thiz.listItem.entropyStart = $(this).val();
+    html.find(`#${id}-entropyStart`).change((data) => {
+      thiz.listItem.entropyStart = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-entropyMiddle`).change(() => {
-      thiz.listItem.entropyMiddle = $(this).val();
+    html.find(`#${id}-entropyMiddle`).change((data) => {
+      thiz.listItem.entropyMiddle = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-entropyEnd`).change(() => {
-      thiz.listItem.entropyEnd = $(this).val();
+    html.find(`#${id}-entropyEnd`).change((data) => {
+      thiz.listItem.entropyEnd = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-depth`).change(() => {
-      thiz.listItem.depth = $(this).val();
+    html.find(`#${id}-depth`).change((data) => {
+      thiz.listItem.depth = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
 
     // Drop-Downs
-    html.find(`#${id}-endingPickMode`).change(() => {
-      thiz.listItem.endingPickMode = $(this).val();
+    const idEndingPickMode = `${id}-endingPickMode`;
+    html.find(`#${idEndingPickMode}`).change((data) => {
+      thiz.listItem.endingPickMode = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-sequencingStrategy`).change(() => {
-      thiz.listItem.sequencingStrategy = $(this).val();
+    this._syncDropDownValue(html, idEndingPickMode, this.listItem.endingPickMode);
+
+    const idSequencingStrategy = `${id}-sequencingStrategy`;
+    html.find(`#${idSequencingStrategy}`).change((data) => {
+      thiz.listItem.sequencingStrategy = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
-    html.find(`#${id}-spellingStrategy`).change(() => {
-      thiz.listItem.spellingStrategy = $(this).val();
+    this._syncDropDownValue(html, idSequencingStrategy, this.listItem.sequencingStrategyId);
+
+    const idSpellingStrategy = `${id}-spellingStrategy`;
+    html.find(`#${idSpellingStrategy}`).change((data) => {
+      thiz.listItem.spellingStrategy = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
+    this._syncDropDownValue(html, idSpellingStrategy, this.listItem.spellingStrategyId);
 
     // Generate
     html.find(`#${id}-generate`).click(() => {
@@ -81,14 +90,22 @@ export class WordGeneratorListItemPresenter {
     });
   }
 
-  _syncDropDownValue(html, id) {
+  /**
+   * Ensures the current value is correctly reflected by the drop-down identified via the given id. 
+   * @param {JQuery} html FormApplication root element. 
+   * @param {String} id The id of the drop-down to synchronize. 
+   * @param {Any} currentValue The current value of the field represented by the drop-down. 
+   * 
+   * @private
+   */
+  _syncDropDownValue(html, id, currentValue) {
     const selectElement = html.find(`#${id}`);
     const optionElements = selectElement.find('option');
-    const value = this.value;
+    const currentValueAsString = "" + currentValue;
     for(let i = 0; i < optionElements.length; i++) {
       const optionElement = optionElements[i];
-      if (optionElement.value === value) {
-        this.element[0].selectedIndex = i;
+      if (optionElement.value == currentValueAsString) {
+        selectElement[0].selectedIndex = i;
         break;
       }
     }

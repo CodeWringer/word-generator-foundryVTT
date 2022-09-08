@@ -1,6 +1,8 @@
 {{!-- Parameters:
 settings: {Array<WordGeneratorSettings>}
 generatedWords: {Array<String>}
+sequencingStrategies: Array<DropDownOption>
+spellingStrategies: Array<DropDownOption>
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -38,7 +40,11 @@ generatedWords: {Array<String>}
     </div>
     <ul class="word-generator-unstyled-list">
       {{#each settings as |setting index|}}
-        {{> "modules/word-generator/template/word-generator-list-item.hbs" listItem=setting}}
+        {{> "modules/word-generator/template/word-generator-list-item.hbs" 
+          listItem=setting 
+          sequencingStrategies=../sequencingStrategies 
+          spellingStrategies=../spellingStrategies
+        }}
       {{/each}}
     </ul>
   </div>

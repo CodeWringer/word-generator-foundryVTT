@@ -6,6 +6,7 @@ import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
 import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
 import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
 import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
+import DropDownOption from "./drop-down-option.mjs";
 import { WordGeneratorListItemPresenter } from "./list-item-presenter.mjs";
 import { SORTING_ORDERS } from "./sorting-orders.mjs";
 import { TEMPLATES } from "./templates.mjs";
@@ -151,9 +152,27 @@ export default class WordGeneratorApplication extends Application {
 
   /** @override */
   async getData(options) {
+    const sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll()
+      .map(it => new DropDownOption({
+        value: it.getDefinitionID(),
+        localizedTitle: it.getHumanReadableName(),
+      }));
+      
+      const spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll()
+      .map(it => new DropDownOption({
+        value: it.getDefinitionID(),
+        localizedTitle: it.getHumanReadableName(),
+      }));
+      spellingStrategies.splice(0, 0, new DropDownOption({
+        value: "undefined",
+        localizedTitle: game.i18n.localize("wg.generator.spellingStrategies.none"),
+      }));
+
     return {
       settings: this._generators,
       generatedWords: this._generatedWords,
+      sequencingStrategies: sequencingStrategies,
+      spellingStrategies: spellingStrategies,
     }
   }
 
