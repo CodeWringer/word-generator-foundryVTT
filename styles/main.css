@@ -23,6 +23,9 @@
   display: inline-block;
   min-height: 1.8rem; }
 
+.word-generator-button {
+  width: 10rem; }
+
 .word-generator-square-button {
   width: 1.8rem;
   height: 1.8rem;
