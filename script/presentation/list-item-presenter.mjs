@@ -62,6 +62,10 @@ export class WordGeneratorListItemPresenter {
       thiz.listItem.depth = $(data.target).val();
       application._setGenerator(thiz.listItem);
     });
+    html.find(`#${id}-seed`).change((data) => {
+      thiz.listItem.seed = $(data.target).val();
+      application._setGenerator(thiz.listItem);
+    });
 
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;

@@ -127,6 +127,13 @@ spellingStrategies: Array<DropDownOption>
         {{/each}}
       </select>
     </div>
+    {{!-- Seed --}}
+    <div class="flexrow">
+      <label for="{{listItem.id}}-seed">
+        {{localize "wg.generator.seed"}}
+      </label>
+      <input id="{{listItem.id}}-seed" type="text" value="{{listItem.seed}}" />
+    </div>
   </div>
   {{!-- Generate --}}
   <div>

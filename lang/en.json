@@ -11,6 +11,7 @@
       "generate": "Generate",
       "targetLengthMin": "Target length minimum",
       "targetLengthMax": "Target length maximum",
+      "seed": "Randomization Seed",
       "sequencingStrategy": "Sequencing strategy",
       "sequencingStrategies": {
         "charDepth": "Character depth",
