@@ -32,7 +32,7 @@ spellingStrategies: Array<DropDownOption>
     {{!-- Sample Set --}}
     <div class="flexrow">
       <label for="{{listItem.id}}-sampleSet">
-        {{localize "wg.generator.sampleSet"}}
+        {{localize "wg.generator.sampleSet.field"}}
       </label>
       <span>{{localize "wg.generator.sampleSize"}}: {{listItem.sampleSet.length}}</span>
       <button 
@@ -40,7 +40,7 @@ spellingStrategies: Array<DropDownOption>
         type="button" 
         id="{{listItem.id}}-edit-sample-set"
         data-id="{{listItem.id}}"
-        title="{{localize "wg.sampleSet.edit"}}"
+        title="{{localize "wg.generator.sampleSet.edit"}}"
         >
         <i class="fas fa-edit"></i>
       </button>

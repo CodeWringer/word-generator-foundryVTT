@@ -1,7 +1,9 @@
+const templatesRoot = "modules/word-generator/template";
 export const TEMPLATES = {
-  WORD_GENERATOR_APPLICATION: "modules/word-generator/template/word-generator-application.hbs",
-  WORD_GENERATOR_LIST_ITEM: "modules/word-generator/template/word-generator-list-item.hbs",
-  MOVE_CONTROLS: "modules/word-generator/template/move-controls.hbs",
+  WORD_GENERATOR_APPLICATION: `${templatesRoot}/word-generator-application.hbs`,
+  WORD_GENERATOR_LIST_ITEM: `${templatesRoot}/word-generator-list-item.hbs`,
+  WORD_GENERATOR_SAMPLES_DIALOG: `${templatesRoot}/word-generator-samples-dialog.hbs`,
+  MOVE_CONTROLS: `${templatesRoot}/move-controls.hbs`,
 };
 
 /**

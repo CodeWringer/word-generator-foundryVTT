@@ -90,6 +90,7 @@ export default class WordGeneratorApplication extends Application {
           listItem: generator,
           listIndex: i,
           userId: game.userId,
+          application: this,
         })
       );
     }
@@ -115,7 +116,7 @@ export default class WordGeneratorApplication extends Application {
 
     // List item event handling. 
     for (const generator of this._generatorPresenters) {
-      generator.activateListeners(html, thiz);
+      generator.activateListeners(html);
     }
 
     // Generated word event handling.
@@ -189,6 +190,7 @@ export default class WordGeneratorApplication extends Application {
       listItem: newSetting,
       listIndex: this._generatorPresenters.length,
       userId: game.userId,
+      application: this,
     }));
 
     new AddGeneratorUseCase().invoke({
@@ -225,6 +227,7 @@ export default class WordGeneratorApplication extends Application {
       listItem: generator,
       listIndex: indexPresenter,
       userId: game.userId,
+      application: this,
     }));
 
     this.render();

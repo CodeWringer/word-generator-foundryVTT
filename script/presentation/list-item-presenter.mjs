@@ -1,5 +1,6 @@
 import * as DialogUtil from "../util/dialog-utility.mjs";
 import WordGeneratorApplication from "./word-generator-application.mjs";
+import WordGeneratorSamplesApplication from "./word-generator-samples-application.mjs";
 
 /**
  * This presenter handles a singular list item. 
@@ -11,19 +12,20 @@ export class WordGeneratorListItemPresenter {
    * @param {WordGeneratorSettings} args.listItem The represented item. 
    * @param {Number} args.listIndex Index of this item in the list. 
    * @param {String} args.userId ID of the user that owns the list. 
+   * @param {WordGeneratorApplication} application 
    */
   constructor(args) {
     this.listItem = args.listItem;
     this.listIndex = args.listIndex;
     this.userId = args.userId;
+    this.application = args.application;
   }
 
   /**
    * 
    * @param {HTMLElement} html 
-   * @param {WordGeneratorApplication} application 
    */
-  activateListeners(html, application) {
+  activateListeners(html, ) {
     const thiz = this;
     const id = this.listItem.id;
 
@@ -32,53 +34,63 @@ export class WordGeneratorListItemPresenter {
         localizableTitle: "wg.generator.confirmDeletion",
       }).then(result => {
         if (result.confirmed === true) {
-          application._removeGenerator(id);
+          this.application._removeGenerator(id);
         }
       });
     });
 
+    html.find(`#${id}-edit-sample-set`).click(() => {
+      new WordGeneratorSamplesApplication(this.listItem, (data) => {
+        if (data.confirmed === true) {
+          this.listItem.sampleSet = data.sampleSet;
+          this.listItem.sampleSetSeparator = data.sampleSetSeparator;
+          this._updateRender()
+        }
+      }).render(true);
+    });
+
     html.find(`#${id}-name`).change((data) => {
       thiz.listItem.name = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
       thiz.listItem.targetLengthMin = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
       thiz.listItem.targetLengthMax = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-entropy`).change((data) => {
       thiz.listItem.entropy = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-entropyStart`).change((data) => {
       thiz.listItem.entropyStart = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
       thiz.listItem.entropyMiddle = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
       thiz.listItem.entropyEnd = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-depth`).change((data) => {
       thiz.listItem.depth = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     html.find(`#${id}-seed`).change((data) => {
       thiz.listItem.seed = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
 
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;
     html.find(`#${idEndingPickMode}`).change((data) => {
       thiz.listItem.endingPickMode = $(data.target).val();
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     this._syncDropDownValue(html, idEndingPickMode, this.listItem.endingPickMode);
 
@@ -90,7 +102,7 @@ export class WordGeneratorListItemPresenter {
       const strategyDefinition = WordGeneratorApplication.registeredSequencingStrategies.get(strategyId);
       thiz.listItem.sequencingStrategySettings = strategyDefinition.getSettings();
 
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     this._syncDropDownValue(html, idSequencingStrategy, this.listItem.sequencingStrategyId);
 
@@ -102,14 +114,14 @@ export class WordGeneratorListItemPresenter {
       const strategyDefinition = WordGeneratorApplication.registeredSpellingStrategies.get(strategyId);
       thiz.listItem.spellingStrategySettings = strategyDefinition.getSettings();
 
-      application._setGenerator(thiz.listItem);
+      this._updateRender()
     });
     this._syncDropDownValue(html, idSpellingStrategy, this.listItem.spellingStrategyId);
 
     // Generate
     html.find(`#${id}-generate`).click(() => {
       const generator = this.listItem.toGenerator();
-      application._generate(generator);
+      this.application._generate(generator);
     });
   }
 
@@ -132,5 +144,14 @@ export class WordGeneratorListItemPresenter {
         break;
       }
     }
+  }
+
+  /**
+   * Triggers a re-render of the parent application. 
+   * 
+   * @private
+   */
+  _updateRender() {
+    this.application._setGenerator(this.listItem);
   }
 }

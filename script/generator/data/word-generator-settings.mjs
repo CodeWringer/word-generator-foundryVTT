@@ -9,6 +9,7 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * @property {String} id
  * @property {String | undefined} name
  * @property {Array<String>} sampleSet
+ * @property {String} sampleSetSeparator The string used to split samples. This splitting happens **prior** to sequencing. 
  * @property {Number} depth
  * 
  * @property {Number} targetLengthMin
@@ -34,6 +35,8 @@ export default class WordGeneratorSettings {
    * @param {String | undefined} args.id
    * @param {String | undefined} args.name
    * @param {Array<String> | undefined} args.sampleSet
+   * @param {String | undefined} sampleSetSeparator The string used to split samples. This splitting happens **prior** to sequencing. 
+   * * Default `,`. 
    * @param {Number | undefined} args.depth
    * 
    * @param {Number | undefined} args.targetLengthMin
@@ -58,7 +61,10 @@ export default class WordGeneratorSettings {
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
     this.name = args.name;
+
     this.sampleSet = args.sampleSet ?? [];
+    this.sampleSetSeparator = args.sampleSetSeparator ?? ",";
+
     this.depth = args.depth ?? 3;
 
     this.targetLengthMin = args.targetLengthMin ?? 3;
@@ -136,6 +142,7 @@ export default class WordGeneratorSettings {
       id: obj.id,
       name: obj.name,
       sampleSet: obj.sampleSet,
+      sampleSetSeparator: obj.sampleSetSeparator,
       depth: obj.depth,
       targetLengthMin: obj.targetLengthMin,
       targetLengthMax: obj.targetLengthMax,
@@ -162,6 +169,7 @@ export default class WordGeneratorSettings {
       id: this.id,
       name: this.name,
       sampleSet: this.sampleSet,
+      sampleSetSeparator: this.sampleSetSeparator,
       depth: this.depth,
       targetLengthMin: this.targetLengthMin,
       targetLengthMax: this.targetLengthMax,

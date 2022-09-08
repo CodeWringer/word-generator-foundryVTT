@@ -1,0 +1,21 @@
+{{!-- Parameters:
+sampleSet: String
+sampleSetSeparator: String
+--}}
+<section>
+  {{!-- Separator --}}
+  <div class="flexrow">
+    <label for="sampleSetSeparator">
+      {{localize "wg.generator.sampleSet.separator"}}
+    </label>
+    <input id="sampleSetSeparator" type="text" value="{{sampleSetSeparator}}" />
+  </div>
+  {{!-- Sample Set --}}
+  <textarea class="word-generator-sampleset" id="sampleset">{{sampleSet}}</textarea>
+  {{!-- Buttons --}}
+  <div class="flexrow">
+    <div class="word-generator-flex grow"></div>
+    <button id="confirm" type="button">{{localize "wg.general.save"}}</button>
+    <button id="cancel" type="button">{{localize "wg.general.cancel"}}</button>
+  </div>
+</section>

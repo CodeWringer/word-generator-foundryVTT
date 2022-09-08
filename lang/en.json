@@ -10,6 +10,7 @@
         "success": "Copied!"
       },
       "confirm": "Confirm",
+      "save": "Save",
       "cancel": "Cancel"
     },
     "generator": {
@@ -42,7 +43,14 @@
         "followBranch": "Follow Branch"
       },
       "sampleSize": "Size",
-      "sampleSet": "Sample Set",
+      "sampleSet": {
+        "field": "Sample Set",
+        "application": {
+          "title": "%s - Sample Set"
+        },
+        "edit": "Edit Sample-Set",
+        "separator": "Separator"
+      },
       "placeholder": {
         "name": "Generator name"
       },
@@ -54,10 +62,6 @@
       "sortAlphaDesc": "Sort down, alphabetically",
       "sortAlphaAsc": "Sort up, alphabetically",
       "depth": "Depth"
-    },
-    "sampleSet": {
-      "edit": "Edit Sample-Set",
-      "separator": "Separator"
     },
     "settings": {
       "toggleMock": {
