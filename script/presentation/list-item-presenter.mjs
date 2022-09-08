@@ -1,3 +1,4 @@
+import * as DialogUtil from "../util/dialog-utility.mjs";
 import WordGeneratorApplication from "./word-generator-application.mjs";
 
 /**
@@ -27,7 +28,13 @@ export class WordGeneratorListItemPresenter {
     const id = this.listItem.id;
 
     html.find(`#${id}-delete`).click(() => {
-      application._removeGenerator(id);
+      DialogUtil.showConfirmationDialog({
+        localizableTitle: "wg.generator.confirmDeletion",
+      }).then(result => {
+        if (result.confirmed === true) {
+          application._removeGenerator(id);
+        }
+      });
     });
 
     html.find(`#${id}-name`).change((data) => {
