@@ -220,12 +220,9 @@ export default class WordGeneratorApplication extends Application {
    * @param {WordGenerator} generator The generator instance to update. 
    */
   _setGenerator(generator) {
-    const indexGenerator = this._generators.findIndex(it => it.id === generator.id);
-    this._generators.splice(indexGenerator, 1, generator);
-    
     const indexPresenter = this._generatorPresenters.findIndex(it => it.listItem.id === generator.id);
-    this._generators.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
-      listItem: newSetting,
+    this._generatorPresenters.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
+      listItem: generator,
       listIndex: indexPresenter,
       userId: game.userId,
     }));

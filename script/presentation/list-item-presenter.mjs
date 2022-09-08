@@ -1,3 +1,5 @@
+import WordGeneratorApplication from "./word-generator-application.mjs";
+
 /**
  * This presenter handles a singular list item. 
  * 
@@ -71,14 +73,24 @@ export class WordGeneratorListItemPresenter {
 
     const idSequencingStrategy = `${id}-sequencingStrategy`;
     html.find(`#${idSequencingStrategy}`).change((data) => {
-      thiz.listItem.sequencingStrategy = $(data.target).val();
+      const strategyId = $(data.target).val();
+      thiz.listItem.sequencingStrategyId = strategyId;
+      
+      const strategyDefinition = WordGeneratorApplication.registeredSequencingStrategies.get(strategyId);
+      thiz.listItem.sequencingStrategySettings = strategyDefinition.getSettings();
+
       application._setGenerator(thiz.listItem);
     });
     this._syncDropDownValue(html, idSequencingStrategy, this.listItem.sequencingStrategyId);
 
     const idSpellingStrategy = `${id}-spellingStrategy`;
     html.find(`#${idSpellingStrategy}`).change((data) => {
-      thiz.listItem.spellingStrategy = $(data.target).val();
+      const strategyId = $(data.target).val();
+      thiz.listItem.spellingStrategyId = strategyId;
+
+      const strategyDefinition = WordGeneratorApplication.registeredSpellingStrategies.get(strategyId);
+      thiz.listItem.spellingStrategySettings = strategyDefinition.getSettings();
+
       application._setGenerator(thiz.listItem);
     });
     this._syncDropDownValue(html, idSpellingStrategy, this.listItem.spellingStrategyId);
