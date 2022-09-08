@@ -121,8 +121,6 @@ spellingStrategies: Array<DropDownOption>
       <label for="{{listItem.id}}-spellingStrategy">
         {{localize "wg.generator.spellingStrategy"}}
       </label>
-{{log sequencingStrategies}}
-{{log spellingStrategies}}
       <select id="{{listItem.id}}-spellingStrategy">
         {{#each spellingStrategies as |strategy index|}}
         <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
