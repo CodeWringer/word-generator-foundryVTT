@@ -54,31 +54,38 @@ export class WordGeneratorListItemPresenter {
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
-      thiz.listItem.targetLengthMin = $(data.target).val();
+      const value = parseInt($(data.target).val());
+      thiz.listItem.targetLengthMin = value;
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
-      thiz.listItem.targetLengthMax = $(data.target).val();
+      const value = parseInt($(data.target).val());
+      thiz.listItem.targetLengthMax = value;
       this._updateRender()
     });
     html.find(`#${id}-entropy`).change((data) => {
-      thiz.listItem.entropy = $(data.target).val();
+      const value = parseFloat($(data.target).val());
+      thiz.listItem.entropy = value;
       this._updateRender()
     });
     html.find(`#${id}-entropyStart`).change((data) => {
-      thiz.listItem.entropyStart = $(data.target).val();
+      const value = parseFloat($(data.target).val());
+      thiz.listItem.entropyStart = value;
       this._updateRender()
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
-      thiz.listItem.entropyMiddle = $(data.target).val();
+      const value = parseFloat($(data.target).val());
+      thiz.listItem.entropyMiddle = value;
       this._updateRender()
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
-      thiz.listItem.entropyEnd = $(data.target).val();
+      const value = parseFloat($(data.target).val());
+      thiz.listItem.entropyEnd = value;
       this._updateRender()
     });
     html.find(`#${id}-depth`).change((data) => {
-      thiz.listItem.depth = $(data.target).val();
+      const value = parseInt($(data.target).val());
+      thiz.listItem.depth = value;
       this._updateRender()
     });
     html.find(`#${id}-seed`).change((data) => {
@@ -109,10 +116,16 @@ export class WordGeneratorListItemPresenter {
     const idSpellingStrategy = `${id}-spellingStrategy`;
     html.find(`#${idSpellingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      thiz.listItem.spellingStrategyId = strategyId;
+      thiz.listItem.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
 
-      const strategyDefinition = WordGeneratorApplication.registeredSpellingStrategies.get(strategyId);
-      thiz.listItem.spellingStrategySettings = strategyDefinition.getSettings();
+      if (strategyId !== undefined) {
+        const strategyDefinition = WordGeneratorApplication.registeredSpellingStrategies.get(strategyId);
+        if (strategyDefinition !== undefined) {
+          thiz.listItem.spellingStrategySettings = strategyDefinition.getSettings();
+        } else {
+          thiz.listItem.spellingStrategySettings = undefined;
+        }
+      }
 
       this._updateRender()
     });
