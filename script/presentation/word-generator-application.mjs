@@ -143,7 +143,7 @@ export default class WordGeneratorApplication extends Application {
       cliboardButton.click(() => {
         this._textToClipboard(html, jInput.val()).then((success) => {
           if (success === true) {
-            this._showInfoBubble(html, cliboardButton, game.i18n.localize("wg.copy.success"));
+            this._showInfoBubble(html, cliboardButton, game.i18n.localize("wg.general.copy.success"));
           }
         });
       });

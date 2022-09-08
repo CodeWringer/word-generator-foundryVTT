@@ -4,6 +4,14 @@
       "title": "Word Generators",
       "close": "Close"
     },
+    "general": {
+      "copy": {
+        "toClipboard": "Copy to clipboard",
+        "success": "Copied!"
+      },
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
     "generator": {
       "create": "Add New Generator",
       "delete": "Delete Generator",
@@ -58,10 +66,6 @@
         "name": "Toggle Debug Mode",
         "hint": "Toggle Debug Mode"
       }
-    },
-    "copy": {
-      "toClipboard": "Copy to clipboard",
-      "success": "Copied!"
     }
   }
 }
