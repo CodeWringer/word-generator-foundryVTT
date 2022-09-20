@@ -45,7 +45,7 @@ export default class AbstractSpellingStrategy {
 
   /**
    * Returns the current settings of this spelling strategy. 
-   * @returns {Object}
+   * @returns {Array<StrategySettings>}
    */
   getSettings() {
     throw new Error("Not implemented");

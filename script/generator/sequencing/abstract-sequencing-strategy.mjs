@@ -78,7 +78,7 @@ export default class AbstractSequencingStrategy {
   /**
    * Returns the current settings of this sequencing strategy. 
    * 
-   * @returns {Object}
+   * @returns {Array<StrategySettings>}
    * 
    * @abstract
    */

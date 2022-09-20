@@ -21,7 +21,7 @@ export default class BeginningCapitalsSpellingStrategy extends AbstractSpellingS
 
   /** @override */
   getSettings() {
-    return undefined;
+    return [];
   }
 
   /** @override */

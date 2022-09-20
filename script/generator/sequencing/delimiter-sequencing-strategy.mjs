@@ -1,3 +1,4 @@
+import { StrategySetting } from "../strategy-setting.mjs";
 import AbstractSequencingStrategy from "./abstract-sequencing-strategy.mjs";
 import Sequence from "./sequence.mjs";
 
@@ -76,13 +77,29 @@ export default class DelimiterSequencingStrategy extends AbstractSequencingStrat
 
   /** @override */
   getSettings() {
-    return {
-      delimiter: this.delimiter,
-    };
+    return [
+      new StrategySetting({
+        name: "delimiter",
+        localizableName: "wg.generator.sequencingStrategies.delimiter",
+        valueType: StrategySettingValueTypes.STRING,
+        value: this.delimiter,
+        defaultValue: ",",
+      }),
+      new StrategySetting({
+        name: "preserveCase",
+        localizableName: "wg.generator.preserveCase",
+        valueType: StrategySettingValueTypes.BOOLEAN,
+        value: this.preserveCase,
+        defaultValue: false,
+      }),
+    ];
   }
 
   /** @override */
   newInstanceWithArgs(args) {
-    return new DelimiterSequencingStrategy(args.delimiter, args.preserveCase);
+    const delimiter = args.find(it => it.name === "delimiter").value;
+    const preserveCase = args.find(it => it.name === "preserveCase").value;
+
+    return new DelimiterSequencingStrategy(delimiter, preserveCase);
   }
 }

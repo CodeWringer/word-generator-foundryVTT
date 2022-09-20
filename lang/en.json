@@ -54,6 +54,7 @@
       "placeholder": {
         "name": "Generator name"
       },
+      "preserveCase": "Preserve Case",
       "moveTop": "Move to top",
       "moveUp": "Move up",
       "moveBottom": "Move to bottom",

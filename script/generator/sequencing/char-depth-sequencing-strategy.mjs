@@ -1,4 +1,6 @@
 import { isInteger } from "../../util/validation.mjs";
+import { StrategySettingValueTypes } from "../strategy-setting.mjs";
+import { StrategySetting } from "../strategy-setting.mjs";
 import AbstractSequencingStrategy from "./abstract-sequencing-strategy.mjs";
 import Sequence from "./sequence.mjs";
 
@@ -8,8 +10,10 @@ import Sequence from "./sequence.mjs";
  * @property {Number | undefined} depth The depth of the look-back for the algorithm. 
  * Higher numbers result in results more similar to the provided sample set, 
  * but also in less variety. 
+ * * Default `1`.
  * @property {Boolean | undefined} preserveCase If true, will not transform found sequences 
- * to lower case, but instead preserve the casing found in the sequence. Default false. 
+ * to lower case, but instead preserve the casing found in the sequence. 
+ * * Default `false`. 
  */
 export default class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   /**
@@ -95,14 +99,29 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
 
   /** @override */
   getSettings() {
-    return {
-      depth: this.depth,
-      preserveCase: this.preserveCase,
-    };
+    return [
+      new StrategySetting({
+        name: "depth",
+        localizableName: "wg.generator.depth",
+        valueType: StrategySettingValueTypes.INTEGER,
+        value: this.depth,
+        defaultValue: 1,
+      }),
+      new StrategySetting({
+        name: "preserveCase",
+        localizableName: "wg.generator.preserveCase",
+        valueType: StrategySettingValueTypes.BOOLEAN,
+        value: this.preserveCase,
+        defaultValue: false,
+      }),
+    ];
   }
 
   /** @override */
   newInstanceWithArgs(args) {
-    return new CharDepthSequencingStrategy(args.depth, args.preserveCase);
+    const depth = args.find(it => it.name === "depth").value;
+    const preserveCase = args.find(it => it.name === "preserveCase").value;
+
+    return new CharDepthSequencingStrategy(depth, preserveCase);
   }
 }

@@ -16,10 +16,10 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * @property {Number} targetLengthMax
  * 
  * @property {String} sequencingStrategyId
- * @property {Object} sequencingStrategySettings
+ * @property {Array<StrategySetting>} sequencingStrategySettings
  * 
  * @property {String | undefined} spellingStrategyId
- * @property {Object | undefined} spellingStrategySettings
+ * @property {Array<StrategySetting> | undefined} spellingStrategySettings
  * 
  * @property {String} seed
  * 
@@ -44,10 +44,10 @@ export default class WordGeneratorSettings {
    * 
    * @param {String | undefined} args.sequencingStrategyId
    * * Default is the id of a `CharDepthSequencingStrategy` type. 
-   * @param {Object | undefined} args.sequencingStrategySettings
+   * @param {Array<StrategySetting> | undefined} args.sequencingStrategySettings
    * 
    * @param {String | undefined} args.spellingStrategyId
-   * @param {Object | undefined} args.spellingStrategySettings
+   * @param {Array<StrategySetting> | undefined} args.spellingStrategySettings
    * 
    * @param {String | undefined} args.seed
    * 
