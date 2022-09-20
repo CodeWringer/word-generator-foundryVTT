@@ -20,5 +20,5 @@ export const StrategySettingValueTypes = {
   INTEGER: 1,
   FLOAT: 2,
   BOOLEAN: 3,
-  OBJECT: 3,
+  OBJECT: 4,
 }

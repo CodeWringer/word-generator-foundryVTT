@@ -11,7 +11,9 @@
 
 .word-generator-setting-entry {
   display: flex;
-  background-color: #0000001a;
+  background-color: #0000001a; }
+
+.word-generator-card {
   margin-bottom: 0.5rem;
   border-radius: 0.3rem;
   border-color: #8d8d8d;

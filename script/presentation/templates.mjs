@@ -4,6 +4,7 @@ export const TEMPLATES = {
   WORD_GENERATOR_LIST_ITEM: `${templatesRoot}/word-generator-list-item.hbs`,
   WORD_GENERATOR_SAMPLES_DIALOG: `${templatesRoot}/word-generator-samples-dialog.hbs`,
   MOVE_CONTROLS: `${templatesRoot}/move-controls.hbs`,
+  SETTING_LIST_ITEM: `${templatesRoot}/setting-list-item.hbs`,
 };
 
 /**

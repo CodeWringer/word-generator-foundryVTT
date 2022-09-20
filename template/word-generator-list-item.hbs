@@ -3,7 +3,7 @@ listItem: WordGeneratorSettings
 sequencingStrategies: Array<DropDownOption>
 spellingStrategies: Array<DropDownOption>
 --}}
-<li class="word-generator-setting-entry">
+<li class="word-generator-setting-entry word-generator-card">
   {{!-- Move controls --}}
   {{> "modules/word-generator/template/move-controls.hbs" listItemId=listItem.id }}
   <div class="word-generator-flex flexcol grow">
@@ -99,33 +99,37 @@ spellingStrategies: Array<DropDownOption>
       </select>
     </div>
     {{!-- sequencingStrategy --}}
-    <div class="flexrow">
-      <label for="{{listItem.id}}-sequencingStrategy">
-        {{localize "wg.generator.sequencingStrategy"}}
-      </label>
-      <select id="{{listItem.id}}-sequencingStrategy">
-        {{#each sequencingStrategies as |strategy index|}}
-        <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
-        {{/each}}
-      </select>
-    </div>
-    {{!-- depth --}}
-    <div class="flexrow">
-      <label for="{{listItem.id}}-depth">
-        {{localize "wg.generator.depth"}}
-      </label>
-      <input id="{{listItem.id}}-depth" type="number" min="0" max="1" value="{{listItem.depth}}" />
-    </div>
+    <div class="word-generator-card">
+      <div class="flexrow">
+        <label for="{{listItem.id}}-sequencingStrategy">
+          {{localize "wg.generator.sequencingStrategy"}}
+        </label>
+        <select id="{{listItem.id}}-sequencingStrategy">
+          {{#each sequencingStrategies as |strategy index|}}
+          <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
+          {{/each}}
+        </select>
+      </div>
+      {{!-- depth --}}
+      <div class="flexrow">
+        <label for="{{listItem.id}}-depth">
+          {{localize "wg.generator.depth"}}
+        </label>
+        <input id="{{listItem.id}}-depth" type="number" min="0" max="1" value="{{listItem.depth}}" />
+      </div>
+    </div> 
     {{!-- spellingStrategy --}}
-    <div class="flexrow">
-      <label for="{{listItem.id}}-spellingStrategy">
-        {{localize "wg.generator.spellingStrategy"}}
-      </label>
-      <select id="{{listItem.id}}-spellingStrategy">
-        {{#each spellingStrategies as |strategy index|}}
-        <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
-        {{/each}}
-      </select>
+    <div class="word-generator-card">
+      <div class="flexrow">
+        <label for="{{listItem.id}}-spellingStrategy">
+          {{localize "wg.generator.spellingStrategy"}}
+        </label>
+        <select id="{{listItem.id}}-spellingStrategy">
+          {{#each spellingStrategies as |strategy index|}}
+          <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
+          {{/each}}
+        </select>
+      </div>
     </div>
     {{!-- Seed --}}
     <div class="flexrow">

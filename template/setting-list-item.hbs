@@ -1,0 +1,35 @@
+{{!-- Params:
+item: StrategySetting
+min: Number | undefined
+max: Number | undefined
+--}}
+<li class="flexrow">
+  <label for="{{item.name}}">{{localize item.localizableName}}</label>
+  <input 
+    id="{{item.name}}" 
+    {{#if (eq item.valueType 0)}} {{!-- StrategySettingValueTypes.STRING --}}
+    type="text" 
+    {{else if(eq item.valueType 1)}} {{!-- StrategySettingValueTypes.INTEGER --}}
+    type="number" 
+    {{#if (neq min undefined)}}
+    min="{{min}}" 
+    {{/if}}
+    {{#if (neq max undefined)}}
+    max="{{max}}" 
+    {{/if}}
+    {{else if(eq item.valueType 2)}} {{!-- StrategySettingValueTypes.FLOAT --}}
+    type="number" 
+    {{#if (neq min undefined)}}
+    min="{{min}}" 
+    {{/if}}
+    {{#if (neq max undefined)}}
+    max="{{max}}" 
+    {{/if}}
+    {{else if(eq item.valueType 3)}} {{!-- StrategySettingValueTypes.BOOLEAN --}}
+    type="checkbox" 
+    {{else if(eq item.valueType 4)}} {{!-- StrategySettingValueTypes.OBJECT --}}
+    {{!-- TODO? --}}
+    {{/if}}
+    value="{{item.value}}" 
+  />
+</li>
