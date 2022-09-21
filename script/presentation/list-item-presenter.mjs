@@ -1,3 +1,4 @@
+import { StrategySettingValueTypes } from "../generator/strategy-setting.mjs";
 import * as DialogUtil from "../util/dialog-utility.mjs";
 import WordGeneratorApplication from "./word-generator-application.mjs";
 import WordGeneratorSamplesApplication from "./word-generator-samples-application.mjs";
@@ -83,14 +84,25 @@ export class WordGeneratorListItemPresenter {
       thiz.listItem.entropyEnd = value;
       this._updateRender()
     });
-    html.find(`#${id}-depth`).change((data) => {
-      const value = parseInt($(data.target).val());
-      thiz.listItem.depth = value;
-      this._updateRender()
-    });
     html.find(`#${id}-seed`).change((data) => {
       thiz.listItem.seed = $(data.target).val();
       this._updateRender()
+    });
+
+    // Sequencing settings
+    html.find(`#${id}-sequencing-settings > li > input`).change(data => {
+      const id = $(data.target)[0].id;
+      const setting = this.listItem.sequencingStrategySettings.find(it => it.name === id);
+      setting.value = this._parseValue(setting, data.target);
+      this._updateRender();
+    });
+
+    // Spelling settings
+    html.find(`#${id}-spelling-settings > li > input`).change(data => {
+      const id = $(data.target)[0].id;
+      const setting = this.listItem.spellingStrategySettings.find(it => it.name === id);
+      setting.value = this._parseValue(setting, data.target);
+      this._updateRender();
     });
 
     // Drop-Downs
@@ -166,5 +178,30 @@ export class WordGeneratorListItemPresenter {
    */
   _updateRender() {
     this.application._setGenerator(this.listItem);
+  }
+
+  /**
+   * Returns a value that the given `StrategySetting` instance would accept,
+   * based on the given DOM element's current value. 
+   * @param {StrategySetting} setting 
+   * @param {JQuery | HTMLElement} element 
+   * 
+   * @returns {String | Number | Boolean}
+   * 
+   * @private
+   */
+  _parseValue(setting, element) {
+    const jElement = $(element);
+
+    switch (setting.valueType) {
+      case StrategySettingValueTypes.INTEGER:
+        return parseInt($(jElement).val());
+      case StrategySettingValueTypes.FLOAT:
+        return parseFloat($(jElement).val());
+      case StrategySettingValueTypes.BOOLEAN:
+        return $(jElement)[0].checked;
+      default:
+        return $(jElement).val();
+    }
   }
 }

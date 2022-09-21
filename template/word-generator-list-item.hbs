@@ -110,13 +110,12 @@ spellingStrategies: Array<DropDownOption>
           {{/each}}
         </select>
       </div>
-      {{!-- depth --}}
-      <div class="flexrow">
-        <label for="{{listItem.id}}-depth">
-          {{localize "wg.generator.depth"}}
-        </label>
-        <input id="{{listItem.id}}-depth" type="number" min="0" max="1" value="{{listItem.depth}}" />
-      </div>
+      {{!-- Sequencing Settings --}}
+      <ul id="{{listItem.id}}-sequencing-settings" class="word-generator-unstyled-list">
+        {{#each listItem.sequencingStrategySettings as |setting index|}}
+          {{> "modules/word-generator/template/setting-list-item.hbs" item=setting}}
+        {{/each}}
+      </ul>
     </div> 
     {{!-- spellingStrategy --}}
     <div class="word-generator-card">
@@ -130,6 +129,12 @@ spellingStrategies: Array<DropDownOption>
           {{/each}}
         </select>
       </div>
+      {{!-- Spelling Settings --}}
+      <ul id="{{listItem.id}}-spelling-settings" class="word-generator-unstyled-list">
+      {{#each listItem.spellingStrategySettings as |setting index|}}
+        {{> "modules/word-generator/template/setting-list-item.hbs" item=setting}}
+      {{/each}}
+      </ul>
     </div>
     {{!-- Seed --}}
     <div class="flexrow">

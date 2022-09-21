@@ -15,6 +15,9 @@ export class StrategySetting {
   }
 }
 
+/**
+ * Values to define the value type of a `StrategySetting`. 
+ */
 export const StrategySettingValueTypes = {
   STRING: 0,
   INTEGER: 1,
