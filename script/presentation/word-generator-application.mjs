@@ -118,15 +118,23 @@ export default class WordGeneratorApplication extends Application {
 
     // Sorting word generators
     html.find("#move-sort-alpha-desc").click(() => {
-      thiz._sort(SORTING_ORDERS.DESC);
+      thiz._sortGenerators(SORTING_ORDERS.DESC);
     });
     html.find("#move-sort-alpha-asc").click(() => {
-      thiz._sort(SORTING_ORDERS.ASC);
+      thiz._sortGenerators(SORTING_ORDERS.ASC);
     });
 
     // Generation count
     html.find("#amountToGenerate").change((data) => {
       thiz._amountToGenerate = parseInt($(data.target).val());
+    });
+
+    // Sorting result list
+    html.find("#results-move-sort-alpha-desc").click(() => {
+      thiz._sortResults(SORTING_ORDERS.DESC);
+    });
+    html.find("#results-move-sort-alpha-asc").click(() => {
+      thiz._sortResults(SORTING_ORDERS.ASC);
     });
 
     // List item event handling. 
@@ -253,7 +261,7 @@ export default class WordGeneratorApplication extends Application {
    * Click-handler to sort generators. 
    * @param {SORTING_ORDERS} sortingOrder 
    */
-  _sort(sortingOrder = SORTING_ORDERS.DESC) {
+  _sortGenerators(sortingOrder = SORTING_ORDERS.DESC) {
     const sorted = new SortGeneratorsUseCase().invoke({
       userId: game.userId,
       sortingOrder: sortingOrder,
@@ -264,6 +272,23 @@ export default class WordGeneratorApplication extends Application {
     });
     
     this._generators = sorted;
+    
+    this.render();
+  }
+
+  /**
+   * Click-handler to sort generated words. 
+   * @param {SORTING_ORDERS} sortingOrder 
+   */
+  _sortResults(sortingOrder = SORTING_ORDERS.DESC) {
+    let sorted = this._generatedWords;
+    if (sortingOrder === SORTING_ORDERS.DESC) {
+      sorted = sorted.sort();
+    } else {
+      sorted = sorted.sort().reverse();
+    }
+
+    this._generatedWords = sorted;
     
     this.render();
   }
