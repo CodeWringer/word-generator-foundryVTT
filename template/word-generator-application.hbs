@@ -3,7 +3,7 @@ settings: {Array<WordGeneratorSettings>}
 generatedWords: {Array<String>}
 sequencingStrategies: Array<DropDownOption>
 spellingStrategies: Array<DropDownOption>
-amountToGenerate: Number
+applicationSettings: WordGeneratorApplicationSettings
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -63,7 +63,7 @@ amountToGenerate: Number
           id="amountToGenerate" 
           type="number" 
           min="1" 
-          value="{{amountToGenerate}}" 
+          value="{{applicationSettings.amountToGenerate}}" 
         />
       </span>
     </div>

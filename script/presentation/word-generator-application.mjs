@@ -2,8 +2,10 @@ import WordGeneratorSettings from "../generator/data/word-generator-settings.mjs
 import WordGenerator from "../generator/generator.mjs";
 import TypeRegistrar from "../generator/type-registrar.mjs";
 import AddGeneratorUseCase from "../use_case/add-generator-use-case.mjs";
+import LoadApplicationSettingsUseCase from "../use_case/load-application-settings-use-case.mjs";
 import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
 import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
+import SetApplicationSettingsUseCase from "../use_case/set-application-settings-use-case.mjs";
 import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
 import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
 import DropDownOption from "./drop-down-option.mjs";
@@ -77,14 +79,16 @@ export default class WordGeneratorApplication extends Application {
   _generatedWords = [];
 
   /**
-   * The number of words to generate. 
-   * @type {Number}
+   * The application level settings. 
+   * @type {WordGeneratorApplicationSettings}
    * @private
    */
-  _amountToGenerate = 10;
+  _applicationSettings = undefined;
 
   constructor() {
     super();
+
+    this._applicationSettings = new LoadApplicationSettingsUseCase().invoke(game.userId);
 
     this._generators = new LoadGeneratorsUseCase().invoke(game.userId);
     this._generatorPresenters = [];
@@ -126,7 +130,12 @@ export default class WordGeneratorApplication extends Application {
 
     // Generation count
     html.find("#amountToGenerate").change((data) => {
-      thiz._amountToGenerate = parseInt($(data.target).val());
+      const amountToGenerate = parseInt($(data.target).val());
+      this._applicationSettings.amountToGenerate = amountToGenerate;
+      new SetApplicationSettingsUseCase().invoke({
+        userId: game.userId,
+        value: this._applicationSettings,
+      });
     });
 
     // Sorting result list
@@ -197,7 +206,7 @@ export default class WordGeneratorApplication extends Application {
       generatedWords: this._generatedWords,
       sequencingStrategies: sequencingStrategies,
       spellingStrategies: spellingStrategies,
-      amountToGenerate: this._amountToGenerate,
+      applicationSettings: this._applicationSettings,
     }
   }
 
@@ -299,7 +308,7 @@ export default class WordGeneratorApplication extends Application {
    */
   _generate(generator) {
     try {
-      const generatedWords = generator.generate(this._amountToGenerate);
+      const generatedWords = generator.generate(this._applicationSettings.amountToGenerate);
       this._generatedWords = generatedWords;
     } catch (error) {
       console.error(error);

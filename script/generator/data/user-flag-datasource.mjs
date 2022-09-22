@@ -60,19 +60,19 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
     );
   }
 
-    /** @override */
-    setAll(userId, generatorSettings) {
-      const user = game.users.get(userId);
+  /** @override */
+  setAll(userId, generatorSettings) {
+    const user = game.users.get(userId);
 
-      if (user === undefined) return;
+    if (user === undefined) return;
 
-      user.setFlag(
-        UserFlagGeneratorSettingsDataSource.FLAG_SCOPE,
-        UserFlagGeneratorSettingsDataSource.KEY_FLAG,
-        generatorSettings ?? []
-      );
-    }
-  
+    user.setFlag(
+      UserFlagGeneratorSettingsDataSource.FLAG_SCOPE,
+      UserFlagGeneratorSettingsDataSource.KEY_FLAG,
+      generatorSettings ?? []
+    );
+  }
+
   /** @override */
   remove(userId, id) {
     const user = game.users.get(userId);
