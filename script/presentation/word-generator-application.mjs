@@ -76,6 +76,13 @@ export default class WordGeneratorApplication extends Application {
    */
   _generatedWords = [];
 
+  /**
+   * The number of words to generate. 
+   * @type {Number}
+   * @private
+   */
+  _amountToGenerate = 10;
+
   constructor() {
     super();
 
@@ -104,14 +111,22 @@ export default class WordGeneratorApplication extends Application {
 
     // General event handling. 
 
+    // Word generator adding
     html.find("#create-generator").click(() => {
       thiz._createGenerator();
     });
+
+    // Sorting word generators
     html.find("#move-sort-alpha-desc").click(() => {
       thiz._sort(SORTING_ORDERS.DESC);
     });
     html.find("#move-sort-alpha-asc").click(() => {
       thiz._sort(SORTING_ORDERS.ASC);
+    });
+
+    // Generation count
+    html.find("#amountToGenerate").change((data) => {
+      thiz._amountToGenerate = parseInt($(data.target).val());
     });
 
     // List item event handling. 
@@ -174,6 +189,7 @@ export default class WordGeneratorApplication extends Application {
       generatedWords: this._generatedWords,
       sequencingStrategies: sequencingStrategies,
       spellingStrategies: spellingStrategies,
+      amountToGenerate: this._amountToGenerate,
     }
   }
 
@@ -258,7 +274,7 @@ export default class WordGeneratorApplication extends Application {
    */
   _generate(generator) {
     try {
-      const generatedWords = generator.generate(50);
+      const generatedWords = generator.generate(this._amountToGenerate);
       this._generatedWords = generatedWords;
     } catch (error) {
       console.error(error);

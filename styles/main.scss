@@ -107,6 +107,9 @@
     &.align-end {
       align-items: flex-end;
     }
+    &.align-center {
+      align-items: center;
+    }
     &.grow {
       flex-grow: 1;
     }
@@ -145,5 +148,9 @@
 
   &-modal {
     z-index: 99999 !important;
+  }
+
+  &-amountToGenerate {
+    width: 5rem;
   }
 }

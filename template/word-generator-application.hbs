@@ -3,6 +3,7 @@ settings: {Array<WordGeneratorSettings>}
 generatedWords: {Array<String>}
 sequencingStrategies: Array<DropDownOption>
 spellingStrategies: Array<DropDownOption>
+amountToGenerate: Number
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -52,6 +53,41 @@ spellingStrategies: Array<DropDownOption>
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
   <div class="word-generator-flex column grow scrollable">
+    <div class="word-generator-flex row">
+      <label 
+        class="word-generator-flex grow align-center" 
+        for="amountToGenerate"
+      >{{localize "wg.generator.generateCount"}}</label>
+      <span class="word-generator-amountToGenerate">
+        <input 
+          id="amountToGenerate" 
+          type="number" 
+          min="1" 
+          value="{{amountToGenerate}}" 
+        />
+      </span>
+    </div>
+    {{!-- Sorting controls --}}
+    <div class="word-generator-controls-bar word-generator-flex row">
+      {{!-- Spacer --}}
+      <div class="word-generator-flex grow"></div>
+      <button
+        class="word-generator-square-button light"
+        type="button"
+        title="{{localize "wg.generator.sortAlphaDesc"}}"
+        id="results-move-sort-alpha-desc"
+        >
+        <i class="fas fa-sort-alpha-down"></i>
+      </button>
+      <button
+        class="word-generator-square-button light"
+        type="button"
+        title="{{localize "wg.generator.sortAlphaAsc"}}"
+        id="results-move-sort-alpha-asc"
+        >
+        <i class="fas fa-sort-alpha-up"></i>
+      </button>
+    </div>
     <ul class="word-generator-unstyled-list">
       {{#each generatedWords as |generatedWord index|}}
       <div id="generated-word-{{index}}" class="word-generator-flex row word-generator-generated-word">

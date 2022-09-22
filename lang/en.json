@@ -62,7 +62,8 @@
       "moveDrag": "Drag to move",
       "sortAlphaDesc": "Sort down, alphabetically",
       "sortAlphaAsc": "Sort up, alphabetically",
-      "depth": "Depth"
+      "depth": "Depth",
+      "generateCount": "Amount to generate"
     },
     "settings": {
       "toggleMock": {

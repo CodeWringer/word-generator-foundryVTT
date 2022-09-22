@@ -81,6 +81,8 @@
     flex-direction: column; }
   .word-generator-flex.align-end {
     align-items: flex-end; }
+  .word-generator-flex.align-center {
+    align-items: center; }
   .word-generator-flex.grow {
     flex-grow: 1; }
 
@@ -110,3 +112,6 @@
 
 .word-generator-modal {
   z-index: 99999 !important; }
+
+.word-generator-amountToGenerate {
+  width: 5rem; }
