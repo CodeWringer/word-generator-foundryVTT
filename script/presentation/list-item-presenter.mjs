@@ -1,5 +1,7 @@
 import { StrategySettingValueTypes } from "../generator/strategy-setting.mjs";
 import * as DialogUtil from "../util/dialog-utility.mjs";
+import InfoBubble from "./info-bubble.mjs";
+import { InfoBubbleAutoShowingTypes, InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
 import WordGeneratorApplication from "./word-generator-application.mjs";
 import WordGeneratorSamplesApplication from "./word-generator-samples-application.mjs";
 
@@ -103,6 +105,96 @@ export class WordGeneratorListItemPresenter {
       const setting = this.listItem.spellingStrategySettings.find(it => it.name === id);
       setting.value = this._parseValue(setting, data.target);
       this._updateRender();
+    });
+
+    // # Info-bubbles
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+    });
+    // ## Sample-Set
+    new InfoBubble({
+      html: html,
+      parent: html.find(`.word-generator-info.sample-set#${id}`),
+      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
 
     // Drop-Downs

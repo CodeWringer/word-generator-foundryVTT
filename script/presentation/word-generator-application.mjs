@@ -9,6 +9,8 @@ import SetApplicationSettingsUseCase from "../use_case/set-application-settings-
 import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
 import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
 import DropDownOption from "./drop-down-option.mjs";
+import InfoBubble from "./info-bubble.mjs";
+import { InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
 import { WordGeneratorListItemPresenter } from "./list-item-presenter.mjs";
 import { SORTING_ORDERS } from "./sorting-orders.mjs";
 import { TEMPLATES } from "./templates.mjs";
@@ -176,7 +178,14 @@ export default class WordGeneratorApplication extends Application {
       cliboardButton.click(() => {
         this._textToClipboard(html, jInput.val()).then((success) => {
           if (success === true) {
-            this._showInfoBubble(html, cliboardButton, game.i18n.localize("wg.general.copy.success"));
+            const infoBubble = new InfoBubble({
+              html: html,
+              parent: cliboardButton,
+              text: game.i18n.localize("wg.general.copy.success"),
+              autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
+              onHide: () => { infoBubble.remove(); },
+            });
+            infoBubble.show();
           }
         });
       });
@@ -367,45 +376,6 @@ export default class WordGeneratorApplication extends Application {
         return false;
       }
     }
-  }
-
-  /**
-   * Adds an info bubble beneath the given parent element. 
-   * 
-   * Event handlers are added to remove the element again, when the cursor moves or any other input is made. 
-   * @param {JQuery} html Root element of the `FormApplication`. 
-   * @param {JQuery} parent The element beneath which to show the info bubble. 
-   * @param {String} text The text to show in the info bubble. 
-   * 
-   * @private
-   */
-  _showInfoBubble(html, parent, text) {
-    const bubbleElement = html.add(`<span>${text}</span>`)[1];
-    const jBubbleElement = $(bubbleElement);
-    jBubbleElement.addClass("word-generator-info-bubble");
-    html.append(jBubbleElement);
-
-    const parentPos = parent.position();
-    const parentSize = { width: parent.outerWidth(), height: parent.outerHeight() };
-    
-    const bubbleSize = { width: jBubbleElement.outerWidth(), height: jBubbleElement.outerHeight() };
-
-    const x = parentPos.left + (parentSize.width / 2) - (bubbleSize.width / 2);
-    const y = parentPos.top - bubbleSize.height;
-
-    bubbleElement.style = `left: ${x}px; top: ${y}px;`;
-
-    const eventNameSpace = "wg-info-bubble";
-    html.on(`mousemove.${eventNameSpace}`, () => {
-      jBubbleElement.remove();
-      html.off(`mousemove.${eventNameSpace}`);
-      html.off(`keydown.${eventNameSpace}`);
-    });
-    html.on(`keydown.${eventNameSpace}`, () => {
-      jBubbleElement.remove();
-      html.off(`mousemove.${eventNameSpace}`);
-      html.off(`keydown.${eventNameSpace}`);
-    });
   }
 }
 

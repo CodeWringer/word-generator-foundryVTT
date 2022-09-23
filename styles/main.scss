@@ -153,4 +153,14 @@
   &-amountToGenerate {
     width: 5rem;
   }
+  
+  &-info {
+    width: 1.8rem;
+    max-width: 1.8rem;
+    height: 1.8rem;
+    max-height: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
