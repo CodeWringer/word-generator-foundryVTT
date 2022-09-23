@@ -25,7 +25,6 @@ export class WordGeneratorListItemPresenter {
   }
 
   /**
-   * 
    * @param {HTMLElement} html 
    */
   activateListeners(html, ) {
@@ -116,83 +115,75 @@ export class WordGeneratorListItemPresenter {
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## target-length
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.target-length#${id}`),
+      text: game.i18n.localize("wg.generator.targetLength.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## entropy
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.entropy#${id}`),
+      text: game.i18n.localize("wg.generator.entropy.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## entropy-start
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.entropy-start#${id}`),
+      text: game.i18n.localize("wg.generator.entropy.start.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## entropy-middle
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.entropy-middle#${id}`),
+      text: game.i18n.localize("wg.generator.entropy.middle.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## entropy-end
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.entropy-end#${id}`),
+      text: game.i18n.localize("wg.generator.entropy.end.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## ending-pick-mode
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.ending-pick-mode#${id}`),
+      text: game.i18n.localize("wg.generator.endingPickMode.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## sequencing-strategy
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.sequencing-strategy#${id}`),
+      text: game.i18n.localize("wg.generator.sequencingStrategy.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## spelling-strategy
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.spelling-strategy#${id}`),
+      text: game.i18n.localize("wg.generator.spellingStrategy.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
-    // ## Sample-Set
+    // ## seed
     new InfoBubble({
       html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## Sample-Set
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+      parent: html.find(`.word-generator-info.seed#${id}`),
+      text: game.i18n.localize("wg.generator.seed.infoHint"),
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });

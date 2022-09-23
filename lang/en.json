@@ -19,24 +19,51 @@
       "delete": "Delete Generator",
       "defaultName": "New Generator",
       "generate": "Generate",
-      "targetLengthMin": "Target length minimum",
-      "targetLengthMax": "Target length maximum",
-      "seed": "Randomization Seed",
-      "sequencingStrategy": "Sequencing strategy",
+      "targetLength": {
+        "infoHint": "The generator will try to keep resulting word length within this boundary, but no guarantee is made.",
+        "min": "Target length minimum",
+        "max": "Target length maximum"
+      },
+      "seed": {
+        "label": "Randomization Seed",
+        "infoHint": "This can be any arbitrary chain of numbers and letters, which the generator will use for its randomization. Defining a seed is useful when you want reproducible results."
+      },
+      "sequencingStrategy": {
+        "label": "Sequencing strategy",
+        "infoHint": "A sequencing strategy determines how the samples will be cut up into smaller chunks which the generator can then use to generate new words."
+      },
       "sequencingStrategies": {
         "charDepth": "Character depth",
         "delimiter": "Delimiter"
       },
-      "spellingStrategy": "Spelling strategy",
+      "spellingStrategy": {
+        "label": "Spelling strategy",
+        "infoHint": "A spelling strategy is applied to generated words, for example to capitalize their first letter."
+      },
       "spellingStrategies": {
         "none": "None",
         "capitalizeFirstLetter": "Capitalize first letter"
       },
-      "entropy": "Entropy",
-      "entropyStart": "Entropy start",
-      "entropyMiddle": "Entropy middle",
-      "entropyEnd": "Entropy end",
-      "endingPickMode": "Ending pick mode",
+      "entropy": {
+        "label": "Entropy",
+        "infoHint": "A number between 0 and 1 (inclusive), which determines the randomness of words, in general. Increasing this number also increases variance, but at the cost of cohesion.",
+        "start": {
+          "label": "Entropy start",
+          "infoHint": "A number between 0 and 1 (inclusive), which determines the randomness of starting sequences. Increasing this number also increases variance, but at the cost of cohesion."
+        },
+        "middle": {
+          "label": "Entropy middle",
+          "infoHint": "A number between 0 and 1 (inclusive), which determines the randomness of middle sequences. Increasing this number also increases variance, but at the cost of cohesion."
+        },
+        "end": {
+          "label": "Entropy end",
+          "infoHint": "A number between 0 and 1 (inclusive), which determines the randomness of ending sequences. Increasing this number also increases variance, but at the cost of cohesion."
+        }
+      },
+      "endingPickMode": {
+        "label": "Ending pick mode",
+        "infoHint": "Determines how and if an ending sequence will be picked for generated words. NONE: Ending sequences are not considered at all and may even appear in the middle of a built word. Greatest variance, lowest cohesion. RANDOM: An ending sequence is picked entirely at random, from the set of ending sequences. Good variance and cohesion. FOLLOW_BRANCH: Branches will be followed until eventually reaching an ending sequence, which is then picked. Lowest variance and greatest cohesion."
+      },
       "endingPickModes": {
         "none": "None",
         "random": "Random",

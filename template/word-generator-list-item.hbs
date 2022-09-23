@@ -46,43 +46,43 @@ spellingStrategies: Array<DropDownOption>
     </div>
     {{!-- targetLengthMin --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-targetLengthMin">{{localize "wg.generator.targetLengthMin"}}</label>
+      <label for="{{listItem.id}}-targetLengthMin">{{localize "wg.generator.targetLength.min"}}</label>
       <i class="far fa-question-circle word-generator-info target-length" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-targetLengthMin" type="number" min="1" value="{{listItem.targetLengthMin}}" />
     </div>
     {{!-- targetLengthMax --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-targetLengthMax">{{localize "wg.generator.targetLengthMax"}}</label>
+      <label for="{{listItem.id}}-targetLengthMax">{{localize "wg.generator.targetLength.max"}}</label>
       <i class="far fa-question-circle word-generator-info target-length" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-targetLengthMax" type="number" min="1" value="{{listItem.targetLengthMax}}" />
     </div>
     {{!-- entropy --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-entropy">{{localize "wg.generator.entropy"}}</label>
+      <label for="{{listItem.id}}-entropy">{{localize "wg.generator.entropy.label"}}</label>
       <i class="far fa-question-circle word-generator-info entropy" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-entropy" type="number" min="0" max="1" value="{{listItem.entropy}}" />
     </div>
     {{!-- entropyStart --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-entropyStart">{{localize "wg.generator.entropyStart"}}</label>
+      <label for="{{listItem.id}}-entropyStart">{{localize "wg.generator.entropy.start.label"}}</label>
       <i class="far fa-question-circle word-generator-info entropy-start" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-entropyStart" type="number" min="0" max="1" value="{{listItem.entropyStart}}" />
     </div>
     {{!-- entropyMiddle --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-entropyMiddle">{{localize "wg.generator.entropyMiddle"}}</label>
+      <label for="{{listItem.id}}-entropyMiddle">{{localize "wg.generator.entropy.middle.label"}}</label>
       <i class="far fa-question-circle word-generator-info entropy-middle" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-entropyMiddle" type="number" min="0" max="1" value="{{listItem.entropyMiddle}}" />
     </div>
     {{!-- entropyEnd --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-entropyEnd">{{localize "wg.generator.entropyEnd"}}</label>
+      <label for="{{listItem.id}}-entropyEnd">{{localize "wg.generator.entropy.end.label"}}</label>
       <i class="far fa-question-circle word-generator-info entropy-end" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-entropyEnd" type="number" min="0" max="1" value="{{listItem.entropyEnd}}" />
     </div>
     {{!-- endingPickMode --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-endingPickMode">{{localize "wg.generator.endingPickMode"}}</label>
+      <label for="{{listItem.id}}-endingPickMode">{{localize "wg.generator.endingPickMode.label"}}</label>
       <i class="far fa-question-circle word-generator-info ending-pick-mode" id="{{listItem.id}}"></i>
       <select id="{{listItem.id}}-endingPickMode">
         <option value="0">{{localize "wg.generator.endingPickModes.none"}}</option>
@@ -93,7 +93,7 @@ spellingStrategies: Array<DropDownOption>
     {{!-- sequencingStrategy --}}
     <div class="word-generator-card">
       <div class="flexrow">
-        <label for="{{listItem.id}}-sequencingStrategy">{{localize "wg.generator.sequencingStrategy"}}</label>
+        <label for="{{listItem.id}}-sequencingStrategy">{{localize "wg.generator.sequencingStrategy.label"}}</label>
         <i class="far fa-question-circle word-generator-info sequencing-strategy" id="{{listItem.id}}"></i>
         <select id="{{listItem.id}}-sequencingStrategy">
           {{#each sequencingStrategies as |strategy index|}}
@@ -111,7 +111,7 @@ spellingStrategies: Array<DropDownOption>
     {{!-- spellingStrategy --}}
     <div class="word-generator-card">
       <div class="flexrow">
-        <label for="{{listItem.id}}-spellingStrategy">{{localize "wg.generator.spellingStrategy"}}</label>
+        <label for="{{listItem.id}}-spellingStrategy">{{localize "wg.generator.spellingStrategy.label"}}</label>
         <i class="far fa-question-circle word-generator-info spelling-strategy" id="{{listItem.id}}"></i>
         <select id="{{listItem.id}}-spellingStrategy">
           {{#each spellingStrategies as |strategy index|}}
@@ -128,7 +128,7 @@ spellingStrategies: Array<DropDownOption>
     </div>
     {{!-- Seed --}}
     <div class="flexrow">
-      <label for="{{listItem.id}}-seed">{{localize "wg.generator.seed"}}</label>
+      <label for="{{listItem.id}}-seed">{{localize "wg.generator.seed.label"}}</label>
       <i class="far fa-question-circle word-generator-info seed" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-seed" type="text" value="{{listItem.seed}}" />
     </div>
