@@ -1,7 +1,10 @@
 .word-generator-application-form {
   display: grid;
   grid-template-columns: minmax(25rem, 1fr) 2fr;
-  gap: 1rem; }
+  gap: 1rem;
+  overflow-y: hidden; }
+  .word-generator-application-form > div {
+    overflow-y: hidden; }
 
 .word-generator-unstyled-list {
   list-style: none;

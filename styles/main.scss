@@ -3,6 +3,11 @@
     display: grid;
     grid-template-columns: minmax(25rem, 1fr) 2fr;
     gap: 1rem;
+    overflow-y: hidden;
+
+    > div {
+      overflow-y: hidden;
+    }
   }
 
   &-unstyled-list {

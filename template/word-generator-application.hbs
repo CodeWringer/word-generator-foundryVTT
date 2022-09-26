@@ -39,7 +39,7 @@ applicationSettings: WordGeneratorApplicationSettings
         <i class="fas fa-sort-alpha-up"></i>
       </button>
     </div>
-    <ul class="word-generator-unstyled-list">
+    <ul class="word-generator-unstyled-list word-generator-scrollable">
       {{#each settings as |setting index|}}
         {{> "modules/word-generator/template/word-generator-list-item.hbs" 
           listItem=setting 
@@ -52,7 +52,7 @@ applicationSettings: WordGeneratorApplicationSettings
   {{!-- Spacer --}}
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
-  <div class="word-generator-flex column grow scrollable">
+  <div class="word-generator-flex column grow">
     <div class="word-generator-flex row">
       <label 
         class="word-generator-flex grow align-center" 
@@ -88,7 +88,7 @@ applicationSettings: WordGeneratorApplicationSettings
         <i class="fas fa-sort-alpha-up"></i>
       </button>
     </div>
-    <ul class="word-generator-unstyled-list">
+    <ul class="word-generator-unstyled-list word-generator-scrollable">
       {{#each generatedWords as |generatedWord index|}}
       <div id="generated-word-{{index}}" class="word-generator-flex row word-generator-generated-word">
         <button 
