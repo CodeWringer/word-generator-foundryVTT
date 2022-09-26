@@ -1,4 +1,4 @@
-import WordGeneratorApplicationDataSource from "../generator/data/word-generator-application-datasource.mjs";
+import WordGeneratorApplicationDataSource from "../presentation/data/word-generator-application-datasource.mjs";
 import AbstractUseCase from "./abstract-use-case.mjs";
 
 export default class SetApplicationSettingsUseCase extends AbstractUseCase {

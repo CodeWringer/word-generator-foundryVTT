@@ -1,6 +1,6 @@
 import LoadMockSettingUseCase from "../../use_case/load-mock-setting-use-case.mjs";
 import MockGeneratorDataSource from "./mock-generator-datasource.mjs";
-import UserFlagGeneratorSettingsDataSource from "./user-flag-datasource.mjs";
+import UserFlagGeneratorSettingsDataSource from "./user-flag-generator-settings-datasource.mjs";
 
 /**
  * Provides access to a generator data source implementation. 
