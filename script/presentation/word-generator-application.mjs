@@ -87,6 +87,32 @@ export default class WordGeneratorApplication extends Application {
    */
   _applicationSettings = undefined;
 
+  /**
+   * @type {Jquery}
+   * @private
+   */
+  _generatorListElement = undefined;
+
+  /**
+   * @type {Jquery}
+   * @private
+   */
+  _resultListElement = undefined;
+
+  /**
+   * Current scroll value of the generators list.
+   * @type {Number}
+   * @private
+   */
+  _currentScrollGeneratorList = 0;
+  
+  /**
+   * Current scroll value of the resulting words list.
+   * @type {Number}
+   * @private
+   */
+  _currentScrollResultList = 0;
+
   constructor() {
     super();
 
@@ -114,6 +140,12 @@ export default class WordGeneratorApplication extends Application {
     super.activateListeners(html);
 
     const thiz = this;
+
+    this._generatorListElement = html.find('#generators-list');
+    this._resultListElement = html.find('#results-list');
+
+    this._generatorListElement.scrollTop(this._currentScrollGeneratorList);
+    this._resultListElement.scrollTop(this._currentScrollResultList);
 
     // General event handling. 
 
@@ -217,6 +249,18 @@ export default class WordGeneratorApplication extends Application {
       spellingStrategies: spellingStrategies,
       applicationSettings: this._applicationSettings,
     }
+  }
+
+  /** @override */
+  render(args) {
+    if (this._generatorListElement !== undefined) {
+      this._currentScrollGeneratorList = this._generatorListElement.scrollTop();
+    }
+    if (this._resultListElement !== undefined) {
+      this._currentScrollResultList = this._resultListElement.scrollTop();
+    }
+
+    super.render(args);
   }
 
   /**
