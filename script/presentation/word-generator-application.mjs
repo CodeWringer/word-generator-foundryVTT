@@ -272,6 +272,11 @@ export default class WordGeneratorApplication extends Application {
       application: this,
     }));
 
+    new SetGeneratorsUseCase().invoke({
+      userId: game.userId,
+      generatorSettings: this._generators,
+    });
+
     this.render();
   }
 
