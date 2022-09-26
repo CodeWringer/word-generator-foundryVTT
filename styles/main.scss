@@ -76,6 +76,11 @@
     & > i {
       margin: 0;
     }
+
+    &.active {
+      background-color: #b7626228;
+      border: solid 1px #b7626228;
+    }
   }
 
   &-move-controls {

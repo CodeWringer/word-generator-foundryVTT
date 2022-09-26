@@ -173,12 +173,33 @@ export default class WordGeneratorApplication extends Application {
     });
 
     // Sorting result list
-    html.find("#results-move-sort-alpha-desc").click(() => {
-      thiz._sortResults(SORTING_ORDERS.DESC);
+    const resultsSortDescButtonElement = html.find("#results-move-sort-alpha-desc");
+    resultsSortDescButtonElement.click(() => {
+      this._applicationSettings.resultsSortMode = SORTING_ORDERS.DESC;
+      new SetApplicationSettingsUseCase().invoke({
+        userId: game.userId,
+        value: this._applicationSettings,
+      });
+      
+      thiz._sortResults();
     });
-    html.find("#results-move-sort-alpha-asc").click(() => {
-      thiz._sortResults(SORTING_ORDERS.ASC);
+    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.DESC) {
+      resultsSortDescButtonElement.addClass("active");
+    }
+
+    const resultsSortAscButtonElement = html.find("#results-move-sort-alpha-asc");
+    resultsSortAscButtonElement.click(() => {
+      this._applicationSettings.resultsSortMode = SORTING_ORDERS.ASC;
+      new SetApplicationSettingsUseCase().invoke({
+        userId: game.userId,
+        value: this._applicationSettings,
+      });
+
+      thiz._sortResults();
     });
+    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.ASC) {
+      resultsSortAscButtonElement.addClass("active");
+    }
 
     // List item event handling. 
     for (const generator of this._generatorPresenters) {
@@ -344,22 +365,34 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-handler to sort generated words. 
-   * @param {SORTING_ORDERS} sortingOrder 
+   * Returns the current list of generated words, sorted by the corresponding application 
+   * setting's sorting mode. 
+   * 
+   * @returns {Array<String>} The sorted list of generated words. 
+   * 
+   * @private
    */
-  _sortResults(sortingOrder = SORTING_ORDERS.DESC) {
+  _getResultsSorted() {
     let sorted = this._generatedWords;
-    if (sortingOrder === SORTING_ORDERS.DESC) {
+    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.DESC) {
       sorted = sorted.sort();
     } else {
       sorted = sorted.sort().reverse();
     }
+    return sorted;
+  }
 
-    this._generatedWords = sorted;
+  /**
+   * Click-handler to sort generated words. 
+   * 
+   * @private
+   */
+  _sortResults() {
+    this._generatedWords = this._getResultsSorted();
     
     this.render();
   }
-
+  
   /**
    * Click-handler to generate words, using a given generator. 
    * @param {WordGenerator} generator The generator instance to utilize. 
@@ -368,6 +401,7 @@ export default class WordGeneratorApplication extends Application {
     try {
       const generatedWords = generator.generate(this._applicationSettings.amountToGenerate);
       this._generatedWords = generatedWords;
+      this._generatedWords = this._getResultsSorted();
     } catch (error) {
       console.error(error);
     }

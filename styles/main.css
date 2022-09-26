@@ -57,6 +57,9 @@
     height: 100%; }
   .word-generator-square-button > i {
     margin: 0; }
+  .word-generator-square-button.active {
+    background-color: #b7626228;
+    border: solid 1px #b7626228; }
 
 .word-generator-move-controls {
   display: flex;
