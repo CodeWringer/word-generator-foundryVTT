@@ -56,37 +56,31 @@ export class WordGeneratorListItemPresenter {
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
-      const value = parseInt($(data.target).val());
-      thiz.listItem.targetLengthMin = value;
+      thiz.listItem.targetLengthMin = this._parseEmptyToGiven(data, 1);
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
-      const value = parseInt($(data.target).val());
-      thiz.listItem.targetLengthMax = value;
+      thiz.listItem.targetLengthMax = this._parseEmptyToGiven(data, 7);
       this._updateRender()
     });
     html.find(`#${id}-entropy`).change((data) => {
-      const value = parseFloat($(data.target).val());
-      thiz.listItem.entropy = value;
+      thiz.listItem.entropy = this._parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyStart`).change((data) => {
-      const value = parseFloat($(data.target).val());
-      thiz.listItem.entropyStart = value;
+      thiz.listItem.entropyStart = this._parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
-      const value = parseFloat($(data.target).val());
-      thiz.listItem.entropyMiddle = value;
+      thiz.listItem.entropyMiddle = this._parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
-      const value = parseFloat($(data.target).val());
-      thiz.listItem.entropyEnd = value;
+      thiz.listItem.entropyEnd = this._parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-seed`).change((data) => {
-      thiz.listItem.seed = $(data.target).val();
+      thiz.listItem.seed = this._parseEmptyToUndefined(data);
       this._updateRender()
     });
 
@@ -94,7 +88,7 @@ export class WordGeneratorListItemPresenter {
     html.find(`#${id}-sequencing-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
       const setting = this.listItem.sequencingStrategySettings.find(it => it.name === id);
-      setting.value = this._parseValue(setting, data.target);
+      setting.value = this._parseSettingValue(setting, data.target);
       this._updateRender();
     });
 
@@ -102,7 +96,7 @@ export class WordGeneratorListItemPresenter {
     html.find(`#${id}-spelling-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
       const setting = this.listItem.spellingStrategySettings.find(it => it.name === id);
-      setting.value = this._parseValue(setting, data.target);
+      setting.value = this._parseSettingValue(setting, data.target);
       this._updateRender();
     });
 
@@ -273,7 +267,7 @@ export class WordGeneratorListItemPresenter {
    * 
    * @private
    */
-  _parseValue(setting, element) {
+  _parseSettingValue(setting, element) {
     const jElement = $(element);
 
     switch (setting.valueType) {
@@ -286,5 +280,36 @@ export class WordGeneratorListItemPresenter {
       default:
         return $(jElement).val();
     }
+  }
+
+  /**
+   * Returns either the value of the given 'change' event handler's context object 
+   * or `undefined`, if the trimmed value is equal to an empty string. 
+   * 
+   * @param {Object} data Context object of a JQuery 'change' event handler. 
+   * 
+   * @returns {Any | undefined}
+   * 
+   * @private
+   */
+  _parseEmptyToUndefined(data) {
+    const newVal = $(data.target).val().trim();
+    return newVal === "" ? undefined : newVal;
+  }
+
+  /**
+   * Returns either the value of the given 'change' event handler's context object 
+   * or the given value, if the trimmed value is equal to an empty string. 
+   * 
+   * @param {Object} data Context object of a JQuery 'change' event handler. 
+   * @param {Any} emptyValue The value to return, in case of an 'empty' value. 
+   * 
+   * @returns {Any | undefined}
+   * 
+   * @private
+   */
+  _parseEmptyToGiven(data, emptyValue) {
+    const newVal = $(data.target).val().trim();
+    return newVal === "" ? emptyValue : newVal;
   }
 }
