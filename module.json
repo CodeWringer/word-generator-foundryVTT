@@ -1,7 +1,7 @@
 {
   "id": "word-generator",
   "title": "Word Generator",
-  "description": "Adds a means of generating wordes or names semi-randomly, based on a provided sample set, via a dedicated menu.",
+  "description": "Adds a means of generating words or names semi-randomly, based on a provided sample set, via a dedicated menu.",
   "authors": [
 		{
 			"name": "Nicolas Haase",
