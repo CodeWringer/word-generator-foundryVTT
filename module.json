@@ -1,11 +1,19 @@
 {
-  "name": "word-generator",
+  "id": "word-generator",
   "title": "Word Generator",
   "description": "Adds a means of generating wordes or names semi-randomly, based on a provided sample set, via a dedicated menu.",
-  "author": "Nicolas Haase",
+  "authors": [
+		{
+			"name": "Nicolas Haase",
+			"url": "https://github.com/CodeWringer",
+			"discord": "Krubi#1695"
+		}
+	],
   "version": "1.0.0",
-  "minimumCoreVersion": "0.9.269",
-  "compatibleCoreVersion": "9",
+  "compatibility": {
+    "minimum": 10,
+    "verified": "10.286"
+  },
   "esmodules": [
     "script/init.mjs",
     "script/presentation/word-generator-application.mjs"
