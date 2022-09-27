@@ -1,5 +1,7 @@
 # Text Generator
-This module for FoundryVTT adds a means of randomly generating names, based on a given sample set and parameters. 
+This module for FoundryVTT adds a means of randomly generating words, names or even sentences, based on a given sample set. 
+
+![Screenshot](img/word-generator-screenshot.png)
 
 ## Usage (Macro)
 This section explains how to make use of the module as it comes out of the box. 
@@ -92,8 +94,8 @@ Additionally, **spelling** strategies must implement:
 * `getSettings`
 
 For a description of what these methods are expected to do and return, see the documentation of: 
-* `AbstractSequencingStrategy`
-* `AbstractSpellingStrategy`
+* [`AbstractSequencingStrategy`](script/generator/sequencing/abstract-sequencing-strategy.mjs)
+* [`AbstractSpellingStrategy`](script/generator/postprocessing/abstract-spelling-strategy.mjs)
 
 ### Sequencing Strategy
 A sequencing strategy is the piece of logic that 'cuts' a given sample into sequences. A sequence can be as short as a single character or as long as several sentences. 
@@ -149,4 +151,4 @@ WordGeneratorApplication.registeredSpellingStrategies.register(new myCustomSpell
 No npm packages or other dependencies have been included. This was at least partly a deliberate decision: 
 1. There is no native support for npm packages in FoundryVTT modules. 
 1. Bundling the dependencies would be possible, but requires the significant overhead and experience of setting up a bundler. 
-1. Dependencies always introduce another potential point of failure. Should any one of the potentially thousands of indirect dependencies cause problems, the overhead of troubleshooting would be much too great. This software is simple enough to not need the potential for depdenceny-hell. 
+1. Dependencies always introduce another potential point of failure. Should any one of the potentially hundreds of indirect dependencies cause problems, the overhead of troubleshooting would be much too great. This software is simple enough to not need the potential for dependency-hell. 
