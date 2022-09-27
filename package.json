@@ -4,7 +4,7 @@
   "description": "Adds a means of generating names semi-randomly, based on a provided sample set, via a dedicated menu.",
   "main": "word-generator.js",
   "scripts": {
-    "build": "node build.js",
+    "build": "node ./npm-scripts/build.mjs",
     "sass": "node-sass ./styles/main.scss ./styles/main.css",
     "sass:watch": "node-sass ./styles/main.scss -w -o ./styles",
     "test": "mocha ./test/**/*.[m]js"
