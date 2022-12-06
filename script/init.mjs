@@ -5,6 +5,33 @@ import { preloadHandlebarsTemplates } from "./presentation/templates.mjs";
 import WordGeneratorApplication from "./presentation/word-generator-application.mjs";
 import CustomUserSettings from "./settings/custom-user-settings.mjs";
 
+
+/* -------------------------------------------- */
+/*  Handlebars Helpers                          */
+/* -------------------------------------------- */
+
+/**
+ * Returns `true`, if the given parameters are considered equal. Otherwise, returns `false`. 
+ * @param {Any} a
+ * @param {Any} b
+ * 
+ * @returns {Boolean}
+ */
+Handlebars.registerHelper('eq', function(a, b) {
+  return a == b;
+});
+
+/**
+ * Returns `true`, if the given parameters are *not* considered equal. Otherwise, returns `false`. 
+ * @param {Any} a
+ * @param {Any} b
+ * 
+ * @returns {Boolean}
+ */
+Handlebars.registerHelper('neq', function(a, b) {
+  return a != b;
+});
+
 Hooks.once('init', async function() {
   // Settings initialization.
   new CustomUserSettings().ensureAllSettings();
