@@ -154,6 +154,10 @@
     // -webkit-filter: drop-shadow(0, 0, 20px, var(--color-shadow-primary));
     z-index: 6;
     padding: 0.25rem;
+
+    &.hidden {
+      display: none;
+    }
   }
 
   &-modal {
