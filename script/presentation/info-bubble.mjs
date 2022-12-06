@@ -105,7 +105,7 @@ export default class InfoBubble {
   /**
    * Manually shows the info bubble. 
    * 
-   * Calling this method is not necessary, if an automatic show type other than `NONE` ist defined. 
+   * Calling this method is not necessary, if an automatic show type other than `NONE` is defined. 
    */
   show() {
     // Important: The hidden class must be removed first, as otherwise the element's width and height will 
@@ -128,7 +128,7 @@ export default class InfoBubble {
   /**
    * Hides the info bubble. 
    * 
-   * Calling this method is not necessary, if an automatic hiding type other than `NONE` ist defined. 
+   * Calling this method is not necessary, if an automatic hiding type other than `NONE` is defined. 
    */
   hide() {
     this._element.addClass("hidden");
