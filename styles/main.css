@@ -91,6 +91,11 @@
     align-items: center; }
   .word-generator-flex.grow {
     flex-grow: 1; }
+  .word-generator-flex.center {
+    justify-content: center;
+    align-items: center; }
+  .word-generator-flex.middle {
+    align-items: center; }
 
 .word-generator-controls-bar {
   height: 1.8rem; }

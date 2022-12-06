@@ -10,15 +10,16 @@ applicationSettings: WordGeneratorApplicationSettings
   <div class="word-generator-flex column scrollable">
     <div class="word-generator-controls-bar word-generator-flex row">
       {{!-- Creation control --}}
-      <a class="flex flex-middle" 
+      <a class="word-generator-flex row" 
         id="create-generator"
       >
-        <div class="word-generator-square-button light flex flex-center">
+        <div class="word-generator-square-button light word-generator-flex center">
           <i class="fas fa-plus"></i>
         </div>
-        <span>{{localize "wg.generator.create"}}</span>
+        <div class="word-generator-flex middle">
+          <span>{{localize "wg.generator.create"}}</span>
+        </div>
       </a>
-      <div class="word-generator-flex-grow"></div>
       {{!-- Spacer --}}
       <div class="word-generator-flex grow"></div>
       {{!-- Sorting controls --}}
