@@ -11,3 +11,6 @@ npm-debug.log
 
 # Generated
 build/
+
+# User
+todo*
