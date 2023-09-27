@@ -3,7 +3,7 @@ import * as DialogUtil from "../util/dialog-utility.mjs";
 import InfoBubble from "./info-bubble.mjs";
 import { InfoBubbleAutoShowingTypes, InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
 import WordGeneratorApplication from "./word-generator-application.mjs";
-import WordGeneratorSamplesApplication from "./word-generator-samples-application.mjs";
+import WordGeneratorSamplesApplication from "./application/word-generator-samples-application/word-generator-samples-application.mjs";
 
 /**
  * This presenter handles a singular list item. 

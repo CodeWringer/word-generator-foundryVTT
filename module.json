@@ -13,22 +13,22 @@
   "version": "1.0.5",
   "compatibility": {
     "minimum": 10,
-    "verified": 10.291
+    "verified": 10.303
   },
   "esmodules": [
-    "script/init.mjs",
-    "script/presentation/word-generator-application.mjs"
+    "module.mjs",
+    "presentation/word-generator-application.mjs"
   ],
   "socket": true,
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "presentation/lang/en.json"
     }
   ],
   "styles": [
-    "styles/main.css"
+    "presentation/styles/main.css"
   ],
   "url": "https://github.com/CodeWringer/word-generator-foundryVTT",
   "manifest": "https://github.com/CodeWringer/word-generator-foundryVTT/releases/latest/download/module.json",

@@ -1,6 +1,7 @@
 import WordGeneratorSettings from "../generator/data/word-generator-settings.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import TypeRegistrar from "../generator/type-registrar.mjs";
+import AddFolderUseCase from "../use_case/add-folder-use-case.mjs";
 import AddGeneratorUseCase from "../use_case/add-generator-use-case.mjs";
 import LoadApplicationSettingsUseCase from "../use_case/load-application-settings-use-case.mjs";
 import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
@@ -8,12 +9,13 @@ import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
 import SetApplicationSettingsUseCase from "../use_case/set-application-settings-use-case.mjs";
 import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
 import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
-import DropDownOption from "./drop-down-option.mjs";
+import WordGeneratorFolder from "./data/word-generator-folder.mjs";
+import DropDownOption from "../../drop-down-option.mjs";
 import InfoBubble from "./info-bubble.mjs";
 import { InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
-import { WordGeneratorListItemPresenter } from "./list-item-presenter.mjs";
-import { SORTING_ORDERS } from "./sorting-orders.mjs";
-import { TEMPLATES } from "./templates.mjs";
+import { WordGeneratorListItemPresenter } from "../../list-item-presenter.mjs";
+import { SORTING_ORDERS } from "../../sorting-orders.mjs";
+import { TEMPLATES } from "../../templates.mjs";
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -113,6 +115,13 @@ export default class WordGeneratorApplication extends Application {
    */
   _currentScrollResultList = 0;
 
+  /**
+   * The list of folders. 
+   * @type {Array<Object>}
+   * @private
+   */
+  _folders = [];
+
   constructor() {
     super();
 
@@ -149,9 +158,14 @@ export default class WordGeneratorApplication extends Application {
 
     // General event handling. 
 
-    // Word generator adding
+    // Word generator creation
     html.find("#create-generator").click(() => {
       thiz._createGenerator();
+    });
+
+    // Folder creation
+    html.find("#create-folder").click(() => {
+      thiz._createFolder();
     });
 
     // Sorting word generators
@@ -459,6 +473,56 @@ export default class WordGeneratorApplication extends Application {
         return false;
       }
     }
+  }
+
+  /**
+   * Prompts the user to enter a folder name and then creates a new folder with 
+   * that name. 
+   * 
+   * @async
+   * @private
+   */
+  async _createFolder() {
+    let name = "";
+    const dialog = await new Dialog({
+      title: "Create Folder",
+      content: '<span>Folder Name</span><input id="inputName" type="text"></input>',
+      buttons: {
+        confirm: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Confirm",
+          callback: () => {
+            this.confirmed = true; 
+            this.close();
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel",
+          callback: () => {
+            this.confirmed = false; 
+            this.close();
+          }
+        }
+      },
+      default: "cancel",
+      close: html => {
+        name = html.find("#inputName").val();
+      }
+    }).render(true);
+
+    const newFolder = new WordGeneratorFolder({
+      name: name,
+    });
+
+    this._folders.push(newFolder);
+
+    new AddFolderUseCase().invoke({
+      userId: game.userId,
+      data: newFolder,
+    });
+    
+    this.render();
   }
 }
 

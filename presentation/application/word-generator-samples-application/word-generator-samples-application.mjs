@@ -1,4 +1,4 @@
-import { TEMPLATES } from "./templates.mjs";
+import { TEMPLATES } from "../../templates.mjs";
 
 /**
  * Houses the presentation layer logic for the sample set of a generator. 
@@ -24,7 +24,7 @@ export default class WordGeneratorSamplesApplication extends Application {
     const overrides = {
       height: 'auto',
       id: 'word-generator-application-sampleset',
-      template: TEMPLATES.WORD_GENERATOR_SAMPLES_DIALOG,
+      template: TEMPLATES.WORD_GENERATOR_SAMPLES_APPLICATION,
       userId: game.userId,
       width: 300,
       height: 400,
