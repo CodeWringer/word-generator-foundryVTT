@@ -182,6 +182,12 @@ export class WordGeneratorListItemPresenter {
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
     });
 
+    // ## collapse button
+    html.find(`#${id}-collapse`).click(() => {
+      thiz.listItem.collapsed = !(thiz.listItem.collapsed ?? false);
+      this._updateRender()
+    });
+
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;
     html.find(`#${idEndingPickMode}`).change((data) => {

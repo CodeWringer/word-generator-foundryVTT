@@ -54,6 +54,10 @@
     min-height: 1.8rem;
   }
 
+  &-square {
+    aspect-ratio: 1/1;
+  }
+
   &-square-button {
     aspect-ratio: 1/1;
     display: flex;

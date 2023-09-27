@@ -39,6 +39,9 @@
   display: inline-block;
   min-height: 1.8rem; }
 
+.word-generator-square {
+  aspect-ratio: 1/1; }
+
 .word-generator-square-button {
   aspect-ratio: 1/1;
   display: flex;

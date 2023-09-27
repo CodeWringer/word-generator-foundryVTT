@@ -8,27 +8,32 @@ spellingStrategies: Array<DropDownOption>
   {{> "modules/word-generator/template/move-controls.hbs" listItemId=listItem.id }}
   <div class="word-generator-flex flexcol grow">
     {{!-- Header Row --}}
-    <div class="flexrow">
-      {{!-- Delete Button --}}
-      <button 
-        class="word-generator-square-button danger"
-        type="button" 
-        id="{{listItem.id}}-delete"
-        data-id="{{listItem.id}}"
-        title="{{localize "wg.generator.delete"}}"
-        >
-        <i class="fas fa-trash"></i>
-      </button>
-      {{!-- Name Input --}}
-      <input 
-        class="word-generator-input-textfield"
-        type="text"
-        id="{{listItem.id}}-name"
-        data-id="{{listItem.id}}"
-        placeholder="{{localize "wg.generator.placeholder.name"}}"
-        value="{{listItem.name}}"
-      />
+    <div class="word-generator-flex column">
+      <div class="word-generator-flex middle">
+        {{!-- Delete Button --}}
+        <button 
+          class="word-generator-square-button danger"
+          type="button" 
+          id="{{listItem.id}}-delete"
+          data-id="{{listItem.id}}"
+          title="{{localize "wg.generator.delete"}}"
+          >
+          <i class="fas fa-trash"></i>
+        </button>
+        {{!-- Name Input --}}
+        <input 
+          class="word-generator-input-textfield"
+          type="text"
+          id="{{listItem.id}}-name"
+          data-id="{{listItem.id}}"
+          placeholder="{{localize "wg.generator.placeholder.name"}}"
+          value="{{listItem.name}}"
+        />
+      </div>
+      <div class="word-generator-flex grow"></div>
     </div>
+    {{#if listItem.collapsed}}
+    {{else}}
     {{!-- Sample Set --}}
     <div class="flexrow">
       <label for="{{listItem.id}}-sampleSet">{{localize "wg.generator.sampleSet.field"}}</label>
@@ -127,16 +132,32 @@ spellingStrategies: Array<DropDownOption>
       </ul>
     </div>
     {{!-- Seed --}}
-    <div class="flexrow">
+    <div class="word-generator-flex row">
       <label for="{{listItem.id}}-seed">{{localize "wg.generator.seed.label"}}</label>
       <i class="far fa-question-circle word-generator-info seed" id="{{listItem.id}}"></i>
       <input id="{{listItem.id}}-seed" type="text" value="{{listItem.seed}}" />
     </div>
+    {{/if}}
+    {{!-- Collapse Button --}}
+    <div class="word-generator-flex" style="max-height: 2rem">
+      <a
+        class="word-generator-flex grow center button"
+        id="{{listItem.id}}-collapse"
+        >
+        <span class="word-generator-flex center word-generator-square">
+          {{#if listItem.collapsed}}
+          <i class="fas fa-angle-double-down"></i>
+          {{else}}
+          <i class="fas fa-angle-double-up"></i>
+          {{/if}}
+        </span>
+      </a>
+    </div>
   </div>
   {{!-- Generate --}}
-  <div>
+  <div class="word-generator-flex">
     <button 
-      class="word-generator-square-button fill-h"
+      class="word-generator-square-button grow"
       type="button" 
       id="{{listItem.id}}-generate"
       data-id="{{listItem.id}}"

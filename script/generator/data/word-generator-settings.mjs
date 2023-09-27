@@ -29,6 +29,8 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * @property {Number} entropyEnd
  * 
  * @property {ENDING_PICK_MODES} endingPickMode
+ * 
+ * @property {Boolean} collapsed If true, the entry is to be rendered collapsed. 
  */
 export default class WordGeneratorSettings {
   /**
@@ -57,6 +59,8 @@ export default class WordGeneratorSettings {
    * @param {Number | undefined} args.entropyEnd
    * 
    * @param {ENDING_PICK_MODES | undefined} args.endingPickMode
+   * 
+   * @param {Boolean | undefined} args.collapsed
    */
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
@@ -84,6 +88,8 @@ export default class WordGeneratorSettings {
     this.entropyEnd = args.entropyEnd ?? 0;
 
     this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.RANDOM;
+
+    this.collapsed = args.collapsed ?? false;
   }
 
   /**
@@ -156,6 +162,7 @@ export default class WordGeneratorSettings {
       entropyMiddle: obj.entropyMiddle,
       entropyEnd: obj.entropyEnd,
       endingPickMode: obj.endingPickMode,
+      collapsed: obj.collapsed,
     });
   }
 
@@ -183,6 +190,7 @@ export default class WordGeneratorSettings {
       entropyMiddle: this.entropyMiddle,
       entropyEnd: this.entropyEnd,
       endingPickMode: this.endingPickMode,
+      collapsed: this.collapsed,
     };
   }
 }
