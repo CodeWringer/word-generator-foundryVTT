@@ -24,25 +24,32 @@
   border-style: solid;
   border-top-width: 6px; }
 
+.word-generator-controls-bar {
+  background-color: #2e2e2e;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px; }
+  .word-generator-controls-bar label {
+    color: #d5d5d5; }
+  .word-generator-controls-bar input {
+    background-color: #d5d5d5; }
+  .word-generator-controls-bar a.word-generator-button.active {
+    background-color: #e5afaf; }
+
 .word-generator-input-textfield {
   display: inline-block;
   min-height: 1.8rem; }
 
-.word-generator-button {
-  width: 10rem; }
-
 .word-generator-square-button {
-  width: 1.8rem;
-  height: 1.8rem;
+  aspect-ratio: 1/1;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   max-width: 1.8rem;
   min-width: 1.8rem;
-  margin: 0;
+  margin: 3px;
   border: solid 1px #7a7971;
-  border-radius: 3px;
+  border-radius: 5px;
   cursor: pointer; }
   .word-generator-square-button.flat-v {
     height: 1.5rem; }
@@ -64,7 +71,7 @@
 .word-generator-move-controls {
   display: flex;
   flex-direction: column;
-  width: 1.8rem;
+  max-width: 3rem;
   border-right: solid 1px #8d8d8d;
   height: 100%; }
   .word-generator-move-controls-container {
@@ -85,7 +92,11 @@
     flex-direction: row; }
   .word-generator-flex.column {
     flex-direction: column; }
+  .word-generator-flex.align-start {
+    justify-content: flex-start;
+    align-items: flex-start; }
   .word-generator-flex.align-end {
+    justify-content: flex-end;
     align-items: flex-end; }
   .word-generator-flex.align-center {
     align-items: center; }
@@ -96,9 +107,6 @@
     align-items: center; }
   .word-generator-flex.middle {
     align-items: center; }
-
-.word-generator-controls-bar {
-  height: 1.8rem; }
 
 .word-generator-results-textarea {
   display: block;
@@ -137,3 +145,12 @@
   display: flex;
   align-items: center;
   justify-content: center; }
+
+a.word-generator-button {
+  background: rgba(255, 255, 240, 0.8);
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 3px;
+  box-sizing: border-box;
+  margin: 4px; }
+  a.word-generator-button .word-generator-button-icon {
+    margin-right: 4px; }

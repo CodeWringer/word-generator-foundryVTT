@@ -31,27 +31,40 @@
     border-top-width: 6px;
   }
 
+  &-controls-bar {
+    background-color: #2e2e2e;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+
+    label {
+      color: #d5d5d5;
+    }
+
+    input {
+      background-color: #d5d5d5;
+    }
+
+    a.word-generator-button.active {
+      background-color: #e5afaf;
+    }
+  }
+
   &-input-textfield {
     display: inline-block;
     min-height: 1.8rem;
   }
 
-  &-button {
-    width: 10rem;
-  }
-
   &-square-button {
-    width: 1.8rem;
-    height: 1.8rem;
+    aspect-ratio: 1/1;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1rem;
     max-width: 1.8rem;
     min-width: 1.8rem;
-    margin: 0;
+    margin: 3px;
     border: solid 1px #7a7971;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
 
     &.flat-v {
@@ -86,7 +99,7 @@
   &-move-controls {
     display: flex;
     flex-direction: column;
-    width: 1.8rem;
+    max-width: 3rem;
     border-right: solid 1px #8d8d8d;
     height: 100%;
 
@@ -114,7 +127,12 @@
     &.column {
       flex-direction: column;
     }
+    &.align-start {
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
     &.align-end {
+      justify-content: flex-end;
       align-items: flex-end;
     }
     &.align-center {
@@ -130,10 +148,6 @@
     &.middle {
       align-items: center;
     }
-  }
-
-  &-controls-bar {
-    height: 1.8rem;
   }
 
   &-results-textarea {
@@ -183,5 +197,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+a.word-generator-button {
+  background: rgba(255, 255, 240, 0.8);
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 3px;
+  box-sizing: border-box;
+  margin: 4px;
+
+  .word-generator-button-icon {
+    margin-right: 4px;
   }
 }

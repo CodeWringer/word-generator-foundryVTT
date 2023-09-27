@@ -4,6 +4,9 @@
       "title": "Word Generators",
       "close": "Close"
     },
+    "folder": {
+      "create": "Create Folder"
+    },
     "general": {
       "copy": {
         "toClipboard": "Copy to clipboard",
@@ -14,7 +17,7 @@
       "cancel": "Cancel"
     },
     "generator": {
-      "create": "Add New Generator",
+      "create": "Create Generator",
       "confirmDeletion": "Delete Generator?",
       "delete": "Delete Generator",
       "defaultName": "New Generator",

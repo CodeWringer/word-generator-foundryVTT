@@ -8,37 +8,47 @@ applicationSettings: WordGeneratorApplicationSettings
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
   <div class="word-generator-flex column scrollable">
-    <div class="word-generator-controls-bar word-generator-flex row">
-      {{!-- Creation control --}}
-      <a class="word-generator-flex row" 
+    <div class="word-generator-flex row word-generator-controls-bar">
+      {{!-- Creation controls --}}
+      {{!-- Create generator --}}
+      <a class="word-generator-flex word-generator-button center row grow" 
         id="create-generator"
       >
-        <div class="word-generator-square-button light word-generator-flex center">
-          <i class="fas fa-plus"></i>
+        <div class="word-generator-flex word-generator-button-icon center">
+          <i class="fas fa-scroll"></i>
         </div>
         <div class="word-generator-flex middle">
           <span>{{localize "wg.generator.create"}}</span>
         </div>
       </a>
-      {{!-- Spacer --}}
-      <div class="word-generator-flex grow"></div>
+      {{!-- Create folder --}}
+      <a class="word-generator-flex word-generator-button center row grow" 
+        id="create-folder"
+      >
+        <div class="word-generator-flex word-generator-button-icon center">
+          <i class="fas fa-folder"></i>
+        </div>
+        <div class="word-generator-flex middle">
+          <span>{{localize "wg.folder.create"}}</span>
+        </div>
+      </a>
       {{!-- Sorting controls --}}
-      <button
-        class="word-generator-square-button light"
+      <a
+        class="word-generator-square-button word-generator-button"
         type="button"
         title="{{localize "wg.generator.sortAlphaDesc"}}"
         id="move-sort-alpha-desc"
         >
         <i class="fas fa-sort-alpha-down"></i>
-      </button>
-      <button
-        class="word-generator-square-button light"
+      </a>
+      <a
+        class="word-generator-square-button word-generator-button"
         type="button"
         title="{{localize "wg.generator.sortAlphaAsc"}}"
         id="move-sort-alpha-asc"
         >
         <i class="fas fa-sort-alpha-up"></i>
-      </button>
+      </a>
     </div>
     <ul id="generators-list" class="word-generator-unstyled-list word-generator-scrollable">
       {{#each settings as |setting index|}}
@@ -54,40 +64,43 @@ applicationSettings: WordGeneratorApplicationSettings
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
   <div class="word-generator-flex column grow">
-    <div class="word-generator-flex row">
-      <label 
-        class="word-generator-flex grow align-center" 
-        for="amountToGenerate"
-      >{{localize "wg.generator.generateCount"}}</label>
-      <span class="word-generator-amountToGenerate">
-        <input 
-          id="amountToGenerate" 
-          type="number" 
-          min="1" 
-          value="{{applicationSettings.amountToGenerate}}" 
-        />
-      </span>
-    </div>
-    {{!-- Sorting controls --}}
-    <div class="word-generator-controls-bar word-generator-flex row">
-      {{!-- Spacer --}}
-      <div class="word-generator-flex grow"></div>
-      <button
-        class="word-generator-square-button light"
-        type="button"
-        title="{{localize "wg.generator.sortAlphaDesc"}}"
-        id="results-move-sort-alpha-desc"
-        >
-        <i class="fas fa-sort-alpha-down"></i>
-      </button>
-      <button
-        class="word-generator-square-button light"
-        type="button"
-        title="{{localize "wg.generator.sortAlphaAsc"}}"
-        id="results-move-sort-alpha-asc"
-        >
-        <i class="fas fa-sort-alpha-up"></i>
-      </button>
+    <div class="word-generator-flex column word-generator-controls-bar">
+      <div class="word-generator-flex row align-end middle">
+        <label 
+          class="word-generator-flex align-center" 
+          for="amountToGenerate"
+        >{{localize "wg.generator.generateCount"}}</label>
+        <span style="width: 6px;"></span>
+        <span class="word-generator-amountToGenerate">
+          <input 
+            id="amountToGenerate" 
+            type="number" 
+            min="1" 
+            value="{{applicationSettings.amountToGenerate}}" 
+          />
+        </span>
+      </div>
+      {{!-- Sorting controls --}}
+      <div class="word-generator-flex row">
+        {{!-- Spacer --}}
+        <div class="word-generator-flex grow"></div>
+        <a
+          class="word-generator-square-button word-generator-button"
+          type="button"
+          title="{{localize "wg.generator.sortAlphaDesc"}}"
+          id="results-move-sort-alpha-desc"
+          >
+          <i class="fas fa-sort-alpha-down"></i>
+        </a>
+        <a
+          class="word-generator-square-button word-generator-button"
+          type="button"
+          title="{{localize "wg.generator.sortAlphaAsc"}}"
+          id="results-move-sort-alpha-asc"
+          >
+          <i class="fas fa-sort-alpha-up"></i>
+        </a>
+      </div>
     </div>
     <ul id="results-list" class="word-generator-unstyled-list word-generator-scrollable">
       {{#each generatedWords as |generatedWord index|}}
