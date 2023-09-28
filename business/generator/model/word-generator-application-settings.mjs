@@ -1,4 +1,4 @@
-import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
+import { SORTING_ORDERS } from "../../../presentation/sorting-orders.mjs";
 
 /**
  * Settings of the `WordGeneratorApplication`. 

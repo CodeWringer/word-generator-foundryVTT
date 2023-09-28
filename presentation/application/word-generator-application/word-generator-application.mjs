@@ -525,5 +525,3 @@ export default class WordGeneratorApplication extends Application {
     this.render();
   }
 }
-
-window.WordGeneratorApplication = WordGeneratorApplication;

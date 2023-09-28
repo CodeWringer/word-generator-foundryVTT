@@ -1,8 +1,13 @@
+/**
+ * Returns the probabilities of a given sequences. 
+ */
 export default class SequenceProbabilityBuilder {
   /**
    * Returns the probabilities of the given sequences. 
-   * @param {Array<Array<Sequence>>} sequencesList 
-   * @returns {SequenceProbabilities}
+   * 
+   * @param {Array<Array<Sequence>>} sequencesList A list of sequences for which to gather probabilities. 
+   * 
+   * @returns {SequenceProbabilities} The probabilities, based on the given sequences. 
    */
   build(sequencesList) {
     const chainEntries = this._getAllChainsOfSet(sequencesList);

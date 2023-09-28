@@ -16,8 +16,7 @@
     "verified": 10.303
   },
   "esmodules": [
-    "module.mjs",
-    "presentation/word-generator-application.mjs"
+    "module.mjs"
   ],
   "socket": true,
   "languages": [

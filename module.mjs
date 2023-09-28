@@ -1,10 +1,21 @@
-import BeginningCapitalsSpellingStrategy from "./generator/postprocessing/beginning-capitals-strategy.mjs";
-import CharDepthSequencingStrategy from "./generator/sequencing/char-depth-sequencing-strategy.mjs";
-import DelimiterSequencingStrategy from "./generator/sequencing/delimiter-sequencing-strategy.mjs";
-import { preloadHandlebarsTemplates } from "./presentation/templates.mjs";
-import WordGeneratorApplication from "./presentation/word-generator-application.mjs";
-import CustomUserSettings from "./settings/custom-user-settings.mjs";
+import BeginningCapitalsSpellingStrategy from "./business/generator/postprocessing/beginning-capitals-strategy.mjs"
+import CharDepthSequencingStrategy from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
+import DelimiterSequencingStrategy from "./business/generator/sequencing/delimiter-sequencing-strategy.mjs"
+import CustomUserSettings from "./data/settings/custom-user-settings.mjs";
+import WordGeneratorApplication from "./presentation/application/word-generator-application/word-generator-application.mjs";
+import { TEMPLATES } from "./presentation/templates.mjs";
 
+/* -------------------------------------------- */
+/*  Initialization                              */
+/* -------------------------------------------- */
+
+Hooks.once('init', function() {
+  // Register globals. 
+  window.WordGeneratorApplication = WordGeneratorApplication;
+
+  // Preload Handlebars templates.
+  return TEMPLATES.preloadHandlebarsTemplates();
+});
 
 /* -------------------------------------------- */
 /*  Handlebars Helpers                          */
