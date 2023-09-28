@@ -339,10 +339,10 @@ export default class WordGeneratorApplication extends Application {
 
     // Add a new presenter for the item. 
     this._generatorItemPresenters.push(new WordGeneratorItemPresenter({
-      entity: newGeneratorItem,
-      listIndex: this._generatorItemPresenters.length,
-      userId: game.userId,
       application: this,
+      entity: newGeneratorItem,
+      sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
+      spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
     }));
 
     this._persistData();
@@ -363,7 +363,7 @@ export default class WordGeneratorApplication extends Application {
     }
     
     // Remove generator item presenter.
-    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === id);
+    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.entity.id === id);
     if (indexPresenter >= 0) {
       this._generatorItemPresenters.splice(indexPresenter, 1);
     }
@@ -386,13 +386,13 @@ export default class WordGeneratorApplication extends Application {
     }
 
     // Update generator item presenter.
-    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === generator.id);
+    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.entity.id === generator.id);
     if (indexPresenter >= 0) {
       this._generatorItemPresenters.splice(indexPresenter, 1, new WordGeneratorItemPresenter({
-        entity: generator,
-        listIndex: indexPresenter,
-        userId: game.userId,
         application: this,
+        entity: generator,
+        sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
+        spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
       }));
     }
 
