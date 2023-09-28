@@ -276,7 +276,7 @@ export default class WordGeneratorApplication extends Application {
    */
   _persistData() {
     const dataSource = new WordGeneratorApplicationDataDataSource();
-    dataSource.set(game.userId, this._data.toDto());
+    dataSource.set(game.userId, this._data);
   }
 
   /**

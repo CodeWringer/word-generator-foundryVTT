@@ -51,6 +51,10 @@ export default class WordGeneratorApplicationDataDataSource {
     const user = game.users.get(userId);
     if (user === undefined) return undefined;
 
+    if (data === undefined) {
+      throw new Error("Cannot set data undefined");
+    }
+
     user.setFlag(
       WordGeneratorApplicationDataDataSource.FLAG_SCOPE,
       WordGeneratorApplicationDataDataSource.KEY_FLAG,
