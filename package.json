@@ -5,8 +5,8 @@
   "main": "word-generator.js",
   "scripts": {
     "build": "node ./npm-scripts/build.mjs",
-    "sass:transpile": "node-sass ./presentation/styles/main.scss ./styles/main.css",
-    "sass:transpile-and-watch": "node-sass ./presentation/styles/main.scss -w -o ./styles",
+    "sass:transpile": "node-sass ./presentation/styles/main.scss ./presentation/styles/main.css",
+    "sass:transpile-and-watch": "node-sass ./presentation/styles/main.scss -w -o ./presentation/styles",
     "test": "mocha ./test/**/*.[m]js"
   },
   "repository": {
