@@ -1,7 +1,7 @@
 # Text Generator
 This module for FoundryVTT adds a means of randomly generating words, names or even sentences, based on a given sample set. 
 
-![Screenshot](presentation/img/word-generator-screenshot.png)
+![Screenshot](img/word-generator-screenshot.png)
 
 ## Usage (Macro)
 This section explains how to make use of the module as it comes out of the box. 
