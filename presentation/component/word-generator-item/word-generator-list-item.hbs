@@ -32,8 +32,6 @@ spellingStrategies: Array<DropDownOption>
       </div>
       <div class="word-generator-flex grow"></div>
     </div>
-    {{#if listItem.collapsed}}
-    {{else}}
     {{!-- Sample Set --}}
     <div class="flexrow">
       <label for="{{listItem.id}}-sampleSet">{{localize "wg.generator.sampleSet.field"}}</label>
@@ -49,6 +47,8 @@ spellingStrategies: Array<DropDownOption>
         <i class="fas fa-edit"></i>
       </button>
     </div>
+    {{#if listItem.collapsed}}
+    {{else}}
     {{!-- targetLengthMin --}}
     <div class="flexrow">
       <label for="{{listItem.id}}-targetLengthMin">{{localize "wg.generator.targetLength.min"}}</label>
