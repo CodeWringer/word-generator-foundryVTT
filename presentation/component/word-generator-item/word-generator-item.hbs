@@ -7,7 +7,7 @@ presenter: WordGeneratorItemPresenter
   <div class="word-generator-flex flexcol grow">
     {{!-- Header Row --}}
     <div class="word-generator-flex column">
-      <div class="word-generator-flex middle">
+      <header class="word-generator-flex middle">
         {{!-- Delete Button --}}
         <button 
           class="word-generator-square-button danger"
@@ -18,16 +18,18 @@ presenter: WordGeneratorItemPresenter
           >
           <i class="fas fa-trash"></i>
         </button>
-        {{!-- Name Input --}}
-        <input 
-          class="word-generator-input-textfield"
-          type="text"
-          id="{{presenter.entity.id}}-name"
-          data-id="{{presenter.entity.id}}"
-          placeholder="{{localize "wg.generator.placeholder.name"}}"
-          value="{{presenter.entity.name}}"
-        />
-      </div>
+        <h3 class="word-generator-flex row grow">
+          {{!-- Name Input --}}
+          <input 
+            class="word-generator-input-textfield"
+            type="text"
+            id="{{presenter.entity.id}}-name"
+            data-id="{{presenter.entity.id}}"
+            placeholder="{{localize "wg.generator.placeholder.name"}}"
+            value="{{presenter.entity.name}}"
+          />
+        </h3>
+      </header>
       <div class="word-generator-flex grow"></div>
     </div>
     {{!-- Sample Set --}}
