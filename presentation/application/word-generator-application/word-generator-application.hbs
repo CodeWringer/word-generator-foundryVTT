@@ -50,17 +50,25 @@ generatorListItemTemplate: String
         <i class="fas fa-sort-alpha-up"></i>
       </a>
     </div>
-    <ul id="generators-list" class="word-generator-unstyled-list word-generator-scrollable">
-      {{#each data.generatorItems as |listItem index|}}
-        {{#with ../generatorListItemTemplate as |template|}}
-          {{> (template) 
-            listItem=listItem 
-            sequencingStrategies=../../sequencingStrategies 
-            spellingStrategies=../../spellingStrategies
-          }}
-        {{/with}}
-      {{/each}}
-    </ul>
+    {{!-- Generators and folders area --}}
+    <div class="word-generator-scrollable">
+      {{!-- Folders and their generators --}}
+      <ul id="folders-list" class="word-generator-unstyled-list">
+        {{#each data.presentationFolders as |itemData index|}}
+          {{#with itemData.template as |template|}}
+            {{> (template) data=itemData }}
+          {{/with}}
+        {{/each}}
+      </ul>
+      {{!-- Generators without a parent folder --}}
+      <ul id="generators-list" class="word-generator-unstyled-list">
+        {{#each data.presentationGenerators as |itemData index|}}
+          {{#with itemData.template as |template|}}
+            {{> (template) data=itemData }}
+          {{/with}}
+        {{/each}}
+      </ul>
+    </div>
   </div>
   {{!-- Spacer --}}
   {{!-- <div style="width: 1rem;"></div> --}}

@@ -9,12 +9,12 @@ import WordGeneratorSamplesApplication from "../../application/word-generator-sa
  * 
  * It activates event listeners, sets initial states and performs other such presentation logic. 
  */
-export class WordGeneratorListItemPresenter {
+export default class WordGeneratorListItemPresenter {
   /**
    * @param {WordGeneratorItem} args.listItem The represented item. 
    * @param {Number} args.listIndex Index of this item in the list. 
    * @param {String} args.userId ID of the user that owns the list. 
-   * @param {WordGeneratorApplication} application 
+   * @param {WordGeneratorApplication} application The owning application. 
    */
   constructor(args) {
     this.listItem = args.listItem;
@@ -24,9 +24,11 @@ export class WordGeneratorListItemPresenter {
   }
 
   /**
+   * Registers event listeners to enable user-interactivity. 
+   * 
    * @param {HTMLElement} html 
    */
-  activateListeners(html, ) {
+  activateListeners(html) {
     const thiz = this;
     const id = this.listItem.id;
 

@@ -5,7 +5,7 @@ import WordGeneratorItem from "../../../business/generator/model/word-generator-
 import TypeRegistrar from "../../../business/generator/type-registrar.mjs"
 import WordGeneratorApplicationDataDataSource from "../../../data/datasource/word-generator-application-data-datasource.mjs"
 import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
-import { WordGeneratorListItemPresenter } from "../../component/word-generator-item/word-generator-list-item-presenter.mjs"
+import WordGeneratorListItemPresenter from "../../component/word-generator-item/word-generator-list-item-presenter.mjs"
 import DropDownOption from "../../drop-down-option.mjs"
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
@@ -57,14 +57,23 @@ export default class WordGeneratorApplication extends Application {
    */
   static registeredSpellingStrategies = new TypeRegistrar();
 
-  /**
-   * Path to the generator list item template. 
-   * 
-   * @type {String}
-   * @readonly
-   * @static
-   */
-  static generatorListItemTemplate = TEMPLATES.WORD_GENERATOR_LIST_ITEM;
+  // /**
+  //  * Path to the generator list item template. 
+  //  * 
+  //  * @type {String}
+  //  * @readonly
+  //  * @static
+  //  */
+  // static generatorListItemTemplate = TEMPLATES.WORD_GENERATOR_LIST_ITEM;
+
+  // /**
+  //  * Path to the generator list item template. 
+  //  * 
+  //  * @type {String}
+  //  * @readonly
+  //  * @static
+  //  */
+  // static folderListItemTemplate = TEMPLATES.WORD_GENERATOR_FOLDER;
 
   /**
    * The application working data. 

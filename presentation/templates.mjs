@@ -15,6 +15,7 @@ export const TEMPLATES = {
   WORD_GENERATOR_APPLICATION: `${basePath}/application/word-generator-application/word-generator-application.hbs`,
   WORD_GENERATOR_SAMPLES_APPLICATION: `${basePath}/application/word-generator-samples-application/word-generator-samples-application.hbs`,
   WORD_GENERATOR_LIST_ITEM: `${basePath}/component/word-generator-item/word-generator-list-item.hbs`,
+  WORD_GENERATOR_FOLDER: `${basePath}/component/folder/word-generator-folder.hbs`,
   MOVE_CONTROLS: `${basePath}/template/move-controls.hbs`,
   SETTING_LIST_ITEM: `${basePath}/template/setting-list-item.hbs`,
   /**

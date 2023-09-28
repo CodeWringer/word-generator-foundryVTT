@@ -1,0 +1,27 @@
+{{!-- Params:
+listItem: WordGeneratorPresentationFolder
+--}}
+<li class="word-generator-folder">
+  <header class="word-generator-folder">
+    <h3>
+      {{#if listItem.isExpanded}}
+      <i class="fas fa-folder-open"></i>
+      {{else}}
+      <i class="fas fa-folder"></i>
+      {{/if}}
+      <span>{{listItem.name}}</span>
+    </h3>
+    <a class="word-generator-square-button word-generator-button" 
+      id="add-generator-item"
+      >
+      <i class="fas fa-suitcase"></i>
+      <i class="fas fa-plus"></i>
+    </a>
+    <a class="word-generator-square-button word-generator-button" 
+      id="add-folder"
+      >
+      <i class="fas fa-folder"></i>
+      <i class="fas fa-plus"></i>
+    </a>
+  </header>
+</li>

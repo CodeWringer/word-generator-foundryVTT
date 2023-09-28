@@ -6,7 +6,8 @@
     },
     "folder": {
       "create": "Create Folder",
-      "name": "Folder Name"
+      "name": "Folder Name",
+      "defaultName": "New Folder"
     },
     "general": {
       "copy": {
