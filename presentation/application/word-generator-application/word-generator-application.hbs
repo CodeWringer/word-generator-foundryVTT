@@ -53,7 +53,7 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
     <div class="word-generator-scrollable">
       {{!-- Folders and their generators --}}
       <ul id="folders-list" class="word-generator-unstyled-list">
-        {{#each generatorItemPresenters as |presenter index|}}
+        {{#each folderPresenters as |presenter index|}}
           {{#with presenter.template as |template|}}
             {{> (template) presenter=presenter }}
           {{/with}}
@@ -61,7 +61,7 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
       </ul>
       {{!-- Generators without a parent folder --}}
       <ul id="generators-list" class="word-generator-unstyled-list">
-        {{#each folderPresenters as |presenter index|}}
+        {{#each generatorItemPresenters as |presenter index|}}
           {{#with presenter.template as |template|}}
             {{> (template) presenter=presenter }}
           {{/with}}

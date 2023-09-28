@@ -297,7 +297,7 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _regenerateFolderPresenters() {
-    this._generatorItemPresenters = [];
+    this._folderPresenters = [];
     for (let i = 0; i < this._data.folders.length; i++) {
       const folder = this._data.folders[i];
 
