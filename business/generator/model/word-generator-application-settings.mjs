@@ -4,7 +4,7 @@ import { SORTING_ORDERS } from "../../../presentation/sorting-orders.mjs";
  * Settings of the `WordGeneratorApplication`. 
  * 
  * @property {Number} amountToGenerate The number of words to generate. 
- * @property {SORTING_ORDERS} args.resultsSortMode The sorting order of generated words. 
+ * @property {SORTING_ORDERS} resultsSortMode The sorting order of generated words. 
  */
 export default class WordGeneratorApplicationSettings {
   /**
@@ -19,7 +19,7 @@ export default class WordGeneratorApplicationSettings {
   }
 
   /**
-   * Returns an instance of this type parsed from the given plain-object. 
+   * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
    * 
@@ -27,7 +27,7 @@ export default class WordGeneratorApplicationSettings {
    * 
    * @static
    */
-  static fromObject(obj) {
+  static fromDto(obj) {
     return new WordGeneratorApplicationSettings({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
@@ -35,11 +35,11 @@ export default class WordGeneratorApplicationSettings {
   }
 
   /**
-   * Returns a plain-object representation of this instance. 
+   * Returns a data transfer object representation of this instance. 
    * 
    * @returns {Object}
    */
-  toObject() {
+  toDto() {
     return {
       amountToGenerate: this.amountToGenerate,
       resultsSortMode: this.resultsSortMode,
