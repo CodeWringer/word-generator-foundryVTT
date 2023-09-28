@@ -1,9 +1,9 @@
-import WordGeneratorApplicationSettings from "./business/generator/model/word-generator-application-settings.mjs";
+import WordGeneratorApplicationData from "./business/generator/model/word-generator-application-data.mjs";
 import BeginningCapitalsSpellingStrategy from "./business/generator/postprocessing/beginning-capitals-strategy.mjs"
 import CharDepthSequencingStrategy from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
 import DelimiterSequencingStrategy from "./business/generator/sequencing/delimiter-sequencing-strategy.mjs"
 import UserFlagGeneratorSettingsDataSource from "./data/datasource/user-flag-generator-settings-datasource.mjs";
-import WordGeneratorApplicationSettingsDataSource from "./data/datasource/word-generator-application-settings-datasource.mjs";
+import WordGeneratorApplicationDataDataSource from "./data/datasource/word-generator-application-data-datasource.mjs";
 import CustomUserSettings from "./data/settings/custom-user-settings.mjs";
 import WordGeneratorApplication from "./presentation/application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "./presentation/templates.mjs";
@@ -27,8 +27,8 @@ Hooks.once('init', function() {
   const oldDataSource = new UserFlagGeneratorSettingsDataSource();
   const generatorItems = oldDataSource.getAll(game.userId);
   if (generatorItems.length > 0) {
-    const dataSource = new WordGeneratorApplicationSettingsDataSource();
-    const migratedData = new WordGeneratorApplicationSettings({
+    const dataSource = new WordGeneratorApplicationDataDataSource();
+    const migratedData = new WordGeneratorApplicationData({
       generatorItems: generatorItems,
     });
     dataSource.set(game.userId, migratedData);

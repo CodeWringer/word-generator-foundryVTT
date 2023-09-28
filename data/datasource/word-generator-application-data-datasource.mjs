@@ -1,9 +1,9 @@
-import WordGeneratorApplicationSettings from "../../business/generator/model/word-generator-application-settings.mjs";
+import WordGeneratorApplicationData from "../../business/generator/model/word-generator-application-data.mjs";
 
 /**
- * Provides means of reading and writing the `WordGeneratorApplicationSettings` to user flags. 
+ * Provides means of reading and writing the `WordGeneratorApplicationData` to user flags. 
  */
-export default class WordGeneratorApplicationSettingsDataSource {
+export default class WordGeneratorApplicationDataDataSource {
   /**
    * Scope of the user flag. 
    * 
@@ -20,40 +20,40 @@ export default class WordGeneratorApplicationSettingsDataSource {
    * @readonly
    * @constant
    */
-  static KEY_FLAG = "word-generator-application-settings";
+  static KEY_FLAG = "word-generator-application-data";
 
   /**
    * Returns the given user's word generator data. 
    * 
    * @param {String} userId User-ID. 
    * 
-   * @returns {WordGeneratorApplicationSettings}
+   * @returns {WordGeneratorApplicationData}
    */
   get(userId) {
     const user = game.users.get(userId);
     if (user === undefined) return undefined;
 
     const dto = user.getFlag(
-      WordGeneratorApplicationSettingsDataSource.FLAG_SCOPE,
-      WordGeneratorApplicationSettingsDataSource.KEY_FLAG
-    ) ?? new WordGeneratorApplicationSettings();
+      WordGeneratorApplicationDataDataSource.FLAG_SCOPE,
+      WordGeneratorApplicationDataDataSource.KEY_FLAG
+    ) ?? new WordGeneratorApplicationData();
 
-    return WordGeneratorApplicationSettings.fromDto(dto);
+    return WordGeneratorApplicationData.fromDto(dto);
   }
 
   /**
    * Sets (= overwrites) the given user's word generator data with the given data. 
    * 
    * @param {String} userId User-ID. 
-   * @param {WordGeneratorApplicationSettings} data The data to set. 
+   * @param {WordGeneratorApplicationData} data The data to set. 
    */
   set(userId, data) {
     const user = game.users.get(userId);
     if (user === undefined) return undefined;
 
     user.setFlag(
-      WordGeneratorApplicationSettingsDataSource.FLAG_SCOPE,
-      WordGeneratorApplicationSettingsDataSource.KEY_FLAG,
+      WordGeneratorApplicationDataDataSource.FLAG_SCOPE,
+      WordGeneratorApplicationDataDataSource.KEY_FLAG,
       data.toDto()
     );
   }
@@ -67,8 +67,8 @@ export default class WordGeneratorApplicationSettingsDataSource {
     if (user === undefined) return undefined;
 
     user.setFlag(
-      WordGeneratorApplicationSettingsDataSource.FLAG_SCOPE,
-      WordGeneratorApplicationSettingsDataSource.KEY_FLAG,
+      WordGeneratorApplicationDataDataSource.FLAG_SCOPE,
+      WordGeneratorApplicationDataDataSource.KEY_FLAG,
       null
     );
   }

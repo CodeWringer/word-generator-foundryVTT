@@ -3,7 +3,7 @@ import WordGeneratorItem from "../../business/generator/model/word-generator-ite
 /**
  * Provides a means of storing `WordGeneratorItem` on user flags. 
  * 
- * @deprecated Deprecated in favor of `WordGeneratorApplicationSettingsDataSource`! This type is kept for migration purposes, but should no longer be used!
+ * @deprecated Deprecated in favor of `WordGeneratorApplicationDataDataSource`! This type is kept for migration purposes, but should no longer be used!
  */
 export default class UserFlagGeneratorSettingsDataSource {
   static FLAG_SCOPE = "core";

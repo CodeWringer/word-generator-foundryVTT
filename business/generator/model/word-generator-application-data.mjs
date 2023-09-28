@@ -12,7 +12,7 @@ import WordGeneratorItem from "./word-generator-item.mjs";
  * @property {Array<WordGeneratorItem>} generatorItems A list of generator items. 
  * @property {Array<WordGeneratorFolder>} folders A list of folders. 
  */
-export default class WordGeneratorApplicationSettings {
+export default class WordGeneratorApplicationData {
   /**
    * @param {Number | undefined} args.amountToGenerate The number of words to generate.
    * * Default `10` 
@@ -33,12 +33,12 @@ export default class WordGeneratorApplicationSettings {
    * 
    * @param {Object} obj 
    * 
-   * @returns {WordGeneratorApplicationSettings}
+   * @returns {WordGeneratorApplicationData}
    * 
    * @static
    */
   static fromDto(obj) {
-    return new WordGeneratorApplicationSettings({
+    return new WordGeneratorApplicationData({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
       generatorItems: (obj.generatorItems ?? []).map(it => WordGeneratorItem.fromDto(it)),
