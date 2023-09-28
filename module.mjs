@@ -13,6 +13,30 @@ import { TEMPLATES } from "./presentation/templates.mjs";
 /* -------------------------------------------- */
 
 Hooks.once('init', function() {
+  // Settings initialization.
+  new CustomUserSettings().ensureAllSettings();
+
+  // Ensure default sequencing strategy definitions are registered. 
+  WordGeneratorApplication.registeredSequencingStrategies.register(new CharDepthSequencingStrategy());
+  WordGeneratorApplication.registeredSequencingStrategies.register(new DelimiterSequencingStrategy(","));
+  
+  // Ensure default spelling strategy definitions are registered. 
+  WordGeneratorApplication.registeredSpellingStrategies.register(new BeginningCapitalsSpellingStrategy());
+  
+  // Migrate data as needed.
+  const oldDataSource = new UserFlagGeneratorSettingsDataSource();
+  const generatorItems = oldDataSource.getAll(game.userId);
+  if (generatorItems.length > 0) {
+    const dataSource = new WordGeneratorApplicationSettingsDataSource();
+    const migratedData = new WordGeneratorApplicationSettings({
+      generatorItems: generatorItems,
+    });
+    dataSource.set(game.userId, migratedData);
+
+    // Finally, clear out old data. 
+    oldDataSource.clear(game.userId);
+  }
+
   // Register globals. 
   window.WordGeneratorApplication = WordGeneratorApplication;
 
@@ -44,33 +68,4 @@ Handlebars.registerHelper('eq', function(a, b) {
  */
 Handlebars.registerHelper('neq', function(a, b) {
   return a != b;
-});
-
-Hooks.once('init', async function() {
-  // Settings initialization.
-  new CustomUserSettings().ensureAllSettings();
-
-  // Ensure default sequencing strategy definitions are registered. 
-  WordGeneratorApplication.registeredSequencingStrategies.register(new CharDepthSequencingStrategy());
-  WordGeneratorApplication.registeredSequencingStrategies.register(new DelimiterSequencingStrategy(","));
-  
-  // Ensure default spelling strategy definitions are registered. 
-  WordGeneratorApplication.registeredSpellingStrategies.register(new BeginningCapitalsSpellingStrategy());
-  
-  // Migrate data as needed.
-  const oldDataSource = new UserFlagGeneratorSettingsDataSource();
-  const generatorItems = oldDataSource.getAll(game.userId);
-  if (generatorItems.length > 0) {
-    const dataSource = new WordGeneratorApplicationSettingsDataSource();
-    const migratedData = new WordGeneratorApplicationSettings({
-      generatorItems: generatorItems,
-    });
-    dataSource.set(game.userId, migratedData);
-
-    // Finally, clear out old data. 
-    oldDataSource.clear(game.userId);
-  }
-
-  // Pre-load Handlebars templates. 
-  preloadHandlebarsTemplates();
 });
