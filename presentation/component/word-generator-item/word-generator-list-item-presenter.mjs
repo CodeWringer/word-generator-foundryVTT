@@ -184,7 +184,7 @@ export class WordGeneratorListItemPresenter {
 
     // ## collapse button
     html.find(`#${id}-collapse`).click(() => {
-      thiz.listItem.collapsed = !(thiz.listItem.collapsed ?? false);
+      thiz.listItem.isExpanded = !(thiz.listItem.isExpanded ?? false);
       this._updateRender()
     });
 

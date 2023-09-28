@@ -47,8 +47,7 @@ spellingStrategies: Array<DropDownOption>
         <i class="fas fa-edit"></i>
       </button>
     </div>
-    {{#if listItem.collapsed}}
-    {{else}}
+    {{#if listItem.isExpanded}}
     {{!-- targetLengthMin --}}
     <div class="flexrow">
       <label for="{{listItem.id}}-targetLengthMin">{{localize "wg.generator.targetLength.min"}}</label>
@@ -145,10 +144,10 @@ spellingStrategies: Array<DropDownOption>
         id="{{listItem.id}}-collapse"
         >
         <span class="word-generator-flex center word-generator-square">
-          {{#if listItem.collapsed}}
-          <i class="fas fa-angle-double-down"></i>
-          {{else}}
+          {{#if listItem.isExpanded}}
           <i class="fas fa-angle-double-up"></i>
+          {{else}}
+          <i class="fas fa-angle-double-down"></i>
           {{/if}}
         </span>
       </a>

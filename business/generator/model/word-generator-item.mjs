@@ -35,7 +35,8 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * @property {ENDING_PICK_MODES} endingPickMode Determines how and if an ending sequence 
  * will be picked for generated words. 
  * 
- * @property {Boolean} collapsed If true, the entry is to be rendered collapsed. 
+ * @property {Boolean} isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
+ * it is rendered collapsed. 
  */
 export default class WordGeneratorItem {
   /**
@@ -65,7 +66,9 @@ export default class WordGeneratorItem {
    * 
    * @param {ENDING_PICK_MODES | undefined} args.endingPickMode
    * 
-   * @param {Boolean | undefined} args.collapsed
+   * @param {Boolean | undefined} args.isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
+   * it is rendered collapsed. 
+   * * Default `false`
    */
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
@@ -94,7 +97,7 @@ export default class WordGeneratorItem {
 
     this.endingPickMode = args.endingPickMode ?? ENDING_PICK_MODES.RANDOM;
 
-    this.collapsed = args.collapsed ?? false;
+    this.isExpanded = args.isExpanded ?? false;
   }
 
   /**
@@ -167,7 +170,6 @@ export default class WordGeneratorItem {
       entropyMiddle: obj.entropyMiddle,
       entropyEnd: obj.entropyEnd,
       endingPickMode: obj.endingPickMode,
-      collapsed: obj.collapsed,
     });
   }
 
@@ -195,7 +197,6 @@ export default class WordGeneratorItem {
       entropyMiddle: this.entropyMiddle,
       entropyEnd: this.entropyEnd,
       endingPickMode: this.endingPickMode,
-      collapsed: this.collapsed,
     };
   }
 }
