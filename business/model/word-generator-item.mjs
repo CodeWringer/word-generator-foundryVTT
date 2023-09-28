@@ -1,6 +1,6 @@
-import { ENDING_PICK_MODES } from "../concatenation/sequence-concatenator.mjs";
-import WordGenerator from "../generator.mjs";
-import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
+import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
+import WordGenerator from "../generator/generator.mjs";
+import CharDepthSequencingStrategy from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 

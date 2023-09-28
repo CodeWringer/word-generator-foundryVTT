@@ -1,4 +1,4 @@
-import { SORTING_ORDERS } from "../../../presentation/sorting-orders.mjs";
+import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 import WordGeneratorFolder from "./word-generator-folder.mjs";
 import WordGeneratorItem from "./word-generator-item.mjs";
 
