@@ -140,7 +140,7 @@ export default class WordGeneratorItem {
   }
 
   /**
-   * Returns an instance of this type parsed from the given plain-object. 
+   * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
    * 
@@ -148,7 +148,7 @@ export default class WordGeneratorItem {
    * 
    * @static
    */
-  static fromObject(obj) {
+  static fromDto(obj) {
     return new WordGeneratorItem({
       id: obj.id,
       name: obj.name,
@@ -172,11 +172,11 @@ export default class WordGeneratorItem {
   }
 
   /**
-   * Returns a plain-object representation of this instance. 
+   * Returns a data transfer object representation of this instance. 
    * 
    * @returns {Object}
    */
-  toObject() {
+  toDto() {
     return {
       id: this.id,
       name: this.name,
