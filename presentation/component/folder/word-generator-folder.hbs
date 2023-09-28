@@ -1,15 +1,15 @@
 {{!-- Params:
-listItem: WordGeneratorPresentationFolder
+presenter: WordGeneratorFolderPresenter
 --}}
 <li class="word-generator-folder">
   <header class="word-generator-folder">
     <h3>
-      {{#if listItem.isExpanded}}
+      {{#if presenter.isExpanded}}
       <i class="fas fa-folder-open"></i>
       {{else}}
       <i class="fas fa-folder"></i>
       {{/if}}
-      <span>{{listItem.name}}</span>
+      <span>{{presenter.name}}</span>
     </h3>
     <a class="word-generator-square-button word-generator-button" 
       id="add-generator-item"
