@@ -136,5 +136,3 @@ export class WordGeneratorSamplesApplicationResult {
     this.sampleSetSeparator = args.sampleSetSeparator;
   }
 }
-
-window.WordGeneratorSamplesApplication = WordGeneratorSamplesApplication;
