@@ -14,7 +14,7 @@
 
 .word-generator-setting-entry {
   display: flex;
-  background-color: #0000001a; }
+  background-color: rgba(0, 0, 0, 0.102); }
 
 .word-generator-card {
   margin-bottom: 0.5rem;
@@ -150,10 +150,32 @@
   justify-content: center; }
 
 a.word-generator-button {
-  background: rgba(255, 255, 240, 0.8);
+  background: #fffff0;
+  color: #1e1e1e;
   border: 1px solid var(--color-border-light-primary);
   border-radius: 3px;
   box-sizing: border-box;
   margin: 4px; }
   a.word-generator-button .word-generator-button-icon {
     margin-right: 4px; }
+
+i.stackable {
+  position: relative; }
+
+i.stacked {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 0.55rem;
+  background-color: #1e1e1e;
+  color: #d5d5d5;
+  padding: 1px;
+  border-radius: 4px; }
+
+header.word-generator-folder.collapsed {
+  background-color: #1d1d1d;
+  color: #d5d5d5; }
+
+header.word-generator-folder.open {
+  background-color: #383838;
+  color: #1e1e1e; }

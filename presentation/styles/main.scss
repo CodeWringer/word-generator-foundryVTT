@@ -1,3 +1,13 @@
+$c-bg-lightest: #fffff0;
+$c-bg-lighter: #484848;
+$c-bg-light: #383838;
+$c-bg-dark: #2e2e2e;
+$c-bg-darker: #232323;
+$c-bg-darkest: #1d1d1d;
+
+$c-text-light: #d5d5d5;
+$c-text-dark: #1e1e1e;
+
 .word-generator {
   &-application-form {
     display: grid;
@@ -19,7 +29,7 @@
 
   &-setting-entry {
     display: flex;
-    background-color: #0000001a;
+    background-color: rgba(0, 0, 0, 0.102);
   }
   
   &-card {
@@ -32,16 +42,16 @@
   }
 
   &-controls-bar {
-    background-color: #2e2e2e;
+    background-color: $c-bg-dark;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
 
     label {
-      color: #d5d5d5;
+      color: $c-text-light;
     }
 
     input {
-      background-color: #d5d5d5;
+      background-color: $c-text-light;
     }
 
     a.word-generator-button.active {
@@ -205,7 +215,8 @@
 }
 
 a.word-generator-button {
-  background: rgba(255, 255, 240, 0.8);
+  background: $c-bg-lightest;
+  color: $c-text-dark;
   border: 1px solid var(--color-border-light-primary);
   border-radius: 3px;
   box-sizing: border-box;
@@ -213,5 +224,32 @@ a.word-generator-button {
 
   .word-generator-button-icon {
     margin-right: 4px;
+  }
+}
+
+i.stackable {
+  position: relative;
+}
+
+i.stacked {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 0.55rem;
+  background-color: $c-text-dark;
+  color: $c-text-light;
+  padding: 1px;
+  border-radius: 4px;
+}
+
+header.word-generator-folder {
+  &.collapsed {
+    background-color: $c-bg-darkest;
+    color: $c-text-light;
+  }
+
+  &.open {
+    background-color: $c-bg-light;
+    color: $c-text-dark;
   }
 }
