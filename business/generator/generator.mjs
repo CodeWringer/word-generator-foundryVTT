@@ -12,8 +12,8 @@ import SequenceConcatenator from './concatenation/sequence-concatenator.mjs';
  * @property {Number} depth The depth to use with the sequencing strategy. 
  * @property {Number} targetLengthMin The target minimum length that generated texts should be. 
  * @property {Number} targetLengthMax The target maximum length that generated texts should be. 
- * @property {AbstractSequencingStrategy} sequencingStrategy
- * @property {AbstractSpellingStrategy | undefined} spellingStrategy
+ * @property {AbstractSequencingStrategy} sequencingStrategy The sequencing strategy to use. 
+ * @property {AbstractSpellingStrategy | undefined} spellingStrategy The spelling post-processing strategy to use. 
  * @property {String} seed A seed for the randomization. 
  * @property {Number | undefined} entropy A number between 0 and 1 (inclusive), which determines the 
  * randomness of words, in general. Default 0. 
