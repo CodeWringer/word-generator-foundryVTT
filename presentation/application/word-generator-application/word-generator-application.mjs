@@ -57,6 +57,15 @@ export default class WordGeneratorApplication extends Application {
   static registeredSpellingStrategies = new TypeRegistrar();
 
   /**
+   * Path to the generator list item template. 
+   * 
+   * @type {String}
+   * @readonly
+   * @static
+   */
+  static generatorListItemTemplate = TEMPLATES.WORD_GENERATOR_LIST_ITEM;
+
+  /**
    * The application working data. 
    * 
    * @type {WordGeneratorApplicationData}
@@ -244,6 +253,7 @@ export default class WordGeneratorApplication extends Application {
       generatedWords: this._generatedWords,
       sequencingStrategies: sequencingStrategies,
       spellingStrategies: spellingStrategies,
+      generatorListItemTemplate: WordGeneratorApplication.generatorListItemTemplate,
     }
   }
 

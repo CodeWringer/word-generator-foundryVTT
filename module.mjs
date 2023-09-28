@@ -6,6 +6,7 @@ import UserFlagGeneratorSettingsDataSource from "./data/datasource/user-flag-gen
 import WordGeneratorApplicationDataDataSource from "./data/datasource/word-generator-application-data-datasource.mjs";
 import CustomUserSettings from "./data/settings/custom-user-settings.mjs";
 import WordGeneratorApplication from "./presentation/application/word-generator-application/word-generator-application.mjs";
+import HandlebarsGlobals from "./presentation/handlebars-globals.mjs";
 import { TEMPLATES } from "./presentation/templates.mjs";
 
 /* -------------------------------------------- */
@@ -13,6 +14,14 @@ import { TEMPLATES } from "./presentation/templates.mjs";
 /* -------------------------------------------- */
 
 Hooks.once('init', function() {
+  // Register Handlebars helpers and partials. 
+  new HandlebarsGlobals().init();
+  
+  // Preload Handlebars templates.
+  return TEMPLATES.preloadHandlebarsTemplates();
+});
+
+Hooks.once('ready', function() {
   // Settings initialization.
   new CustomUserSettings().ensureAllSettings();
 
@@ -39,33 +48,4 @@ Hooks.once('init', function() {
 
   // Register globals. 
   window.WordGeneratorApplication = WordGeneratorApplication;
-
-  // Preload Handlebars templates.
-  return TEMPLATES.preloadHandlebarsTemplates();
-});
-
-/* -------------------------------------------- */
-/*  Handlebars Helpers                          */
-/* -------------------------------------------- */
-
-/**
- * Returns `true`, if the given parameters are considered equal. Otherwise, returns `false`. 
- * @param {Any} a
- * @param {Any} b
- * 
- * @returns {Boolean}
- */
-Handlebars.registerHelper('eq', function(a, b) {
-  return a == b;
-});
-
-/**
- * Returns `true`, if the given parameters are *not* considered equal. Otherwise, returns `false`. 
- * @param {Any} a
- * @param {Any} b
- * 
- * @returns {Boolean}
- */
-Handlebars.registerHelper('neq', function(a, b) {
-  return a != b;
 });

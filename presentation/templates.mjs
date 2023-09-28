@@ -1,14 +1,22 @@
 /**
+ * String partial `"modules/word-generator/presentation"`. 
+ * 
+ * @type {String}
+ * @constant
+ */
+const basePath = "modules/word-generator/presentation";
+
+/**
  * Provides access to the template (= Handlebars) file paths. 
  * 
  * @constant
  */
 export const TEMPLATES = {
-  WORD_GENERATOR_APPLICATION: "presentation/word-generator-application/word-generator-application.hbs",
-  WORD_GENERATOR_SAMPLES_APPLICATION: "presentation/word-generator-samples-application/word-generator-samples-application.hbs",
-  WORD_GENERATOR_LIST_ITEM: "presentation/component/word-generator-item/word-generator-list-item.hbs",
-  MOVE_CONTROLS: "presentation/template/move-controls.hbs",
-  SETTING_LIST_ITEM: "presentation/template/setting-list-item.hbs",
+  WORD_GENERATOR_APPLICATION: `${basePath}/application/word-generator-application/word-generator-application.hbs`,
+  WORD_GENERATOR_SAMPLES_APPLICATION: `${basePath}/application/word-generator-samples-application/word-generator-samples-application.hbs`,
+  WORD_GENERATOR_LIST_ITEM: `${basePath}/component/word-generator-item/word-generator-list-item.hbs`,
+  MOVE_CONTROLS: `${basePath}/template/move-controls.hbs`,
+  SETTING_LIST_ITEM: `${basePath}/template/setting-list-item.hbs`,
   /**
    * Define a set of template paths to pre-load.
    * 
@@ -20,13 +28,13 @@ export const TEMPLATES = {
    */
   preloadHandlebarsTemplates: async () => {
     const templateArr = [];
-    for (const propertyName in this) {
+    for (const propertyName in TEMPLATES) {
       if (
-        !this.hasOwnProperty(propertyName)
+        !TEMPLATES.hasOwnProperty(propertyName)
         || propertyName == "preloadHandlebarsTemplates"
       ) continue;
 
-      templateArr.push(this[propertyName]);
+      templateArr.push(TEMPLATES[propertyName]);
     }
     return loadTemplates(templateArr);
   }

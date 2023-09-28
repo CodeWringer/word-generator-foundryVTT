@@ -20,7 +20,7 @@ export default class UserFlagGeneratorSettingsDataSource {
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
     ) ?? [];
 
-    return WordGeneratorItem.fromObject(arr.find(it => it.id === id));
+    return WordGeneratorItem.fromDto(arr.find(it => it.id === id));
   }
   
   /** @override */
@@ -32,7 +32,7 @@ export default class UserFlagGeneratorSettingsDataSource {
     return (user.getFlag(
       UserFlagGeneratorSettingsDataSource.FLAG_SCOPE,
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
-    ) ?? []).map(it => WordGeneratorItem.fromObject(it));
+    ) ?? []).map(it => WordGeneratorItem.fromDto(it));
   }
   
   /** @override */
@@ -46,7 +46,7 @@ export default class UserFlagGeneratorSettingsDataSource {
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
     ) ?? [];
 
-    const objectifiedSettings = generatorSetting.toObject();
+    const objectifiedSettings = generatorSetting.toDto();
     const index = arr.findIndex(it => it.id === generatorSetting.id);
     if (index >= 0) {
       arr.splice(index, 1, objectifiedSettings);

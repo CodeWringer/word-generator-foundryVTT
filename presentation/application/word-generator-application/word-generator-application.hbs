@@ -3,6 +3,7 @@ data: WordGeneratorApplicationData
 generatedWords: Array<String>
 sequencingStrategies: Array<DropDownOption>
 spellingStrategies: Array<DropDownOption>
+generatorListItemTemplate: String
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -51,11 +52,13 @@ spellingStrategies: Array<DropDownOption>
     </div>
     <ul id="generators-list" class="word-generator-unstyled-list word-generator-scrollable">
       {{#each data.generatorItems as |listItem index|}}
-        {{> "modules/word-generator/template/word-generator-list-item.hbs" 
-          listItem=listItem 
-          sequencingStrategies=../sequencingStrategies 
-          spellingStrategies=../spellingStrategies
-        }}
+        {{#with ../generatorListItemTemplate as |template|}}
+          {{> (template) 
+            listItem=listItem 
+            sequencingStrategies=../sequencingStrategies 
+            spellingStrategies=../spellingStrategies
+          }}
+        {{/with}}
       {{/each}}
     </ul>
   </div>

@@ -5,7 +5,7 @@ spellingStrategies: Array<DropDownOption>
 --}}
 <li class="word-generator-setting-entry word-generator-card">
   {{!-- Move controls --}}
-  {{> "modules/word-generator/template/move-controls.hbs" listItemId=listItem.id }}
+  {{> "modules/word-generator/presentation/template/move-controls.hbs" listItemId=listItem.id }}
   <div class="word-generator-flex flexcol grow">
     {{!-- Header Row --}}
     <div class="word-generator-flex column">
@@ -109,7 +109,7 @@ spellingStrategies: Array<DropDownOption>
       {{!-- Sequencing Settings --}}
       <ul id="{{listItem.id}}-sequencing-settings" class="word-generator-unstyled-list">
         {{#each listItem.sequencingStrategySettings as |setting index|}}
-          {{> "modules/word-generator/template/setting-list-item.hbs" item=setting}}
+          {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
         {{/each}}
       </ul>
     </div> 
@@ -127,7 +127,7 @@ spellingStrategies: Array<DropDownOption>
       {{!-- Spelling Settings --}}
       <ul id="{{listItem.id}}-spelling-settings" class="word-generator-unstyled-list">
       {{#each listItem.spellingStrategySettings as |setting index|}}
-        {{> "modules/word-generator/template/setting-list-item.hbs" item=setting}}
+        {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
       {{/each}}
       </ul>
     </div>
