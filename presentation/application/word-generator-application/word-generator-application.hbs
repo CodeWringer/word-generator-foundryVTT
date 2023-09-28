@@ -55,8 +55,8 @@ generatorListItemTemplate: String
         {{#with ../generatorListItemTemplate as |template|}}
           {{> (template) 
             listItem=listItem 
-            sequencingStrategies=../sequencingStrategies 
-            spellingStrategies=../spellingStrategies
+            sequencingStrategies=../../sequencingStrategies 
+            spellingStrategies=../../spellingStrategies
           }}
         {{/with}}
       {{/each}}
