@@ -1,3 +1,4 @@
+// TODO: Turn into instantiable object
 /**
  * Returns true, if the given value can be parsed to an integer. 
  * @returns {Boolean} 

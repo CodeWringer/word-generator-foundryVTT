@@ -4,13 +4,13 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
- * maximum length, etc.) for a word generator. 
+ * maximum length, etc.) for a word generator item. 
  * 
- * @property {String} id
- * @property {String | undefined} name
- * @property {Array<String>} sampleSet
+ * @property {String} id Unique ID. 
+ * @property {String | undefined} name Human readable name. 
+ * @property {Array<String>} sampleSet A sample-set to draw inspiration from. 
  * @property {String} sampleSetSeparator The string used to split samples. This splitting happens **prior** to sequencing. 
- * @property {Number} depth
+ * @property {Number} depth 
  * 
  * @property {Number} targetLengthMin
  * @property {Number} targetLengthMax
@@ -32,14 +32,14 @@ import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-str
  * 
  * @property {Boolean} collapsed If true, the entry is to be rendered collapsed. 
  */
-export default class WordGeneratorSettings {
+export default class WordGeneratorItem {
   /**
-   * @param {String | undefined} args.id
-   * @param {String | undefined} args.name
-   * @param {Array<String> | undefined} args.sampleSet
+   * @param {String | undefined} args.id Unique ID. 
+   * @param {String | undefined} args.name Human readable name. 
+   * @param {Array<String> | undefined} args.sampleSet A sample-set to draw inspiration from. 
    * @param {String | undefined} sampleSetSeparator The string used to split samples. This splitting happens **prior** to sequencing. 
    * * Default `,`. 
-   * @param {Number | undefined} args.depth
+   * @param {Number | undefined} args.depth 
    * 
    * @param {Number | undefined} args.targetLengthMin
    * @param {Number | undefined} args.targetLengthMax
@@ -139,12 +139,12 @@ export default class WordGeneratorSettings {
    * 
    * @param {Object} obj 
    * 
-   * @returns {WordGeneratorSettings}
+   * @returns {WordGeneratorItem}
    * 
    * @static
    */
   static fromObject(obj) {
-    return new WordGeneratorSettings({
+    return new WordGeneratorItem({
       id: obj.id,
       name: obj.name,
       sampleSet: obj.sampleSet,

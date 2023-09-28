@@ -1,12 +1,12 @@
-import { ENDING_PICK_MODES } from "../concatenation/sequence-concatenator.mjs";
-import BeginningCapitalsSpellingStrategy from "../postprocessing/beginning-capitals-strategy.mjs";
-import CharDepthSequencingStrategy from "../sequencing/char-depth-sequencing-strategy.mjs";
+import { ENDING_PICK_MODES } from "../../business/generator/concatenation/sequence-concatenator.mjs";
+import BeginningCapitalsSpellingStrategy from "../../business/generator/postprocessing/beginning-capitals-strategy.mjs";
+import CharDepthSequencingStrategy from "../../business/generator/sequencing/char-depth-sequencing-strategy.mjs";
 import AbstractGeneratorDataSource from "./abstract-generator-datasource.mjs";
-import WordGeneratorSettings from "./word-generator-settings.mjs";
+import WordGeneratorItem from "../../business/generator/model/word-generator-settings.mjs";
 
 export default class MockGeneratorDataSource extends AbstractGeneratorDataSource {
   /**
-   * @type {Array<WordGeneratorSettings>}
+   * @type {Array<WordGeneratorItem>}
    * @private
    */
   _list = [];
@@ -21,7 +21,7 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
       const capitalize = new BeginningCapitalsSpellingStrategy();
 
       this._list = [
-        new WordGeneratorSettings({
+        new WordGeneratorItem({
           id: "abc-0123",
           name: "Simple Generator 1",
           sampleSet: [
@@ -49,7 +49,7 @@ export default class MockGeneratorDataSource extends AbstractGeneratorDataSource
           entropyEnd: 0.3,
           endingPickMode: ENDING_PICK_MODES.RANDOM,
         }).toObject(),
-        new WordGeneratorSettings({
+        new WordGeneratorItem({
           id: "abc-0124",
           name: "Simple Generator 2",
           sampleSet: [

@@ -1,4 +1,4 @@
-import WordGeneratorApplicationSettings from "./word-generator-application-settings.mjs";
+import WordGeneratorApplicationSettings from "../../business/generator/model/word-generator-application-settings.mjs";
 
 export default class WordGeneratorApplicationDataSource {
   static FLAG_SCOPE = "core";

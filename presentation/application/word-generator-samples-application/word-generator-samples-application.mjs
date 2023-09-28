@@ -5,12 +5,12 @@ import { TEMPLATES } from "../../templates.mjs";
  * 
  * @example
  * ```
- * const myGeneratorSettings = new WordGeneratorSettings();
+ * const myGeneratorSettings = new WordGeneratorItem();
  * const myCloseCallback = (data) => { console.log(data.sampleSet); };
  * new WordGeneratorSamplesApplication(myGeneratorSettings, myCloseCallback).render(true);
  * ```
  * 
- * @property {WordGeneratorSettings} _generator 
+ * @property {WordGeneratorItem} _generator 
  * @property {String} _sampleSet The joined sample set, as a single string. 
  * @property {String} _sampleSetSeparator The separator string, used to split samples. 
  * @property {Function<WordGeneratorSamplesApplicationResult> | undefined} _closeCallback Optional. A callback invoked upon closing 
@@ -45,7 +45,7 @@ export default class WordGeneratorSamplesApplication extends Application {
   get title() { return game.i18n.localize("wg.generator.sampleSet.application.title").replace("%s", this._generator.name); }
 
   /**
-   * @param {WordGeneratorSettings} generator
+   * @param {WordGeneratorItem} generator
    * @param {Function<Boolean> | undefined} closeCallback Optional. A callback invoked upon closing 
    * the Application. Receives an instance of `WordGeneratorSamplesApplicationResult` as argument. 
    */

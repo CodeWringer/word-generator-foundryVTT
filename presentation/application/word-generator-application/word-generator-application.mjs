@@ -1,4 +1,4 @@
-import WordGeneratorSettings from "../generator/data/word-generator-settings.mjs";
+import WordGeneratorItem from "../generator/data/word-generator-settings.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import TypeRegistrar from "../generator/type-registrar.mjs";
 import AddFolderUseCase from "../use_case/add-folder-use-case.mjs";
@@ -64,7 +64,7 @@ export default class WordGeneratorApplication extends Application {
   static registeredSpellingStrategies = new TypeRegistrar();
 
   /**
-   * @type {Array<WordGeneratorSettings>}
+   * @type {Array<WordGeneratorItem>}
    * @private
    */
   _generators = [];
@@ -302,7 +302,7 @@ export default class WordGeneratorApplication extends Application {
    * Click-handler to create a new generator. 
    */
   _createGenerator() {
-    const newSetting = new WordGeneratorSettings({
+    const newSetting = new WordGeneratorItem({
       name: game.i18n.localize("wg.generator.defaultName"),
     });
 

@@ -1,7 +1,7 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import { isInteger } from '../../script/util/validation.mjs';
+import { isInteger } from '../../../business/util/validation.mjs';
 
 describe('validation', function() {
   describe('isInteger', function() {

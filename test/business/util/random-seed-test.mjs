@@ -1,7 +1,7 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import RandomSeeded from '../../script/util/random-seed.mjs';
+import RandomSeeded from '../../../business/util/random-seed.mjs';
 
 describe('RandomSeeded', function() {
   const testSeedString = "Test1234567890";

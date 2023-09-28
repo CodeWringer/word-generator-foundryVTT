@@ -1,8 +1,8 @@
 import AbstractGeneratorDataSource from "./abstract-generator-datasource.mjs";
-import WordGeneratorSettings from "./word-generator-settings.mjs";
+import WordGeneratorItem from "../../business/generator/model/word-generator-settings.mjs";
 
 /**
- * Provides a means of storing `WordGeneratorSettings` on user flags. 
+ * Provides a means of storing `WordGeneratorItem` on user flags. 
  */
 export default class UserFlagGeneratorSettingsDataSource extends AbstractGeneratorDataSource {
   static FLAG_SCOPE = "core";
@@ -19,7 +19,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
     ) ?? [];
 
-    return WordGeneratorSettings.fromObject(arr.find(it => it.id === id));
+    return WordGeneratorItem.fromObject(arr.find(it => it.id === id));
   }
   
   /** @override */
@@ -31,7 +31,7 @@ export default class UserFlagGeneratorSettingsDataSource extends AbstractGenerat
     return (user.getFlag(
       UserFlagGeneratorSettingsDataSource.FLAG_SCOPE,
       UserFlagGeneratorSettingsDataSource.KEY_FLAG
-    ) ?? []).map(it => WordGeneratorSettings.fromObject(it));
+    ) ?? []).map(it => WordGeneratorItem.fromObject(it));
   }
   
   /** @override */

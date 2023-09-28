@@ -1,10 +1,10 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import WordGenerator from '../script/generator/generator.mjs';
-import BeginningCapitalsSpellingStrategy from '../script/generator/postprocessing/beginning-capitals-strategy.mjs';
-import CharDepthSequencingStrategy from '../script/generator/sequencing/char-depth-sequencing-strategy.mjs';
-import { ENDING_PICK_MODES } from '../script/generator/concatenation/sequence-concatenator.mjs';
+import WordGenerator from '../business/generator/generator.mjs';
+import BeginningCapitalsSpellingStrategy from '../business/generator/postprocessing/beginning-capitals-strategy.mjs';
+import CharDepthSequencingStrategy from '../business/generator/sequencing/char-depth-sequencing-strategy.mjs';
+import { ENDING_PICK_MODES } from '../business/generator/concatenation/sequence-concatenator.mjs';
 
 describe('WordGenerator', function() {
   const testSeed = "Test1234567890";

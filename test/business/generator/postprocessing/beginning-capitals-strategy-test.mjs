@@ -1,7 +1,7 @@
 import should from 'should';
 import sinon from 'sinon';
 import 'should-sinon';
-import BeginningCapitalsSpellingStrategy from '../../script/generator/postprocessing/beginning-capitals-strategy.mjs';
+import BeginningCapitalsSpellingStrategy from '../../../../business/generator/postprocessing/beginning-capitals-strategy.mjs';
 
 describe('BeginningCapitalsSpellingStrategy', function() {
   it('capitalizes the given word correctly', function() {

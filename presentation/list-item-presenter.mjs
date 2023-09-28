@@ -12,7 +12,7 @@ import WordGeneratorSamplesApplication from "./application/word-generator-sample
  */
 export class WordGeneratorListItemPresenter {
   /**
-   * @param {WordGeneratorSettings} args.listItem The represented item. 
+   * @param {WordGeneratorItem} args.listItem The represented item. 
    * @param {Number} args.listIndex Index of this item in the list. 
    * @param {String} args.userId ID of the user that owns the list. 
    * @param {WordGeneratorApplication} application 

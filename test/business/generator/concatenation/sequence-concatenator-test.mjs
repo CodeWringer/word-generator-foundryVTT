@@ -1,8 +1,5 @@
-import SequenceConcatenator from "../../script/generator/concatenation/sequence-concatenator.mjs"
-import { ENDING_PICK_MODES } from "../../script/generator/concatenation/sequence-concatenator.mjs";
-import { ProbableSequence } from "../../script/generator/probability-building/sequence-probability-builder.mjs";
-import { ProbableSequenceBranch } from "../../script/generator/probability-building/sequence-probability-builder.mjs";
-import { SequenceProbabilities } from "../../script/generator/probability-building/sequence-probability-builder.mjs";
+import SequenceConcatenator, { ENDING_PICK_MODES } from "../../../../business/generator/concatenation/sequence-concatenator.mjs"
+import { ProbableSequence, ProbableSequenceBranch, SequenceProbabilities } from "../../../../business/generator/probability-building/sequence-probability-builder.mjs";
 
 describe('SequenceConcatenator', function() {
   describe('generate', function() {

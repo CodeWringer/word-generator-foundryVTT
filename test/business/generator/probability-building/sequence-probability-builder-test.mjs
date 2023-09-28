@@ -1,5 +1,5 @@
-import SequenceProbabilityBuilder from "../../script/generator/probability-building/sequence-probability-builder.mjs";
-import Sequence from "../../script/generator/sequencing/sequence.mjs";
+import SequenceProbabilityBuilder from "../../../../business/generator/probability-building/sequence-probability-builder.mjs";
+import Sequence from "../../../../business/generator/sequencing/sequence.mjs";
 
 describe('SequenceProbabilityBuilder', function() {
   describe('build', function() {

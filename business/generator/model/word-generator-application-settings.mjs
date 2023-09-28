@@ -1,6 +1,8 @@
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 
 /**
+ * Settings of the `WordGeneratorApplication`. 
+ * 
  * @property {Number} amountToGenerate The number of words to generate. 
  * @property {SORTING_ORDERS} args.resultsSortMode The sorting order of generated words. 
  */
