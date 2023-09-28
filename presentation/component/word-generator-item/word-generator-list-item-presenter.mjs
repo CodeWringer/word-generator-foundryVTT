@@ -1,9 +1,8 @@
-import { StrategySettingValueTypes } from "../generator/strategy-setting.mjs";
-import * as DialogUtil from "../util/dialog-utility.mjs";
-import InfoBubble from "./info-bubble.mjs";
-import { InfoBubbleAutoShowingTypes, InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
-import WordGeneratorApplication from "./word-generator-application.mjs";
-import WordGeneratorSamplesApplication from "./application/word-generator-samples-application/word-generator-samples-application.mjs";
+import DialogUtility from "../../util/dialog-utility.mjs";
+import { StrategySettingValueTypes } from "../../../business/generator/strategy-setting.mjs";
+import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
+import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
+import WordGeneratorSamplesApplication from "../../application/word-generator-samples-application/word-generator-samples-application.mjs";
 
 /**
  * This presenter handles a singular list item. 
@@ -32,7 +31,7 @@ export class WordGeneratorListItemPresenter {
     const id = this.listItem.id;
 
     html.find(`#${id}-delete`).click(() => {
-      DialogUtil.showConfirmationDialog({
+      DialogUtility.showConfirmationDialog({
         localizableTitle: "wg.generator.confirmDeletion",
       }).then(result => {
         if (result.confirmed === true) {

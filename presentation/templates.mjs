@@ -6,7 +6,7 @@
 export const TEMPLATES = {
   WORD_GENERATOR_APPLICATION: "presentation/word-generator-application/word-generator-application.hbs",
   WORD_GENERATOR_SAMPLES_APPLICATION: "presentation/word-generator-samples-application/word-generator-samples-application.hbs",
-  WORD_GENERATOR_LIST_ITEM: "presentation/template/word-generator-list-item.hbs",
+  WORD_GENERATOR_LIST_ITEM: "presentation/component/word-generator-item/word-generator-list-item.hbs",
   MOVE_CONTROLS: "presentation/template/move-controls.hbs",
   SETTING_LIST_ITEM: "presentation/template/setting-list-item.hbs",
   /**

@@ -13,7 +13,7 @@ import WordGeneratorFolder from "./data/word-generator-folder.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
 import InfoBubble from "./info-bubble.mjs";
 import { InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
-import { WordGeneratorListItemPresenter } from "../../list-item-presenter.mjs";
+import { WordGeneratorListItemPresenter } from "../../component/word-generator-item/word-generator-list-item-presenter.mjs";
 import { SORTING_ORDERS } from "../../sorting-orders.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 
