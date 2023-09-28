@@ -5,7 +5,8 @@
       "close": "Close"
     },
     "folder": {
-      "create": "Create Folder"
+      "create": "Create Folder",
+      "name": "Folder Name"
     },
     "general": {
       "copy": {

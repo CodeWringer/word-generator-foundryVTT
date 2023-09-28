@@ -9,6 +9,7 @@ import { WordGeneratorListItemPresenter } from "../../component/word-generator-i
 import DropDownOption from "../../drop-down-option.mjs"
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
+import DialogUtility from "../../util/dialog-utility.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -146,8 +147,8 @@ export default class WordGeneratorApplication extends Application {
     });
 
     // Folder creation
-    html.find("#create-folder").click(() => {
-      thiz._createFolder();
+    html.find("#create-folder").click(async () => {
+      await thiz._createFolder();
     });
 
     // Sorting word generators
@@ -171,6 +172,7 @@ export default class WordGeneratorApplication extends Application {
       this._data.resultsSortMode = SORTING_ORDERS.DESC;
       this._persistData();
       this._generatedWords = this._getResultsSorted(this._generatedWords, this._data.resultsSortMode);
+      this.render();
     });
     if (this._data.resultsSortMode === SORTING_ORDERS.DESC) {
       resultsSortDescButtonElement.addClass("active");
@@ -181,6 +183,7 @@ export default class WordGeneratorApplication extends Application {
       this._data.resultsSortMode = SORTING_ORDERS.ASC;
       this._persistData();
       this._generatedWords = this._getResultsSorted(this._generatedWords, this._data.resultsSortMode);
+      this.render();
     });
     if (this._data.resultsSortMode === SORTING_ORDERS.ASC) {
       resultsSortAscButtonElement.addClass("active");
@@ -336,7 +339,7 @@ export default class WordGeneratorApplication extends Application {
     }
     
     // Remove generator item presenter.
-    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === generator.id);
+    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === id);
     if (indexPresenter >= 0) {
       this._generatorItemPresenters.splice(indexPresenter, 1);
     }
@@ -494,36 +497,15 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   async _createFolder() {
-    let name = "";
-    await new Dialog({
-      title: "Create Folder",
-      content: '<span>Folder Name</span><input id="inputName" type="text"></input>',
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-check"></i>',
-          label: "Confirm",
-          callback: () => {
-            this.confirmed = true; 
-            this.close();
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: "Cancel",
-          callback: () => {
-            this.confirmed = false; 
-            this.close();
-          }
-        }
-      },
-      default: "cancel",
-      close: html => {
-        name = html.find("#inputName").val();
-      }
-    }).render(true);
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.folder.create"),
+      localizedInputLabel: game.i18n.localize("wg.folder.name"),
+    });
+
+    if (dialog.confirmed !== true) return;
 
     const newFolder = new WordGeneratorFolder({
-      name: name,
+      name: dialog.input,
     });
 
     this._data.folders.push(newFolder);

@@ -31,7 +31,7 @@ export class WordGeneratorListItemPresenter {
     const id = this.listItem.id;
 
     html.find(`#${id}-delete`).click(() => {
-      DialogUtility.showConfirmationDialog({
+      new DialogUtility().showConfirmationDialog({
         localizableTitle: "wg.generator.confirmDeletion",
       }).then(result => {
         if (result.confirmed === true) {
