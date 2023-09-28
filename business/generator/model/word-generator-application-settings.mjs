@@ -41,8 +41,8 @@ export default class WordGeneratorApplicationSettings {
     return new WordGeneratorApplicationSettings({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
-      generatorItems: obj.generatorItems.map(it => WordGeneratorItem.fromDto(it)),
-      folders: obj.folders.map(it => WordGeneratorFolder.fromDto(it)),
+      generatorItems: (obj.generatorItems ?? []).map(it => WordGeneratorItem.fromDto(it)),
+      folders: (obj.folders ?? []).map(it => WordGeneratorFolder.fromDto(it)),
     });
   }
 

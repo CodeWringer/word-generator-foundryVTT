@@ -1,10 +1,11 @@
-import AbstractGeneratorDataSource from "./abstract-generator-datasource.mjs";
-import WordGeneratorItem from "../../business/generator/model/word-generator-settings.mjs";
+import WordGeneratorItem from "../../business/generator/model/word-generator-item.mjs";
 
 /**
  * Provides a means of storing `WordGeneratorItem` on user flags. 
+ * 
+ * @deprecated Deprecated in favor of `WordGeneratorApplicationSettingsDataSource`! This type is kept for migration purposes, but should no longer be used!
  */
-export default class UserFlagGeneratorSettingsDataSource extends AbstractGeneratorDataSource {
+export default class UserFlagGeneratorSettingsDataSource {
   static FLAG_SCOPE = "core";
   static KEY_FLAG = "word-generator-settings";
 
