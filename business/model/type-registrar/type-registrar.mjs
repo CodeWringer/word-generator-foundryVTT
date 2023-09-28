@@ -80,7 +80,7 @@ export default class TypeRegistrar {
    * @returns {Array<Object>} All registered type definitions. 
    */
   getAll() {
-    return this._registered.map(it => it);
+    return this._registered.concat([]); // Return a safe copy. 
   }
 
   /**
