@@ -32,7 +32,8 @@ export class WordGeneratorListItemPresenter {
 
     html.find(`#${id}-delete`).click(() => {
       new DialogUtility().showConfirmationDialog({
-        localizableTitle: "wg.generator.confirmDeletion",
+        localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
+        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.listItem.name),
       }).then(result => {
         if (result.confirmed === true) {
           this.application._removeGenerator(id);
