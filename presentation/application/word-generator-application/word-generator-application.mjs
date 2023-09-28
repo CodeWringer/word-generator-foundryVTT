@@ -380,20 +380,15 @@ export default class WordGeneratorApplication extends Application {
    */
   _updateGenerator(generator) {
     // Update generator item.
-    const indexGenerator = this._data.generatorItems.find(it => it.id === generator.id);
+    const indexGenerator = this._data.generatorItems.findIndex(it => it.id === generator.id);
     if (indexGenerator >= 0) {
       this._data.generatorItems[indexGenerator] = generator;
     }
 
     // Update generator item presenter.
-    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.entity.id === generator.id);
-    if (indexPresenter >= 0) {
-      this._generatorItemPresenters.splice(indexPresenter, 1, new WordGeneratorItemPresenter({
-        application: this,
-        entity: generator,
-        sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
-        spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
-      }));
+    const presenter = this._generatorItemPresenters.find(it => it.entity.id === generator.id);
+    if (presenter !== undefined) {
+      presenter.entity = generator;
     }
 
     this._persistData();
@@ -407,30 +402,42 @@ export default class WordGeneratorApplication extends Application {
    * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
    */
   _sort(sortingOrder = SORTING_ORDERS.DESC) {
+    // This function does the actual sorting, by name. 
+    const sortByName = function(entities, sortingOrder) {
+      const sorted = entities.concat([]); // Safe-copy
+      if (sortingOrder === SORTING_ORDERS.DESC) {
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+      } else {
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+      }
+      return sorted;
+    };
+
+    // This function sorts the given presenters, by id, based on the 
+    // order of ids of the given entities in their array. 
+    const sortPresentersByReference = function(presenters, entities) {
+      const sorted = entities
+        .map(entity => entity.id) // Fetch only the ids of the entities. 
+        .map(entityId => 
+          presenters.find(presenter => 
+            presenter.entity.id === entityId
+          )
+        );
+      return sorted;
+    };
+
     // Sort the folders.
-    const sortedFolders = this._data.folders.concat([]); // Safe-copy
-    if (sortingOrder === SORTING_ORDERS.DESC) {
-      sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      sortedFolders.sort((a, b) => b.name.localeCompare(a.name));
-    }
-    this._data.folders = sortedFolders;
+    this._data.folders = sortByName(this._data.folders, sortingOrder);
+    // Sort the folder presenters.
+    this._folderPresenters = sortPresentersByReference(this._folderPresenters, this._data.folders);
 
     // Sort the generator items.
-    const sortedGenerators = this._data.generatorItems.concat([]); // Safe-copy
-    if (sortingOrder === SORTING_ORDERS.DESC) {
-      sortedGenerators.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      sortedGenerators.sort((a, b) => b.name.localeCompare(a.name));
-    }
-    this._data.generatorItems = sortedGenerators;
+    this._data.generatorItems = sortByName(this._data.generatorItems, sortingOrder);
+    // Sort the generator item presenters.
+    this._generatorItemPresenters = sortPresentersByReference(this._generatorItemPresenters, this._data.generatorItems);
 
     this._persistData();
 
-    // Re-generate the presenters. 
-    this._regenerateFolderPresenters();
-    this._regenerateGeneratorItemPresenters();
-    
     this.render();
   }
 
