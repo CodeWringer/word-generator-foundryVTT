@@ -1,4 +1,4 @@
-import WordGeneratorApplicationData from "../../business/generator/model/word-generator-application-data.mjs";
+import WordGeneratorApplicationData from "../../business/model/word-generator-application-data.mjs";
 
 /**
  * Provides means of reading and writing the `WordGeneratorApplicationData` to user flags. 

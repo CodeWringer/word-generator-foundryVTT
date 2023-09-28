@@ -1,4 +1,4 @@
-import WordGeneratorItem from "../../business/generator/model/word-generator-item.mjs";
+import WordGeneratorItem from "../../business/model/word-generator-item.mjs";
 
 /**
  * Provides a means of storing `WordGeneratorItem` on user flags. 

@@ -1,4 +1,4 @@
-import WordGeneratorApplicationData from "./business/generator/model/word-generator-application-data.mjs";
+import WordGeneratorApplicationData from "./business/model/word-generator-application-data.mjs";
 import BeginningCapitalsSpellingStrategy from "./business/generator/postprocessing/beginning-capitals-strategy.mjs"
 import CharDepthSequencingStrategy from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
 import DelimiterSequencingStrategy from "./business/generator/sequencing/delimiter-sequencing-strategy.mjs"
