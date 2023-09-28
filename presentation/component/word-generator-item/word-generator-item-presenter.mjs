@@ -3,39 +3,68 @@ import { StrategySettingValueTypes } from "../../../business/generator/strategy-
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import WordGeneratorSamplesApplication from "../../application/word-generator-samples-application/word-generator-samples-application.mjs";
+import AbstractPresenter from "../../abstract-presenter.mjs";
+import { TEMPLATES } from "../../templates.mjs";
+import DropDownOption from "../../drop-down-option.mjs";
+import WordGeneratorItem from "../../../business/model/word-generator-item.mjs";
+import AbstractSequencingStrategy from "../../../business/generator/sequencing/abstract-sequencing-strategy.mjs";
+import AbstractSpellingStrategy from "../../../business/generator/postprocessing/abstract-spelling-strategy.mjs";
 
 /**
- * This presenter handles a singular list item. 
+ * This presenter handles a singular generator. 
  * 
- * It activates event listeners, sets initial states and performs other such presentation logic. 
+ * @property {String} template Path to the Handlebars template that represents the entity. 
+ * * Read-only
+ * @property {WordGeneratorApplication} application The parent application. 
+ * @property {WordGeneratorItem} entity The represented entity.  
+ * @property {Boolean} isExpanded
+ * 
+ * @property {Array<AbstractSequencingStrategy>} sequencingStrategies
+ * @property {Array<DropDownOption>} sequencingStrategyOptions
+ * 
+ * @property {Array<AbstractSpellingStrategy>} spellingStrategies
+ * @property {Array<DropDownOption>} spellingStrategyOptions
  */
-export default class WordGeneratorListItemPresenter {
-  /**
-   * @param {WordGeneratorItem} args.listItem The represented item. 
-   * @param {Number} args.listIndex Index of this item in the list. 
-   * @param {String} args.userId ID of the user that owns the list. 
-   * @param {WordGeneratorApplication} application The owning application. 
-   */
-  constructor(args) {
-    this.listItem = args.listItem;
-    this.listIndex = args.listIndex;
-    this.userId = args.userId;
-    this.application = args.application;
-  }
+export default class WordGeneratorItemPresenter extends AbstractPresenter {
+  get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
 
   /**
-   * Registers event listeners to enable user-interactivity. 
-   * 
-   * @param {HTMLElement} html 
+   * @param {Object} args
+   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WordGeneratorItem} args.entity The represented entity.  
+   * @param {Boolean | undefined} args.isExpanded
+   * * default `false`
+   * @param {Array<AbstractSequencingStrategy>} args.sequencingStrategies
+   * @param {Array<AbstractSpellingStrategy>} args.spellingStrategies
    */
+  constructor(args = {}) {
+    super(args);
+
+    this.isExpanded = args.isExpanded ?? false;
+
+    this.sequencingStrategies = args.sequencingStrategies;
+    this.sequencingStrategyOptions = this.sequencingStrategies
+      .map(it => new DropDownOption({
+        value: it.getDefinitionID(),
+        localizedTitle: it.getHumanReadableName(),
+      }));
+
+    this.spellingStrategies = args.spellingStrategies;
+    this.spellingStrategyOptions = this.spellingStrategies
+      .map(it => new DropDownOption({
+        value: it.getDefinitionID(),
+        localizedTitle: it.getHumanReadableName(),
+      }));
+  }
+
   activateListeners(html) {
     const thiz = this;
-    const id = this.listItem.id;
+    const id = this.entity.id;
 
     html.find(`#${id}-delete`).click(() => {
       new DialogUtility().showConfirmationDialog({
         localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
-        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.listItem.name),
+        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name),
       }).then(result => {
         if (result.confirmed === true) {
           this.application._removeGenerator(id);
@@ -44,52 +73,52 @@ export default class WordGeneratorListItemPresenter {
     });
 
     html.find(`#${id}-edit-sample-set`).click(() => {
-      new WordGeneratorSamplesApplication(this.listItem, (data) => {
+      new WordGeneratorSamplesApplication(this.entity, (data) => {
         if (data.confirmed === true) {
-          this.listItem.sampleSet = data.sampleSet;
-          this.listItem.sampleSetSeparator = data.sampleSetSeparator;
+          this.entity.sampleSet = data.sampleSet;
+          this.entity.sampleSetSeparator = data.sampleSetSeparator;
           this._updateRender()
         }
       }).render(true);
     });
 
     html.find(`#${id}-name`).change((data) => {
-      thiz.listItem.name = $(data.target).val();
+      thiz.entity.name = $(data.target).val();
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
-      thiz.listItem.targetLengthMin = this._parseEmptyToGiven(data, 1);
+      thiz.entity.targetLengthMin = this.parseEmptyToGiven(data, 1);
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
-      thiz.listItem.targetLengthMax = this._parseEmptyToGiven(data, 7);
+      thiz.entity.targetLengthMax = this.parseEmptyToGiven(data, 7);
       this._updateRender()
     });
     html.find(`#${id}-entropy`).change((data) => {
-      thiz.listItem.entropy = this._parseEmptyToGiven(data, 0.0);
+      thiz.entity.entropy = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyStart`).change((data) => {
-      thiz.listItem.entropyStart = this._parseEmptyToGiven(data, 0.0);
+      thiz.entity.entropyStart = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
-      thiz.listItem.entropyMiddle = this._parseEmptyToGiven(data, 0.0);
+      thiz.entity.entropyMiddle = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
-      thiz.listItem.entropyEnd = this._parseEmptyToGiven(data, 0.0);
+      thiz.entity.entropyEnd = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-seed`).change((data) => {
-      thiz.listItem.seed = this._parseEmptyToUndefined(data);
+      thiz.entity.seed = this.parseEmptyToUndefined(data);
       this._updateRender()
     });
 
     // Sequencing settings
     html.find(`#${id}-sequencing-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
-      const setting = this.listItem.sequencingStrategySettings.find(it => it.name === id);
+      const setting = this.entity.sequencingStrategySettings.find(it => it.name === id);
       setting.value = this._parseSettingValue(setting, data.target);
       this._updateRender();
     });
@@ -97,7 +126,7 @@ export default class WordGeneratorListItemPresenter {
     // Spelling settings
     html.find(`#${id}-spelling-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
-      const setting = this.listItem.spellingStrategySettings.find(it => it.name === id);
+      const setting = this.entity.spellingStrategySettings.find(it => it.name === id);
       setting.value = this._parseSettingValue(setting, data.target);
       this._updateRender();
     });
@@ -186,74 +215,53 @@ export default class WordGeneratorListItemPresenter {
 
     // ## collapse button
     html.find(`#${id}-collapse`).click(() => {
-      thiz.listItem.isExpanded = !(thiz.listItem.isExpanded ?? false);
+      thiz.isExpanded = !(thiz.isExpanded ?? false);
       this._updateRender()
     });
 
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;
     html.find(`#${idEndingPickMode}`).change((data) => {
-      thiz.listItem.endingPickMode = $(data.target).val();
+      thiz.entity.endingPickMode = $(data.target).val();
       this._updateRender()
     });
-    this._syncDropDownValue(html, idEndingPickMode, this.listItem.endingPickMode);
+    this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode);
 
     const idSequencingStrategy = `${id}-sequencingStrategy`;
     html.find(`#${idSequencingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      thiz.listItem.sequencingStrategyId = strategyId;
+      thiz.entity.sequencingStrategyId = strategyId;
       
-      const strategyDefinition = WordGeneratorApplication.registeredSequencingStrategies.get(strategyId);
-      thiz.listItem.sequencingStrategySettings = strategyDefinition.getSettings();
+      const strategyDefinition = this.sequencingStrategies.find(it => it.id === strategyId);
+      thiz.entity.sequencingStrategySettings = strategyDefinition.getSettings();
 
       this._updateRender()
     });
-    this._syncDropDownValue(html, idSequencingStrategy, this.listItem.sequencingStrategyId);
+    this.syncDropDownValue(html, idSequencingStrategy, this.entity.sequencingStrategyId);
 
     const idSpellingStrategy = `${id}-spellingStrategy`;
     html.find(`#${idSpellingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      thiz.listItem.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
+      thiz.entity.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
 
       if (strategyId !== undefined) {
-        const strategyDefinition = WordGeneratorApplication.registeredSpellingStrategies.get(strategyId);
+        const strategyDefinition = this.spellingStrategies.find(it => it.id === strategyId);
         if (strategyDefinition !== undefined) {
-          thiz.listItem.spellingStrategySettings = strategyDefinition.getSettings();
+          thiz.entity.spellingStrategySettings = strategyDefinition.getSettings();
         } else {
-          thiz.listItem.spellingStrategySettings = undefined;
+          thiz.entity.spellingStrategySettings = undefined;
         }
       }
 
       this._updateRender()
     });
-    this._syncDropDownValue(html, idSpellingStrategy, this.listItem.spellingStrategyId);
+    this.syncDropDownValue(html, idSpellingStrategy, this.entity.spellingStrategyId);
 
     // Generate
     html.find(`#${id}-generate`).click(() => {
-      const generator = this.listItem.toGenerator();
+      const generator = this.entity.toGenerator();
       this.application._generate(generator);
     });
-  }
-
-  /**
-   * Ensures the current value is correctly reflected by the drop-down identified via the given id. 
-   * @param {JQuery} html FormApplication root element. 
-   * @param {String} id The id of the drop-down to synchronize. 
-   * @param {Any} currentValue The current value of the field represented by the drop-down. 
-   * 
-   * @private
-   */
-  _syncDropDownValue(html, id, currentValue) {
-    const selectElement = html.find(`#${id}`);
-    const optionElements = selectElement.find('option');
-    const currentValueAsString = "" + currentValue;
-    for(let i = 0; i < optionElements.length; i++) {
-      const optionElement = optionElements[i];
-      if (optionElement.value == currentValueAsString) {
-        selectElement[0].selectedIndex = i;
-        break;
-      }
-    }
   }
 
   /**
@@ -262,7 +270,7 @@ export default class WordGeneratorListItemPresenter {
    * @private
    */
   _updateRender() {
-    this.application._updateGenerator(this.listItem);
+    this.application._updateGenerator(this.entity);
   }
 
   /**
@@ -288,36 +296,5 @@ export default class WordGeneratorListItemPresenter {
       default:
         return $(jElement).val();
     }
-  }
-
-  /**
-   * Returns either the value of the given 'change' event handler's context object 
-   * or `undefined`, if the trimmed value is equal to an empty string. 
-   * 
-   * @param {Object} data Context object of a JQuery 'change' event handler. 
-   * 
-   * @returns {Any | undefined}
-   * 
-   * @private
-   */
-  _parseEmptyToUndefined(data) {
-    const newVal = $(data.target).val().trim();
-    return newVal === "" ? undefined : newVal;
-  }
-
-  /**
-   * Returns either the value of the given 'change' event handler's context object 
-   * or the given value, if the trimmed value is equal to an empty string. 
-   * 
-   * @param {Object} data Context object of a JQuery 'change' event handler. 
-   * @param {Any} emptyValue The value to return, in case of an 'empty' value. 
-   * 
-   * @returns {Any | undefined}
-   * 
-   * @private
-   */
-  _parseEmptyToGiven(data, emptyValue) {
-    const newVal = $(data.target).val().trim();
-    return newVal === "" ? emptyValue : newVal;
   }
 }

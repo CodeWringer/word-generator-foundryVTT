@@ -1,30 +1,43 @@
+import WordGeneratorFolder from "../../../business/model/word-generator-folder.mjs";
+import AbstractPresenter from "../../abstract-presenter.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
-import WordGeneratorPresentationFolder from "./word-generator-presentation-folder.mjs";
+import { TEMPLATES } from "../../templates.mjs";
 
 /**
- * This presenter handles a folder. 
+ * This presenter handles a singular folder. 
  * 
- * It activates event listeners, sets initial states and performs other such presentation logic. 
+ * @property {String} template Path to the Handlebars template that represents the entity. 
+ * * Read-only
+ * @property {WordGeneratorApplication} application The parent application. 
+ * @property {WordGeneratorFolder} entity The represented entity.  
+ * @property {Boolean} isExpanded
+ * @property {WordGeneratorFolderPresenter | undefined} parent
+ * @property {Array<WordGeneratorFolderPresenter>} children
+ * @property {Array<WordGeneratorItemPresenter>} items
  */
-export default class WordGeneratorFolderPresenter {
+export default class WordGeneratorFolderPresenter extends AbstractPresenter {
+  get template() { return TEMPLATES.WORD_GENERATOR_FOLDER; }
+
   /**
-   * @param {WordGeneratorPresentationFolder} args.listItem The represented item. 
-   * @param {Number} args.listIndex Index of this item in the list. 
-   * @param {String} args.userId ID of the user that owns the list. 
-   * @param {WordGeneratorApplication} application The owning application. 
+   * @param {Object} args
+   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WordGeneratorFolder} args.entity The represented entity.  
+   * @param {Boolean | undefined} args.isExpanded
+   * * default `false`
+   * @param {WordGeneratorFolderPresenter | undefined} args.parent
+   * @param {Array<WordGeneratorFolderPresenter> | undefined} args.children
+   * @param {Array<WordGeneratorItemPresenter> | undefined} args.items
    */
-  constructor(args) {
-    this.listItem = args.listItem;
-    this.listIndex = args.listIndex;
-    this.userId = args.userId;
-    this.application = args.application;
+  constructor(args = {}) {
+    super(args);
+
+    this.isExpanded = args.isExpanded ?? false;
+    this.parent = args.parent;
+    this.children = args.children ?? [];
+    this.items = args.items ?? [];
   }
-  
-  /**
-   * Registers event listeners to enable user-interactivity. 
-   * 
-   * @param {HTMLElement} html 
-   */
+
   activateListeners(html) {
+    const thiz = this;
   }
 }

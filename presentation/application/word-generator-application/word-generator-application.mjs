@@ -5,8 +5,7 @@ import WordGeneratorItem from "../../../business/model/word-generator-item.mjs"
 import TypeRegistrar from "../../../business/model/type-registrar/type-registrar.mjs"
 import WordGeneratorApplicationDataDataSource from "../../../data/datasource/word-generator-application-data-datasource.mjs"
 import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
-import WordGeneratorListItemPresenter from "../../component/word-generator-item/word-generator-list-item-presenter.mjs"
-import DropDownOption from "../../drop-down-option.mjs"
+import WordGeneratorItemPresenter from "../../component/word-generator-item/word-generator-item-presenter.mjs"
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
 import DialogUtility from "../../util/dialog-utility.mjs"
@@ -28,7 +27,6 @@ export default class WordGeneratorApplication extends Application {
     const defaults = super.defaultOptions;
   
     const overrides = {
-      height: 'auto',
       id: 'word-generator-application',
       template: TEMPLATES.WORD_GENERATOR_APPLICATION,
       title: game.i18n.localize("wg.application.title"),
@@ -86,7 +84,7 @@ export default class WordGeneratorApplication extends Application {
   /**
    * The array of generator list item presenters. 
    * 
-   * @type {Array<WordGeneratorListItemPresenter>}
+   * @type {Array<WordGeneratorItemPresenter>}
    * @private
    */
   _generatorItemPresenters = [];
@@ -244,23 +242,9 @@ export default class WordGeneratorApplication extends Application {
 
   /** @override */
   async getData(options) {
-    const sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll()
-      .map(it => new DropDownOption({
-        value: it.getDefinitionID(),
-        localizedTitle: it.getHumanReadableName(),
-      }));
-      
-      const spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll()
-      .map(it => new DropDownOption({
-        value: it.getDefinitionID(),
-        localizedTitle: it.getHumanReadableName(),
-      }));
-
     return {
       data: this._data,
       generatedWords: this._generatedWords,
-      sequencingStrategies: sequencingStrategies,
-      spellingStrategies: spellingStrategies,
       generatorListItemTemplate: WordGeneratorApplication.generatorListItemTemplate,
     }
   }
@@ -298,8 +282,8 @@ export default class WordGeneratorApplication extends Application {
       const generator = this._data.generatorItems[i];
 
       this._generatorItemPresenters.push(
-        new WordGeneratorListItemPresenter({
-          listItem: generator,
+        new WordGeneratorItemPresenter({
+          entity: generator,
           listIndex: i,
           userId: game.userId,
           application: this,
@@ -319,8 +303,8 @@ export default class WordGeneratorApplication extends Application {
     this._data.generatorItems.push(newGeneratorItem);
 
     // Add a new presenter for the item. 
-    this._generatorItemPresenters.push(new WordGeneratorListItemPresenter({
-      listItem: newGeneratorItem,
+    this._generatorItemPresenters.push(new WordGeneratorItemPresenter({
+      entity: newGeneratorItem,
       listIndex: this._generatorItemPresenters.length,
       userId: game.userId,
       application: this,
@@ -369,8 +353,8 @@ export default class WordGeneratorApplication extends Application {
     // Update generator item presenter.
     const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === generator.id);
     if (indexPresenter >= 0) {
-      this._generatorItemPresenters.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
-        listItem: generator,
+      this._generatorItemPresenters.splice(indexPresenter, 1, new WordGeneratorItemPresenter({
+        entity: generator,
         listIndex: indexPresenter,
         userId: game.userId,
         application: this,
