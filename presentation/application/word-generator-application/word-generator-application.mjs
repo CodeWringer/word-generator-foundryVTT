@@ -1,7 +1,9 @@
 import WordGenerator from "../../../business/generator/generator.mjs"
+import WordGeneratorApplicationData from "../../../business/generator/model/word-generator-application-data.mjs"
 import WordGeneratorFolder from "../../../business/generator/model/word-generator-folder.mjs"
 import WordGeneratorItem from "../../../business/generator/model/word-generator-item.mjs"
 import TypeRegistrar from "../../../business/generator/type-registrar.mjs"
+import WordGeneratorApplicationDataDataSource from "../../../data/datasource/word-generator-application-data-datasource.mjs"
 import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
 import { WordGeneratorListItemPresenter } from "../../component/word-generator-item/word-generator-list-item-presenter.mjs"
 import DropDownOption from "../../drop-down-option.mjs"
@@ -55,30 +57,28 @@ export default class WordGeneratorApplication extends Application {
   static registeredSpellingStrategies = new TypeRegistrar();
 
   /**
-   * @type {Array<WordGeneratorItem>}
+   * The application working data. 
+   * 
+   * @type {WordGeneratorApplicationData}
    * @private
    */
-  _generators = [];
+  _data = new WordGeneratorApplicationData();
 
   /**
+   * The array of generator list item presenters. 
+   * 
    * @type {Array<WordGeneratorListItemPresenter>}
    * @private
    */
-  _generatorPresenters = [];
+  _generatorItemPresenters = [];
 
   /**
    * An array of the last generated words. 
+   * 
    * @type {Array<String>}
    * @private
    */
   _generatedWords = [];
-
-  /**
-   * The application level settings. 
-   * @type {WordGeneratorApplicationSettings}
-   * @private
-   */
-  _applicationSettings = undefined;
 
   /**
    * @type {Jquery}
@@ -94,6 +94,7 @@ export default class WordGeneratorApplication extends Application {
 
   /**
    * Current scroll value of the generators list.
+   * 
    * @type {Number}
    * @private
    */
@@ -101,38 +102,19 @@ export default class WordGeneratorApplication extends Application {
   
   /**
    * Current scroll value of the resulting words list.
+   * 
    * @type {Number}
    * @private
    */
   _currentScrollResultList = 0;
 
-  /**
-   * The list of folders. 
-   * @type {Array<Object>}
-   * @private
-   */
-  _folders = [];
-
   constructor() {
     super();
 
-    this._applicationSettings = new LoadApplicationSettingsUseCase().invoke(game.userId);
+    const dataSource = new WordGeneratorApplicationDataDataSource();
+    this._data = dataSource.get(game.userId);
 
-    this._generators = new LoadGeneratorsUseCase().invoke(game.userId);
-    this._generatorPresenters = [];
-
-    for (let i = 0; i < this._generators.length; i++) {
-      const generator = this._generators[i];
-
-      this._generatorPresenters.push(
-        new WordGeneratorListItemPresenter({
-          listItem: generator,
-          listIndex: i,
-          userId: game.userId,
-          application: this,
-        })
-      );
-    }
+    this._regenerateGeneratorItemPresenters();
   }
 
   /** @override */
@@ -170,45 +152,34 @@ export default class WordGeneratorApplication extends Application {
     // Generation count
     html.find("#amountToGenerate").change((data) => {
       const amountToGenerate = parseInt($(data.target).val());
-      this._applicationSettings.amountToGenerate = amountToGenerate;
-      new SetApplicationSettingsUseCase().invoke({
-        userId: game.userId,
-        value: this._applicationSettings,
-      });
+      this._data.amountToGenerate = amountToGenerate;
+      this._persistData();
     });
 
     // Sorting result list
     const resultsSortDescButtonElement = html.find("#results-move-sort-alpha-desc");
     resultsSortDescButtonElement.click(() => {
-      this._applicationSettings.resultsSortMode = SORTING_ORDERS.DESC;
-      new SetApplicationSettingsUseCase().invoke({
-        userId: game.userId,
-        value: this._applicationSettings,
-      });
-      
-      thiz._sortResults();
+      this._data.resultsSortMode = SORTING_ORDERS.DESC;
+      this._persistData();
+      this._generatedWords = this._getResultsSorted(this._generatedWords, this._data.resultsSortMode);
     });
-    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.DESC) {
+    if (this._data.resultsSortMode === SORTING_ORDERS.DESC) {
       resultsSortDescButtonElement.addClass("active");
     }
 
     const resultsSortAscButtonElement = html.find("#results-move-sort-alpha-asc");
     resultsSortAscButtonElement.click(() => {
-      this._applicationSettings.resultsSortMode = SORTING_ORDERS.ASC;
-      new SetApplicationSettingsUseCase().invoke({
-        userId: game.userId,
-        value: this._applicationSettings,
-      });
-
-      thiz._sortResults();
+      this._data.resultsSortMode = SORTING_ORDERS.ASC;
+      this._persistData();
+      this._generatedWords = this._getResultsSorted(this._generatedWords, this._data.resultsSortMode);
     });
-    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.ASC) {
+    if (this._data.resultsSortMode === SORTING_ORDERS.ASC) {
       resultsSortAscButtonElement.addClass("active");
     }
 
     // List item event handling. 
-    for (const generator of this._generatorPresenters) {
-      generator.activateListeners(html);
+    for (const presenter of this._generatorItemPresenters) {
+      presenter.activateListeners(html);
     }
 
     // Generated word event handling.
@@ -269,11 +240,10 @@ export default class WordGeneratorApplication extends Application {
       }));
 
     return {
-      settings: this._generators,
+      data: this._data,
       generatedWords: this._generatedWords,
       sequencingStrategies: sequencingStrategies,
       spellingStrategies: spellingStrategies,
-      applicationSettings: this._applicationSettings,
     }
   }
 
@@ -290,81 +260,129 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
+   * Persists the current working data. 
+   * 
+   * @private
+   */
+  _persistData() {
+    const dataSource = new WordGeneratorApplicationDataDataSource();
+    dataSource.set(game.userId, this._data.toDto());
+  }
+
+  /**
+   * Re-generates the word generator item presenters
+   * 
+   * @private
+   */
+  _regenerateGeneratorItemPresenters() {
+    this._generatorItemPresenters = [];
+    for (let i = 0; i < this._data.generatorItems.length; i++) {
+      const generator = this._data.generatorItems[i];
+
+      this._generatorItemPresenters.push(
+        new WordGeneratorListItemPresenter({
+          listItem: generator,
+          listIndex: i,
+          userId: game.userId,
+          application: this,
+        })
+      );
+    }
+  }
+
+  /**
    * Click-handler to create a new generator. 
    */
   _createGenerator() {
-    const newSetting = new WordGeneratorItem({
+    // Add a new generator item. 
+    const newGeneratorItem = new WordGeneratorItem({
       name: game.i18n.localize("wg.generator.defaultName"),
     });
+    this._data.generatorItems.push(newGeneratorItem);
 
-    this._generators.push(newSetting);
-    this._generatorPresenters.push(new WordGeneratorListItemPresenter({
-      listItem: newSetting,
-      listIndex: this._generatorPresenters.length,
+    // Add a new presenter for the item. 
+    this._generatorItemPresenters.push(new WordGeneratorListItemPresenter({
+      listItem: newGeneratorItem,
+      listIndex: this._generatorItemPresenters.length,
       userId: game.userId,
       application: this,
     }));
 
-    new AddGeneratorUseCase().invoke({
-      userId: game.userId,
-      generatorSettings: newSetting,
-    });
+    this._persistData();
 
     this.render();
   }
   
   /**
    * Click-handler to remove a generator. 
+   * 
    * @param {String} id Id of a generator to remove. 
    */
   _removeGenerator(id) {
-    const index = this._generators.findIndex(it => it.id === id);
-    this._generators.splice(index, 1);
+    // Remove generator item.
+    const index = this._data.generatorItems.findIndex(it => it.id === id);
+    if (index >= 0) {
+      this._data.generatorItems.splice(index, 1);
+    }
+    
+    // Remove generator item presenter.
+    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === generator.id);
+    if (indexPresenter >= 0) {
+      this._generatorItemPresenters.splice(indexPresenter, 1);
+    }
 
-    new RemoveGeneratorUseCase().invoke({
-      userId: this.userId,
-      generatorId: id,
-    });
+    this._persistData();
 
     this.render();
   }
 
   /**
-   * Click-handler to override/update a generator. 
+   * Click-handler to update the given generator. 
+   * 
    * @param {WordGenerator} generator The generator instance to update. 
    */
-  _setGenerator(generator) {
-    const indexPresenter = this._generatorPresenters.findIndex(it => it.listItem.id === generator.id);
-    this._generatorPresenters.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
-      listItem: generator,
-      listIndex: indexPresenter,
-      userId: game.userId,
-      application: this,
-    }));
+  _updateGenerator(generator) {
+    // Update generator item.
+    const indexGenerator = this._data.generatorItems.find(it => it.id === generator.id);
+    if (indexGenerator >= 0) {
+      this._data.generatorItems[indexGenerator] = generator;
+    }
 
-    new SetGeneratorsUseCase().invoke({
-      userId: game.userId,
-      generatorSettings: this._generators,
-    });
+    // Update generator item presenter.
+    const indexPresenter = this._generatorItemPresenters.findIndex(it => it.listItem.id === generator.id);
+    if (indexPresenter >= 0) {
+      this._generatorItemPresenters.splice(indexPresenter, 1, new WordGeneratorListItemPresenter({
+        listItem: generator,
+        listIndex: indexPresenter,
+        userId: game.userId,
+        application: this,
+      }));
+    }
+
+    this._persistData();
 
     this.render();
   }
 
   /**
    * Click-handler to sort generators. 
-   * @param {SORTING_ORDERS} sortingOrder 
+   * 
+   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
    */
   _sortGenerators(sortingOrder = SORTING_ORDERS.DESC) {
-    const sorted = new SortGeneratorsUseCase().invoke({
-      userId: game.userId,
-      sortingOrder: sortingOrder,
-    });
-    new SetGeneratorsUseCase().invoke({
-      userId: game.userId,
-      generatorSettings: sorted,
-    });
-    
-    this._generators = sorted;
+    // Sort the generator items.
+    const sorted = this._data.generatorItems.concat([]); // Safe-copy
+    if (sortingOrder === SORTING_ORDERS.DESC) {
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      sorted.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    this._data.generatorItems = sorted;
+
+    // Re-generate the presenters. 
+    this._regenerateGeneratorItemPresenters();
+
+    this._persistData();
     
     this.render();
   }
@@ -373,13 +391,16 @@ export default class WordGeneratorApplication extends Application {
    * Returns the current list of generated words, sorted by the corresponding application 
    * setting's sorting mode. 
    * 
+   * @param {Array<String>} results The list of words to sort. 
+   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
+   * 
    * @returns {Array<String>} The sorted list of generated words. 
    * 
    * @private
    */
-  _getResultsSorted() {
-    let sorted = this._generatedWords;
-    if (this._applicationSettings.resultsSortMode === SORTING_ORDERS.DESC) {
+  _getResultsSorted(results, sortingOrder = SORTING_ORDERS.DESC) {
+    let sorted = results.concat([]); // Safe-copy
+    if (sortingOrder === SORTING_ORDERS.DESC) {
       sorted = sorted.sort();
     } else {
       sorted = sorted.sort().reverse();
@@ -388,25 +409,14 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-handler to sort generated words. 
-   * 
-   * @private
-   */
-  _sortResults() {
-    this._generatedWords = this._getResultsSorted();
-    
-    this.render();
-  }
-  
-  /**
    * Click-handler to generate words, using a given generator. 
+   * 
    * @param {WordGenerator} generator The generator instance to utilize. 
    */
   _generate(generator) {
     try {
-      const generatedWords = generator.generate(this._applicationSettings.amountToGenerate);
-      this._generatedWords = generatedWords;
-      this._generatedWords = this._getResultsSorted();
+      const generatedWords = generator.generate(this._data.amountToGenerate);
+      this._generatedWords = this._getResultsSorted(generatedWords, this._data.resultsSortMode);
     } catch (error) {
       console.error(error);
     }
@@ -475,7 +485,7 @@ export default class WordGeneratorApplication extends Application {
    */
   async _createFolder() {
     let name = "";
-    const dialog = await new Dialog({
+    await new Dialog({
       title: "Create Folder",
       content: '<span>Folder Name</span><input id="inputName" type="text"></input>',
       buttons: {
@@ -506,13 +516,10 @@ export default class WordGeneratorApplication extends Application {
       name: name,
     });
 
-    this._folders.push(newFolder);
-
-    new AddFolderUseCase().invoke({
-      userId: game.userId,
-      data: newFolder,
-    });
+    this._data.folders.push(newFolder);
     
+    this._persistData();
+
     this.render();
   }
 }

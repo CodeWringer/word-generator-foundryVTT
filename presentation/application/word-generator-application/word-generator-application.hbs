@@ -1,9 +1,8 @@
 {{!-- Parameters:
-settings: {Array<WordGeneratorItem>}
-generatedWords: {Array<String>}
+data: WordGeneratorApplicationData
+generatedWords: Array<String>
 sequencingStrategies: Array<DropDownOption>
 spellingStrategies: Array<DropDownOption>
-applicationSettings: WordGeneratorApplicationData
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -51,9 +50,9 @@ applicationSettings: WordGeneratorApplicationData
       </a>
     </div>
     <ul id="generators-list" class="word-generator-unstyled-list word-generator-scrollable">
-      {{#each settings as |setting index|}}
+      {{#each data.generatorItems as |listItem index|}}
         {{> "modules/word-generator/template/word-generator-list-item.hbs" 
-          listItem=setting 
+          listItem=listItem 
           sequencingStrategies=../sequencingStrategies 
           spellingStrategies=../spellingStrategies
         }}
@@ -76,7 +75,7 @@ applicationSettings: WordGeneratorApplicationData
             id="amountToGenerate" 
             type="number" 
             min="1" 
-            value="{{applicationSettings.amountToGenerate}}" 
+            value="{{data.amountToGenerate}}" 
           />
         </span>
       </div>

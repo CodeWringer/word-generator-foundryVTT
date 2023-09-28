@@ -18,7 +18,7 @@ export default class WordGeneratorApplicationData {
    * * Default `10` 
    * @param {SORTING_ORDERS | undefined} args.resultsSortMode The sorting order of generated words. 
    * * Default `SORTING_ORDERS.DESC`
-   * @param {Array<WordGeneratorItem>  undefined} generatorItems A list of generator items. 
+   * @param {Array<WordGeneratorItem> | undefined} generatorItems A list of generator items. 
    * @param {Array<WordGeneratorFolder> | undefined} folders A list of folders. 
    */
   constructor(args = {}) {

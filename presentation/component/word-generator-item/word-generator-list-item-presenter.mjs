@@ -259,7 +259,7 @@ export class WordGeneratorListItemPresenter {
    * @private
    */
   _updateRender() {
-    this.application._setGenerator(this.listItem);
+    this.application._updateGenerator(this.listItem);
   }
 
   /**
