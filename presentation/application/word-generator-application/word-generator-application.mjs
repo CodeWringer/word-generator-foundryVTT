@@ -1,21 +1,12 @@
-import WordGeneratorItem from "../generator/data/word-generator-settings.mjs";
-import WordGenerator from "../generator/generator.mjs";
-import TypeRegistrar from "../generator/type-registrar.mjs";
-import AddFolderUseCase from "../use_case/add-folder-use-case.mjs";
-import AddGeneratorUseCase from "../use_case/add-generator-use-case.mjs";
-import LoadApplicationSettingsUseCase from "../use_case/load-application-settings-use-case.mjs";
-import LoadGeneratorsUseCase from "../use_case/load-generators-use-case.mjs";
-import RemoveGeneratorUseCase from "../use_case/remove-generator-use-case.mjs";
-import SetApplicationSettingsUseCase from "../use_case/set-application-settings-use-case.mjs";
-import SetGeneratorsUseCase from "../use_case/set-generators-use-case.mjs";
-import SortGeneratorsUseCase from "../use_case/sort-generators-use-case.mjs";
-import WordGeneratorFolder from "./data/word-generator-folder.mjs";
-import DropDownOption from "../../drop-down-option.mjs";
-import InfoBubble from "./info-bubble.mjs";
-import { InfoBubbleAutoHidingTypes } from "./info-bubble.mjs";
-import { WordGeneratorListItemPresenter } from "../../component/word-generator-item/word-generator-list-item-presenter.mjs";
-import { SORTING_ORDERS } from "../../sorting-orders.mjs";
-import { TEMPLATES } from "../../templates.mjs";
+import WordGenerator from "../../../business/generator/generator.mjs"
+import WordGeneratorFolder from "../../../business/generator/model/word-generator-folder.mjs"
+import WordGeneratorItem from "../../../business/generator/model/word-generator-item.mjs"
+import TypeRegistrar from "../../../business/generator/type-registrar.mjs"
+import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
+import { WordGeneratorListItemPresenter } from "../../component/word-generator-item/word-generator-list-item-presenter.mjs"
+import DropDownOption from "../../drop-down-option.mjs"
+import { SORTING_ORDERS } from "../../sorting-orders.mjs"
+import { TEMPLATES } from "../../templates.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
