@@ -255,10 +255,6 @@ export default class WordGeneratorApplication extends Application {
         value: it.getDefinitionID(),
         localizedTitle: it.getHumanReadableName(),
       }));
-      spellingStrategies.splice(0, 0, new DropDownOption({
-        value: "undefined",
-        localizedTitle: game.i18n.localize("wg.generator.spellingStrategies.none"),
-      }));
 
     return {
       data: this._data,

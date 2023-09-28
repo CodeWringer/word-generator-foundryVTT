@@ -1,4 +1,5 @@
 import WordGeneratorApplicationData from "./business/model/word-generator-application-data.mjs";
+import NoneSpellingStrategy from "./business/generator/postprocessing/none-spelling-strategy.mjs";
 import BeginningCapitalsSpellingStrategy from "./business/generator/postprocessing/beginning-capitals-strategy.mjs"
 import CharDepthSequencingStrategy from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
 import DelimiterSequencingStrategy from "./business/generator/sequencing/delimiter-sequencing-strategy.mjs"
@@ -30,6 +31,7 @@ Hooks.once('ready', function() {
   WordGeneratorApplication.registeredSequencingStrategies.register(new DelimiterSequencingStrategy(","));
   
   // Ensure default spelling strategy definitions are registered. 
+  WordGeneratorApplication.registeredSpellingStrategies.register(new NoneSpellingStrategy());
   WordGeneratorApplication.registeredSpellingStrategies.register(new BeginningCapitalsSpellingStrategy());
   
   // Migrate data as needed.
