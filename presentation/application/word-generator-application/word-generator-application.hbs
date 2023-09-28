@@ -1,9 +1,8 @@
 {{!-- Parameters:
-data: WordGeneratorApplicationData
-generatedWords: Array<String>
-sequencingStrategies: Array<DropDownOption>
-spellingStrategies: Array<DropDownOption>
-generatorListItemTemplate: String
+data: {WordGeneratorApplicationData}
+generatedWords: {Array<String></String>}
+generatorItemPresenters: Array<WordGeneratorItemPresenter>}
+folderPresenters: {Array<WordGeneratorFolderPresenter>}
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
@@ -54,17 +53,17 @@ generatorListItemTemplate: String
     <div class="word-generator-scrollable">
       {{!-- Folders and their generators --}}
       <ul id="folders-list" class="word-generator-unstyled-list">
-        {{#each data.presentationFolders as |itemData index|}}
-          {{#with itemData.template as |template|}}
-            {{> (template) data=itemData }}
+        {{#each generatorItemPresenters as |presenter index|}}
+          {{#with presenter.template as |template|}}
+            {{> (template) presenter=presenter }}
           {{/with}}
         {{/each}}
       </ul>
       {{!-- Generators without a parent folder --}}
       <ul id="generators-list" class="word-generator-unstyled-list">
-        {{#each data.presentationGenerators as |itemData index|}}
-          {{#with itemData.template as |template|}}
-            {{> (template) data=itemData }}
+        {{#each folderPresenters as |presenter index|}}
+          {{#with presenter.template as |template|}}
+            {{> (template) presenter=presenter }}
           {{/with}}
         {{/each}}
       </ul>

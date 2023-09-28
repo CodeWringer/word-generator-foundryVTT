@@ -5,6 +5,7 @@ import WordGeneratorItem from "../../../business/model/word-generator-item.mjs"
 import TypeRegistrar from "../../../business/model/type-registrar/type-registrar.mjs"
 import WordGeneratorApplicationDataDataSource from "../../../data/datasource/word-generator-application-data-datasource.mjs"
 import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
+import WordGeneratorFolderPresenter from "../../component/folder/word-generator-folder-presenter.mjs"
 import WordGeneratorItemPresenter from "../../component/word-generator-item/word-generator-item-presenter.mjs"
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
@@ -55,24 +56,6 @@ export default class WordGeneratorApplication extends Application {
    */
   static registeredSpellingStrategies = new TypeRegistrar();
 
-  // /**
-  //  * Path to the generator list item template. 
-  //  * 
-  //  * @type {String}
-  //  * @readonly
-  //  * @static
-  //  */
-  // static generatorListItemTemplate = TEMPLATES.WORD_GENERATOR_LIST_ITEM;
-
-  // /**
-  //  * Path to the generator list item template. 
-  //  * 
-  //  * @type {String}
-  //  * @readonly
-  //  * @static
-  //  */
-  // static folderListItemTemplate = TEMPLATES.WORD_GENERATOR_FOLDER;
-
   /**
    * The application working data. 
    * 
@@ -88,6 +71,14 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _generatorItemPresenters = [];
+
+  /**
+   * The array of generator list item presenters. 
+   * 
+   * @type {Array<WordGeneratorFolderPresenter>}
+   * @private
+   */
+  _folderPresenters = [];
 
   /**
    * An array of the last generated words. 
@@ -132,6 +123,7 @@ export default class WordGeneratorApplication extends Application {
     this._data = dataSource.get(game.userId);
 
     this._regenerateGeneratorItemPresenters();
+    this._regenerateFolderPresenters();
   }
 
   /** @override */
@@ -160,10 +152,10 @@ export default class WordGeneratorApplication extends Application {
 
     // Sorting word generators
     html.find("#move-sort-alpha-desc").click(() => {
-      thiz._sortGenerators(SORTING_ORDERS.DESC);
+      thiz._sort(SORTING_ORDERS.DESC);
     });
     html.find("#move-sort-alpha-asc").click(() => {
-      thiz._sortGenerators(SORTING_ORDERS.ASC);
+      thiz._sort(SORTING_ORDERS.ASC);
     });
 
     // Generation count
@@ -196,13 +188,19 @@ export default class WordGeneratorApplication extends Application {
       resultsSortAscButtonElement.addClass("active");
     }
 
-    // List item event handling. 
+    // Generated word event handling.
+    this._activateListenersClipboardButtons(html);
+
+    // Child event handlers
+    // Generators
     for (const presenter of this._generatorItemPresenters) {
       presenter.activateListeners(html);
     }
 
-    // Generated word event handling.
-    this._activateListenersClipboardButtons(html);
+    // Folders
+    for (const presenter of this._folderPresenters) {
+      presenter.activateListeners(html);
+    }
   }
 
   /**
@@ -245,7 +243,8 @@ export default class WordGeneratorApplication extends Application {
     return {
       data: this._data,
       generatedWords: this._generatedWords,
-      generatorListItemTemplate: WordGeneratorApplication.generatorListItemTemplate,
+      generatorItemPresenters: this._generatorItemPresenters,
+      folderPresenters: this._folderPresenters,
     }
   }
 
@@ -272,7 +271,7 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Re-generates the word generator item presenters
+   * Re-generates the generator item presenters.
    * 
    * @private
    */
@@ -283,10 +282,46 @@ export default class WordGeneratorApplication extends Application {
 
       this._generatorItemPresenters.push(
         new WordGeneratorItemPresenter({
-          entity: generator,
-          listIndex: i,
-          userId: game.userId,
           application: this,
+          entity: generator,
+          sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
+          spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
+        })
+      );
+    }
+  }
+
+  /**
+   * Re-generates the folder presenters. 
+   * 
+   * @private
+   */
+  _regenerateFolderPresenters() {
+    this._generatorItemPresenters = [];
+    for (let i = 0; i < this._data.folders.length; i++) {
+      const folder = this._data.folders[i];
+
+      const parentFolder = this._data.folders.find(it => it.id === folder.id);
+      const childFolders = folder.childIds
+        .map(childId => 
+          this._data.folders.find(it => 
+            it.id === childId
+          )
+        );
+      const folderItems = folder.itemIds
+        .map(itemId => 
+          this._data.generatorItems.find(it => 
+            it.id === itemId
+          )
+        );
+
+      this._folderPresenters.push(
+        new WordGeneratorFolderPresenter({
+          application: this,
+          entity: folder,
+          parent: parentFolder,
+          children: childFolders,
+          items: folderItems,
         })
       );
     }
@@ -367,24 +402,34 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-handler to sort generators. 
+   * Click-handler to sort generators and folders. 
    * 
    * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
    */
-  _sortGenerators(sortingOrder = SORTING_ORDERS.DESC) {
-    // Sort the generator items.
-    const sorted = this._data.generatorItems.concat([]); // Safe-copy
+  _sort(sortingOrder = SORTING_ORDERS.DESC) {
+    // Sort the folders.
+    const sortedFolders = this._data.folders.concat([]); // Safe-copy
     if (sortingOrder === SORTING_ORDERS.DESC) {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
+      sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
     } else {
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
+      sortedFolders.sort((a, b) => b.name.localeCompare(a.name));
     }
-    this._data.generatorItems = sorted;
+    this._data.folders = sortedFolders;
 
-    // Re-generate the presenters. 
-    this._regenerateGeneratorItemPresenters();
+    // Sort the generator items.
+    const sortedGenerators = this._data.generatorItems.concat([]); // Safe-copy
+    if (sortingOrder === SORTING_ORDERS.DESC) {
+      sortedGenerators.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      sortedGenerators.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    this._data.generatorItems = sortedGenerators;
 
     this._persistData();
+
+    // Re-generate the presenters. 
+    this._regenerateFolderPresenters();
+    this._regenerateGeneratorItemPresenters();
     
     this.render();
   }
