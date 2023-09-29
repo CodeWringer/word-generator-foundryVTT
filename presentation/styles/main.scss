@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 $c-bg-lightest: #fffff0;
 $c-bg-lighter: #484848;
 $c-bg-light: #383838;
@@ -22,7 +20,6 @@ $c-border-highlight: var(--color-border-highlight);
 $c-shadow-primary: var(--color-shadow-primary);
 $c-shadow-highlight: var(--color-shadow-highlight);
 
->>>>>>> Stashed changes
 .word-generator {
   &-application-form {
     display: grid;
@@ -57,13 +54,7 @@ $c-shadow-highlight: var(--color-shadow-highlight);
   }
 
   &-controls-bar {
-<<<<<<< Updated upstream
-    background-color: #2e2e2e;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-=======
     background-color: $c-bg-dark;
->>>>>>> Stashed changes
 
     label {
       color: #d5d5d5;
@@ -234,14 +225,9 @@ $c-shadow-highlight: var(--color-shadow-highlight);
 }
 
 a.word-generator-button {
-<<<<<<< Updated upstream
-  background: rgba(255, 255, 240, 0.8);
-  border: 1px solid var(--color-border-light-primary);
-=======
   background-color: $c-bg-lightest;
   color: $c-text-dark;
   border: 1px solid $c-border-light-2;
->>>>>>> Stashed changes
   border-radius: 3px;
   box-sizing: border-box;
   margin: 4px;
@@ -250,8 +236,6 @@ a.word-generator-button {
     margin-right: 4px;
   }
 }
-<<<<<<< Updated upstream
-=======
 
 i.stackable {
   position: relative;
@@ -335,4 +319,3 @@ header.word-generator-folder {
     }
   }
 }
->>>>>>> Stashed changes
