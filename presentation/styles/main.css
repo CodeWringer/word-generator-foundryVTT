@@ -1,7 +1,7 @@
 .word-generator-application-form {
   display: grid;
   grid-template-columns: minmax(25rem, 1fr) 2fr;
-  gap: 1rem;
+  gap: 0;
   overflow-y: hidden; }
   .word-generator-application-form > div {
     overflow-y: hidden; }
@@ -25,9 +25,7 @@
   border-top-width: 6px; }
 
 .word-generator-controls-bar {
-  background-color: #2e2e2e;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px; }
+  background-color: #2e2e2e; }
   .word-generator-controls-bar label {
     color: #d5d5d5; }
   .word-generator-controls-bar input {
@@ -150,14 +148,29 @@
   justify-content: center; }
 
 a.word-generator-button {
+<<<<<<< HEAD
   background: #fffff0;
   color: #1e1e1e;
+=======
+<<<<<<< Updated upstream
+  background: rgba(255, 255, 240, 0.8);
+>>>>>>> develop
   border: 1px solid var(--color-border-light-primary);
+=======
+  background-color: #fffff0;
+  color: #1e1e1e;
+  border: 1px solid var(--color-border-light-2);
+>>>>>>> Stashed changes
   border-radius: 3px;
   box-sizing: border-box;
   margin: 4px; }
   a.word-generator-button .word-generator-button-icon {
     margin-right: 4px; }
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> develop
 
 i.stackable {
   position: relative; }
@@ -166,11 +179,19 @@ i.stacked {
   position: absolute;
   top: -4px;
   right: -4px;
+<<<<<<< HEAD
   font-size: 0.55rem;
   background-color: #1e1e1e;
   color: #d5d5d5;
   padding: 1px;
   border-radius: 4px; }
+=======
+  font-size: 0.5rem;
+  padding: 1px;
+  border-radius: 4px;
+  background-color: #1d1d1d;
+  color: #d5d5d5; }
+>>>>>>> develop
 
 header.word-generator-folder.collapsed {
   background-color: #1d1d1d;
@@ -179,3 +200,51 @@ header.word-generator-folder.collapsed {
 header.word-generator-folder.open {
   background-color: #383838;
   color: #1e1e1e; }
+<<<<<<< HEAD
+=======
+
+.wg-application > section.window-content {
+  margin: 0;
+  padding: 0; }
+
+.wg-border-shadow-t {
+  box-sizing: border-box;
+  border-top-style: solid;
+  border-top-color: var(--color-border-highlight);
+  border-top-width: 1px;
+  margin: 5px 0 0 0;
+  box-shadow: 10px 0 0 0 var(--color-shadow-primary); }
+
+.wg-border-shadow-r {
+  box-sizing: border-box;
+  border-right-style: solid;
+  border-right-color: var(--color-border-highlight);
+  border-right-width: 1px;
+  margin: 0 5px 0 0;
+  box-shadow: 0 10px 0 0 var(--color-shadow-primary); }
+
+.wg-border-shadow-b {
+  box-sizing: border-box;
+  border-bottom-style: solid;
+  border-bottom-color: var(--color-border-highlight);
+  border-bottom-width: 1px;
+  margin: 0 0 5px 0;
+  box-shadow: 0 0 10px 0 var(--color-shadow-primary); }
+
+.wg-border-shadow-l {
+  box-sizing: border-box;
+  border-left-style: solid;
+  border-left-color: var(--color-border-highlight);
+  border-left-width: 1px;
+  margin: 0 0 0 5px;
+  box-shadow: 0 0 0 10px var(--color-shadow-primary); }
+
+.wg-content-area {
+  background-color: #2e2e2e;
+  border-right-style: solid;
+  border-right-color: var(--color-border-dark-1);
+  border-right-width: 1px; }
+  .wg-content-area:last-of-type {
+    border-right: none; }
+>>>>>>> Stashed changes
+>>>>>>> develop
