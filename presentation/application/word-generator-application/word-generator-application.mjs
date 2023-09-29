@@ -35,6 +35,7 @@ export default class WordGeneratorApplication extends Application {
       width: 700,
       height: 700,
       resizable: true,
+      classes: ["wg-application"]
     };
   
     const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
@@ -89,16 +90,22 @@ export default class WordGeneratorApplication extends Application {
   _generatedWords = [];
 
   /**
+   * The DOM element for the scrollable content area of folders and generators.
+   * This is needed to preserve the current scroll value. 
+   * 
    * @type {Jquery}
    * @private
    */
-  _generatorListElement = undefined;
+  _contentAreaElement1 = undefined;
 
   /**
+   * The DOM element for the scrollable content area of generated results.
+   * This is needed to preserve the current scroll value. 
+   * 
    * @type {Jquery}
    * @private
    */
-  _resultListElement = undefined;
+  _contentAreaElement2 = undefined;
 
   /**
    * Current scroll value of the generators list.
@@ -132,11 +139,11 @@ export default class WordGeneratorApplication extends Application {
 
     const thiz = this;
 
-    this._generatorListElement = html.find('#generators-list');
-    this._resultListElement = html.find('#results-list');
-
-    this._generatorListElement.scrollTop(this._currentScrollGeneratorList);
-    this._resultListElement.scrollTop(this._currentScrollResultList);
+    this._contentAreaElement1 = html.find('#content-area-1');
+    this._contentAreaElement1.scrollTop(this._currentScrollGeneratorList);
+    
+    this._contentAreaElement2 = html.find('#content-area-2');
+    this._contentAreaElement2.scrollTop(this._currentScrollResultList);
 
     // General event handling. 
 
@@ -250,11 +257,11 @@ export default class WordGeneratorApplication extends Application {
 
   /** @override */
   render(args) {
-    if (this._generatorListElement !== undefined) {
-      this._currentScrollGeneratorList = this._generatorListElement.scrollTop();
+    if (this._contentAreaElement1 !== undefined) {
+      this._currentScrollGeneratorList = this._contentAreaElement1.scrollTop();
     }
-    if (this._resultListElement !== undefined) {
-      this._currentScrollResultList = this._resultListElement.scrollTop();
+    if (this._contentAreaElement2 !== undefined) {
+      this._currentScrollResultList = this._contentAreaElement2.scrollTop();
     }
 
     super.render(args);

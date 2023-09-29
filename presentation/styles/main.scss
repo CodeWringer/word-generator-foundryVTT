@@ -1,8 +1,33 @@
+<<<<<<< Updated upstream
+=======
+$c-bg-lightest: #fffff0;
+$c-bg-lighter: #484848;
+$c-bg-light: #383838;
+$c-bg-dark: #2e2e2e;
+$c-bg-darker: #232323;
+$c-bg-darkest: #1d1d1d;
+
+$c-text-light: #d5d5d5;
+$c-text-dark: #1e1e1e;
+
+$c-border-light-1: var(--color-border-light-1);
+$c-border-light-2: var(--color-border-light-2);
+$c-border-dark-1: var(--color-border-dark-1);
+$c-border-dark-2: var(--color-border-dark-2);
+$c-border-dark-3: var(--color-border-dark-3);
+$c-border-dark-4: var(--color-border-dark-4);
+$c-border-dark-5: var(--color-border-dark-5);
+$c-border-highlight: var(--color-border-highlight);
+
+$c-shadow-primary: var(--color-shadow-primary);
+$c-shadow-highlight: var(--color-shadow-highlight);
+
+>>>>>>> Stashed changes
 .word-generator {
   &-application-form {
     display: grid;
     grid-template-columns: minmax(25rem, 1fr) 2fr;
-    gap: 1rem;
+    gap: 0;
     overflow-y: hidden;
 
     > div {
@@ -32,9 +57,13 @@
   }
 
   &-controls-bar {
+<<<<<<< Updated upstream
     background-color: #2e2e2e;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
+=======
+    background-color: $c-bg-dark;
+>>>>>>> Stashed changes
 
     label {
       color: #d5d5d5;
@@ -205,8 +234,14 @@
 }
 
 a.word-generator-button {
+<<<<<<< Updated upstream
   background: rgba(255, 255, 240, 0.8);
   border: 1px solid var(--color-border-light-primary);
+=======
+  background-color: $c-bg-lightest;
+  color: $c-text-dark;
+  border: 1px solid $c-border-light-2;
+>>>>>>> Stashed changes
   border-radius: 3px;
   box-sizing: border-box;
   margin: 4px;
@@ -215,3 +250,89 @@ a.word-generator-button {
     margin-right: 4px;
   }
 }
+<<<<<<< Updated upstream
+=======
+
+i.stackable {
+  position: relative;
+}
+
+i.stacked {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 0.5rem;
+  padding: 1px;
+  border-radius: 4px;
+  background-color: $c-bg-darkest;
+  color: $c-text-light;
+}
+
+header.word-generator-folder {
+  &.collapsed {
+    background-color: $c-bg-darkest;
+    color: $c-text-light;
+  }
+
+  &.open {
+    background-color: $c-bg-light;
+    color: $c-text-dark;
+  }
+}
+
+.wg {
+  &-application {
+    > section.window-content {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  &-border-shadow {
+    &-t {
+      box-sizing: border-box;
+      border-top-style: solid;
+      border-top-color: $c-border-highlight;
+      border-top-width: 1px;
+      margin: 5px 0 0 0;
+      box-shadow: 10px 0 0 0 $c-shadow-primary;
+    }
+    &-r {
+      box-sizing: border-box;
+      border-right-style: solid;
+      border-right-color: $c-border-highlight;
+      border-right-width: 1px;
+      margin: 0 5px 0 0;
+      box-shadow: 0 10px 0 0 $c-shadow-primary;
+    }
+    &-b {
+      box-sizing: border-box;
+      border-bottom-style: solid;
+      border-bottom-color: $c-border-highlight;
+      border-bottom-width: 1px;
+      margin: 0 0 5px 0;
+      box-shadow: 0 0 10px 0 $c-shadow-primary;
+    }
+    &-l {
+      box-sizing: border-box;
+      border-left-style: solid;
+      border-left-color: $c-border-highlight;
+      border-left-width: 1px;
+      margin: 0 0 0 5px;
+      box-shadow: 0 0 0 10px $c-shadow-primary;
+    }
+  }
+
+  &-content-area {
+    background-color: $c-bg-dark;
+
+    border-right-style: solid;
+    border-right-color: $c-border-dark-1;
+    border-right-width: 1px;
+
+    &:last-of-type {
+      border-right: none;
+    }
+  }
+}
+>>>>>>> Stashed changes

@@ -6,8 +6,9 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
-  <div class="word-generator-flex column scrollable">
-    <div class="word-generator-flex row word-generator-controls-bar">
+  <div class="word-generator-flex column scrollable wg-content-area"
+    id="content-area-1">
+    <div class="word-generator-flex row word-generator-controls-bar wg-border-shadow-b">
       {{!-- Creation controls --}}
       {{!-- Create generator --}}
       <a class="word-generator-flex word-generator-button center row grow" 
@@ -52,7 +53,7 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
     {{!-- Generators and folders area --}}
     <div class="word-generator-scrollable">
       {{!-- Folders and their generators --}}
-      <ul id="folders-list" class="word-generator-unstyled-list">
+      <ul class="word-generator-unstyled-list">
         {{#each folderPresenters as |presenter index|}}
           {{#with presenter.template as |template|}}
             {{> (template) presenter=presenter }}
@@ -60,7 +61,7 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
         {{/each}}
       </ul>
       {{!-- Generators without a parent folder --}}
-      <ul id="generators-list" class="word-generator-unstyled-list">
+      <ul class="word-generator-unstyled-list">
         {{#each generatorItemPresenters as |presenter index|}}
           {{#with presenter.template as |template|}}
             {{> (template) presenter=presenter }}
@@ -72,8 +73,9 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
   {{!-- Spacer --}}
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
-  <div class="word-generator-flex column grow">
-    <div class="word-generator-flex column word-generator-controls-bar">
+  <div class="word-generator-flex column grow wg-content-area"
+    id="content-area-2">
+    <div class="word-generator-flex column word-generator-controls-bar wg-border-shadow-b">
       <div class="word-generator-flex row align-end middle">
         <label 
           class="word-generator-flex align-center" 
