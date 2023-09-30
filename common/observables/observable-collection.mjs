@@ -50,14 +50,6 @@ export default class ObservableCollection {
   static EVENT_ON_CHANGE = "collectionOnChange";
 
   /**
-   * Event key for the "onChange" event, invoked by contained elements. 
-   * 
-   * @static
-   * @type {String}
-   */
-  static EVENT_ON_ELEMENT_CHANGE = "collectionElementOnChange";
-
-  /**
    * A wrapped array instance. 
    * 
    * As a collection user DO **NOT** MODIFY THIS ARRAY DIRECTLY! 
