@@ -16,50 +16,44 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
- * @property {WordGeneratorItem} entity The represented entity.  
- * @property {Boolean} isExpanded
+ * @property {ObservableWordGeneratorItem} entity The represented entity.  
  * 
  * @property {Array<AbstractSequencingStrategy>} sequencingStrategies
  * @property {Array<DropDownOption>} sequencingStrategyOptions
  * 
  * @property {Array<AbstractSpellingStrategy>} spellingStrategies
  * @property {Array<DropDownOption>} spellingStrategyOptions
- * 
- * @property {WordGeneratorFolderPresenter | undefined} parent
  */
 export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
   get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
 
+  get id() { return this.entity.id; }
+
+  get name() { return this.entity.name.value; }
+
+  get isExpanded() { return this.entity.isExpanded.value; }
+
   /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {WordGeneratorItem} args.entity The represented entity.  
-   * @param {Boolean | undefined} args.isExpanded
-   * * default `false`
-   * @param {Array<AbstractSequencingStrategy>} args.sequencingStrategies
-   * @param {Array<AbstractSpellingStrategy>} args.spellingStrategies
-   * @param {WordGeneratorFolderPresenter | undefined} args.parent
+   * @param {ObservableWordGeneratorItem} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
 
-    this.isExpanded = args.isExpanded ?? false;
-
-    this.sequencingStrategies = args.sequencingStrategies;
+    this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
     this.sequencingStrategyOptions = this.sequencingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
         localizedTitle: it.getHumanReadableName(),
       }));
 
-    this.spellingStrategies = args.spellingStrategies;
+    this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
     this.spellingStrategyOptions = this.spellingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
         localizedTitle: it.getHumanReadableName(),
       }));
-
-    this.parent = args.parent;
   }
 
   activateListeners(html) {
@@ -69,71 +63,61 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     html.find(`#${id}-delete`).click(() => {
       new DialogUtility().showConfirmationDialog({
         localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
-        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name),
+        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
       }).then(result => {
         if (result.confirmed === true) {
-          this.application._removeGenerator(id);
+          // this.application._removeGenerator(id);
         }
       });
     });
 
     html.find(`#${id}-edit-sample-set`).click(() => {
-      new WordGeneratorSamplesApplication(this.entity, (data) => {
-        if (data.confirmed === true) {
-          this.entity.sampleSet = data.sampleSet;
-          this.entity.sampleSetSeparator = data.sampleSetSeparator;
-          this._updateRender()
-        }
-      }).render(true);
+      // new WordGeneratorSamplesApplication(this.entity, (data) => {
+      //   if (data.confirmed === true) {
+      //     this.entity.sampleSet.value = data.sampleSet;
+      //     this.entity.sampleSetSeparator.value = data.sampleSetSeparator;
+      //     this._updateRender()
+      //   }
+      // }).render(true);
     });
 
     html.find(`#${id}-name`).change((data) => {
-      this.entity.name = $(data.target).val();
-      this._updateRender()
+      this.entity.name.value = $(data.target).val();
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
-      this.entity.targetLengthMin = this.parseEmptyToGiven(data, 1);
-      this._updateRender()
+      this.entity.targetLengthMin.value = this.parseEmptyToGiven(data, 1);
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
-      this.entity.targetLengthMax = this.parseEmptyToGiven(data, 7);
-      this._updateRender()
+      this.entity.targetLengthMax.value = this.parseEmptyToGiven(data, 7);
     });
     html.find(`#${id}-entropy`).change((data) => {
-      this.entity.entropy = this.parseEmptyToGiven(data, 0.0);
-      this._updateRender()
+      this.entity.entropy.value = this.parseEmptyToGiven(data, 0.0);
     });
     html.find(`#${id}-entropyStart`).change((data) => {
-      this.entity.entropyStart = this.parseEmptyToGiven(data, 0.0);
-      this._updateRender()
+      this.entity.entropyStart.value = this.parseEmptyToGiven(data, 0.0);
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
-      this.entity.entropyMiddle = this.parseEmptyToGiven(data, 0.0);
-      this._updateRender()
+      this.entity.entropyMiddle.value = this.parseEmptyToGiven(data, 0.0);
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
-      this.entity.entropyEnd = this.parseEmptyToGiven(data, 0.0);
-      this._updateRender()
+      this.entity.entropyEnd.value = this.parseEmptyToGiven(data, 0.0);
     });
     html.find(`#${id}-seed`).change((data) => {
-      this.entity.seed = this.parseEmptyToUndefined(data);
-      this._updateRender()
+      this.entity.seed.value = this.parseEmptyToUndefined(data);
     });
 
     // Sequencing settings
     html.find(`#${id}-sequencing-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
-      const setting = this.entity.sequencingStrategySettings.find(it => it.name === id);
+      const setting = this.entity.sequencingStrategySettings.getAll().find(it => it.name === id);
       setting.value = this._parseSettingValue(setting, data.target);
-      this._updateRender();
     });
 
     // Spelling settings
     html.find(`#${id}-spelling-settings > li > input`).change(data => {
       const id = $(data.target)[0].id;
-      const setting = this.entity.spellingStrategySettings.find(it => it.name === id);
+      const setting = this.entity.spellingStrategySettings.getAll().find(it => it.name === id);
       setting.value = this._parseSettingValue(setting, data.target);
-      this._updateRender();
     });
 
     // # Info-bubbles
@@ -220,62 +204,47 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
 
     // ## collapse button
     html.find(`#${id}-collapse`).click(() => {
-      this.isExpanded = !(this.isExpanded ?? false);
-      this._updateRender()
+      this.entity.isExpanded.value = !this.entity.isExpanded.value;
     });
 
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;
     html.find(`#${idEndingPickMode}`).change((data) => {
-      this.entity.endingPickMode = $(data.target).val();
-      this._updateRender()
+      this.entity.endingPickMode.value = $(data.target).val();
     });
-    this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode);
+    this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode.value);
 
     const idSequencingStrategy = `${id}-sequencingStrategy`;
     html.find(`#${idSequencingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      this.entity.sequencingStrategyId = strategyId;
+      this.entity.sequencingStrategyId.value = strategyId;
       
       const strategyDefinition = this.sequencingStrategies.find(it => it.id === strategyId);
-      this.entity.sequencingStrategySettings = strategyDefinition.getSettings();
-
-      this._updateRender()
+      this.entity.sequencingStrategySettings.clear();
+      this.entity.sequencingStrategySettings.addAll(strategyDefinition.getSettings());
     });
-    this.syncDropDownValue(html, idSequencingStrategy, this.entity.sequencingStrategyId);
+    this.syncDropDownValue(html, idSequencingStrategy, this.entity.sequencingStrategyId.value);
 
     const idSpellingStrategy = `${id}-spellingStrategy`;
     html.find(`#${idSpellingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      this.entity.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
+      this.entity.spellingStrategyId.value = strategyId === "undefined" ? undefined : strategyId;
 
       if (strategyId !== undefined) {
         const strategyDefinition = this.spellingStrategies.find(it => it.id === strategyId);
+        thiz.entity.spellingStrategySettings.clear();
         if (strategyDefinition !== undefined) {
-          thiz.entity.spellingStrategySettings = strategyDefinition.getSettings();
-        } else {
-          thiz.entity.spellingStrategySettings = undefined;
+          thiz.entity.spellingStrategySettings.addAll(strategyDefinition.getSettings());
         }
       }
-
-      this._updateRender()
     });
-    this.syncDropDownValue(html, idSpellingStrategy, this.entity.spellingStrategyId);
+    this.syncDropDownValue(html, idSpellingStrategy, this.entity.spellingStrategyId.value);
 
     // Generate
     html.find(`#${id}-generate`).click(() => {
       const generator = this.entity.toGenerator();
       this.application._generate(generator);
     });
-  }
-
-  /**
-   * Triggers a re-render of the parent application. 
-   * 
-   * @private
-   */
-  _updateRender() {
-    this.application._updateGenerator(this.entity);
   }
 
   /**

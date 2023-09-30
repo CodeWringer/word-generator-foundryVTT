@@ -60,6 +60,7 @@ export default class DialogUtility {
    * @param {Object} args Arguments to pass to the rendering function. 
    * @param {String | undefined} args.localizedTitle Localized text for the dialog title. 
    * @param {String | undefined} args.localizedInputLabel Localized text for the label above the input. 
+   * @param {String | undefined} args.value Initial value to set. 
    * 
    * @returns {Promise<Object>} Resolves when the dialog is closed. 
    * * Returns the instance of the closed dialog, its DOM and the user input. 
@@ -74,7 +75,7 @@ export default class DialogUtility {
     return new Promise(async (resolve, reject) => {
       const dialog = new Dialog({
         title: args.localizedTitle ?? "",
-        content: `<span>${args.localizedInputLabel}</span><input id="inputField" type="text"></input>`,
+        content: `<span>${args.localizedInputLabel}</span><input id="inputField" type="text" value="${args.value ?? ""}"></input>`,
         buttons: {
           confirm: {
             icon: '<i class="fas fa-check"></i>',

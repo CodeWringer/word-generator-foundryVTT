@@ -1,3 +1,4 @@
+import WordGeneratorApplication from "../../presentation/application/word-generator-application/word-generator-application.mjs";
 import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import CharDepthSequencingStrategy from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
