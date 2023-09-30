@@ -7,6 +7,7 @@ $c-bg-darkest: #1d1d1d;
 
 $c-text-light: #d5d5d5;
 $c-text-dark: #1e1e1e;
+$c-text-higlight: #e1bdbd;
 
 $c-border-light-1: var(--color-border-light-1);
 $c-border-light-2: var(--color-border-light-2);
@@ -365,12 +366,6 @@ i.stacked {
       border-left: 6px solid $c-bg-light;
     }
 
-    &.dragover {
-      header.wg-folder {
-        background-color: $c-bg-dark;
-      }
-    }
-
     header.wg-folder {
       border: 1px solid black;
       color: $c-text-light;
@@ -378,9 +373,14 @@ i.stacked {
       height: 2.5rem;
     
       &.open {
+        background-color: $c-bg-lighter;
+      }
+
+      &.dragover {
+        color: $c-text-higlight;
         background-color: $c-bg-light;
       }
-    
+      
       h3 {
         margin: 0;
         border: 0;

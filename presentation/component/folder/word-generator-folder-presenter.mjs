@@ -70,6 +70,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
       entityDataType: this.entityDataType,
+      elementId: `${this.entity.id}-header`,
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
         if (droppedEntityDataType === this.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 

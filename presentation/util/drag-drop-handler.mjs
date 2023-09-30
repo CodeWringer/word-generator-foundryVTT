@@ -52,6 +52,8 @@ export class DragDropHandler {
    * of unrecognized data types. 
    * @param {String | undefined} args.dragOverClass CSS class to automatically add to the element 
    * when something is dragged over it. 
+   * @param {String | undefined} args.elementId ID of the element that allows receiving dragged elements. 
+   * * By default uses `entityId`. 
    * @param {Function | undefined} args.dragStartHandler Callback that is invoked when the dragging of 
    * the element is begun. 
    * @param {Function | undefined} args.dragOverHandler Callback that is invoked when something is dragged 
