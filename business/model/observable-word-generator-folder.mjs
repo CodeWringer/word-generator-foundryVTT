@@ -1,6 +1,7 @@
 import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
+import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
 
 /**
@@ -16,12 +17,6 @@ import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
  */
 export default class ObservableWordGeneratorFolder {
   /**
-   * @type {EventEmitter}
-   * @private
-   */
-  _eventEmitter = new EventEmitter();
-
-  /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * @param {String | undefined} args.name Human readable name of the folder. 
@@ -34,6 +29,7 @@ export default class ObservableWordGeneratorFolder {
    */
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
+
     this.name = new ObservableField({ 
       value: args.name ?? game.i18n.localize("wg.folder.defaultName")
     });
@@ -42,14 +38,6 @@ export default class ObservableWordGeneratorFolder {
     this.children = new ObservableCollection({ elements: (args.children ?? []) });
     this.items = new ObservableCollection({ elements: (args.items ?? []) });
 
-    this.name.onChange((field, oldValue, newValue) => {
-      this._eventEmitter.emit(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, field, oldValue, newValue);
-    });
-
-    this.isExpanded.onChange((field, oldValue, newValue) => {
-      this._eventEmitter.emit(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, field, oldValue, newValue);
-    });
-
     this.parent.onChange((field, oldValue, newValue) => {
       if (oldValue !== undefined) {
         oldValue.children.remove(this);
@@ -57,8 +45,6 @@ export default class ObservableWordGeneratorFolder {
       if (newValue !== undefined) {
         newValue.children.add(this);
       }
-
-      this._eventEmitter.emit(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, field, oldValue, newValue);
     });
 
     this.children.onChange((collection, change, args) => {
@@ -75,8 +61,6 @@ export default class ObservableWordGeneratorFolder {
           }
         }
       }
-
-      this._eventEmitter.emit(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, collection, change, args);
     });
 
     this.items.onChange((collection, change, args) => {
@@ -93,9 +77,15 @@ export default class ObservableWordGeneratorFolder {
           }
         }
       }
-      
-      this._eventEmitter.emit(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, collection, change, args);
     });
+
+    this.propagator = new ObservationPropagator(this, [
+      this.name,
+      this.isExpanded,
+      this.parent,
+      this.children,
+      this.items,
+    ]);
   }
   
   /**
@@ -188,29 +178,5 @@ export default class ObservableWordGeneratorFolder {
       }
     }
     return undefined;
-  }
-
-  /**
-   * Registers an event listener that is invoked whenever any of the data changes. 
-   * 
-   * @param {Function} callback 
-   * @returns 
-   */
-  onChange(callback) {
-    return this._eventEmitter.on(ObservableCollection.EVENT_ON_ELEMENT_CHANGE, callback);
-  }
-
-  /**
-   * Un-registers an event listener with the given id. 
-   * 
-   * @param {String | undefined} callbackId A callback ID to un-register or 
-   * `undefined`, to un-register **all** callbacks. 
-   */
-  offChange(callbackId) {
-    if (callbackId === undefined) {
-      this._eventEmitter.allOff(ObservableCollection.EVENT_ON_ELEMENT_CHANGE);
-    } else {
-      this._eventEmitter.off(callbackId);
-    }
   }
 }
