@@ -1,5 +1,6 @@
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
+import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 import ObservableWordGeneratorFolder from "./observable-word-generator-folder.mjs";
 import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
@@ -49,6 +50,14 @@ export default class ObservableWordGeneratorApplicationData {
         }
       }
     });
+
+    this.propagator = new ObservationPropagator(this, [
+      this.amountToGenerate,
+      this.resultsSortMode,
+      this.generators,
+      this.folders,
+      this.generatedResults,
+    ]);
   }
   
   /**

@@ -1,5 +1,6 @@
 import ObservableCollection from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
+import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import WordGeneratorApplication from "../../presentation/application/word-generator-application/word-generator-application.mjs";
 import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
 import WordGenerator from "../generator/generator.mjs";
@@ -25,7 +26,7 @@ import CharDepthSequencingStrategy from "../generator/sequencing/char-depth-sequ
  * @property {ObservableField<String | undefined>} spellingStrategyId ID of the spelling post-processing strategy to use. 
  * @property {ObservableCollection<StrategySetting> | undefined} spellingStrategySettings Settings of the spelling post-processing strategy. 
  * 
- * @property {String} seed A seed for the randomization. 
+ * @property {ObservableField<String>} seed A seed for the randomization. 
  * 
  * @property {ObservableField<Number | undefined>} entropy A number between 0 and 1 (inclusive), which determines the 
  * randomness of words, in general. Default 0. 
@@ -121,6 +122,27 @@ export default class ObservableWordGeneratorItem {
         newValue.items.add(this);
       }
     });
+
+    this.propagator = new ObservationPropagator(this, [
+      this.name,
+      this.sampleSet,
+      this.sampleSetSeparator,
+      this.depth,
+      this.targetLengthMin,
+      this.targetLengthMax,
+      this.sequencingStrategyId,
+      this.sequencingStrategySettings,
+      this.spellingStrategyId,
+      this.spellingStrategySettings,
+      this.seed,
+      this.entropy,
+      this.entropyStart,
+      this.entropyMiddle,
+      this.entropyEnd,
+      this.endingPickMode,
+      this.isExpanded,
+      this.parent,
+    ]);
   }
 
   /**
