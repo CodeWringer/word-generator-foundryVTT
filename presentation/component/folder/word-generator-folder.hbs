@@ -1,10 +1,15 @@
 {{!-- Params:
 presenter: WordGeneratorFolderPresenter
 --}}
-<li class="word-generator-folder">
-  <header class="word-generator-folder word-generator-flex row{{#if presenter.isExpanded}} open{{else}} collapsed{{/if}}">
+<div class="wg-folder"
+  draggable="true"
+  id="{{presenter.entity.id}}"
+  >
+  <header class="wg-folder word-generator-flex row wg-dark wg-pad-6{{#if presenter.isExpanded}} open{{/if}}"
+    id="{{presenter.entity.id}}-header"
+    >
     <h3 class="word-generator-flex grow">
-      <div class="word-generator-square word-generator-flex center">
+      <div class="wg-square word-generator-flex center">
         {{#if presenter.isExpanded}}
         <i class="fas fa-folder-open"></i>
         {{else}}
@@ -13,35 +18,28 @@ presenter: WordGeneratorFolderPresenter
       </div>
       <span class="word-generator-flex middle grow">{{presenter.entity.name}}</span>
     </h3>
-    <a class="word-generator-square-button word-generator-button" 
-      id="add-generator-item">
-      <i class="fas fa-scroll stackable">
-        <i class="fas fa-plus stacked"></i>
-      </i>
-    </a>
-    <a class="word-generator-square-button word-generator-button" 
-      id="add-folder">
-      <i class="fas fa-folder stackable">
-        <i class="fas fa-plus stacked"></i>
-      </i>
-    </a>
+    <div class="wg-square word-generator-flex center">
+      <a class="wg-interactible wg-pad-6" 
+        id="{{presenter.entity.id}}-add-generator">
+        <i class="fas fa-scroll stackable">
+          <i class="fas fa-plus stacked wg-dark"></i>
+        </i>
+      </a>
+    </div>
+    <div class="wg-square word-generator-flex center">
+      <a class="wg-interactible wg-pad-6" 
+        id="{{presenter.entity.id}}-add-folder">
+        <i class="fas fa-folder stackable">
+          <i class="fas fa-plus stacked wg-dark"></i>
+        </i>
+      </a>
+    </div>
   </header>
-  <div class="word-generator-folder-content">
-    {{!-- Folders and their generators --}}
-    <ul class="word-generator-unstyled-list">
-      {{#each presenter.children as |presenter index|}}
-        {{#with presenter.template as |template|}}
-          {{> (template) presenter=presenter }}
-        {{/with}}
-      {{/each}}
-    </ul>
-    {{!-- Generators without a parent folder --}}
-    <ul class="word-generator-unstyled-list">
-      {{#each presenter.items as |presenter index|}}
-        {{#with presenter.template as |template|}}
-          {{> (template) presenter=presenter }}
-        {{/with}}
-      {{/each}}
-    </ul>
+  {{#if presenter.isExpanded}}
+  <div class="wg-folder-content">
+    {{#with presenter.contentListPresenter.template as |template|}}
+      {{> (template) presenter=../presenter.contentListPresenter }}
+    {{/with}}
   </div>
-</li>
+  {{/if}}
+</div>

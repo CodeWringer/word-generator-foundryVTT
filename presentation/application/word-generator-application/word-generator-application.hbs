@@ -1,13 +1,11 @@
 {{!-- Parameters:
 data: {WordGeneratorApplicationData}
 generatedWords: {Array<String></String>}
-generatorItemPresenters: Array<WordGeneratorItemPresenter>}
-folderPresenters: {Array<WordGeneratorFolderPresenter>}
+contentListPresenter: {WordGeneratorListPresenter}
 --}}
 <form class="word-generator-application-form">
   {{!-- List of generators --}}
-  <div class="word-generator-flex column scrollable wg-content-area"
-    id="content-area-1">
+  <div class="word-generator-flex column wg-content-area">
     <div class="word-generator-flex row word-generator-controls-bar wg-border-shadow-b">
       {{!-- Creation controls --}}
       {{!-- Create generator --}}
@@ -51,30 +49,17 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
       </a>
     </div>
     {{!-- Generators and folders area --}}
-    <div class="word-generator-scrollable">
-      {{!-- Folders and their generators --}}
-      <ul class="word-generator-unstyled-list">
-        {{#each folderPresenters as |presenter index|}}
-          {{#with presenter.template as |template|}}
-            {{> (template) presenter=presenter }}
-          {{/with}}
-        {{/each}}
-      </ul>
-      {{!-- Generators without a parent folder --}}
-      <ul class="word-generator-unstyled-list">
-        {{#each generatorItemPresenters as |presenter index|}}
-          {{#with presenter.template as |template|}}
-            {{> (template) presenter=presenter }}
-          {{/with}}
-        {{/each}}
-      </ul>
+    <div class="word-generator-scrollable"
+      id="content-area-1">
+      {{#with contentListPresenter.template as |template|}}
+        {{> (template) presenter=../contentListPresenter }}
+      {{/with}}
     </div>
   </div>
   {{!-- Spacer --}}
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
-  <div class="word-generator-flex column grow wg-content-area"
-    id="content-area-2">
+  <div class="word-generator-flex column grow wg-content-area">
     <div class="word-generator-flex column word-generator-controls-bar wg-border-shadow-b">
       <div class="word-generator-flex row align-end middle">
         <label 
@@ -113,7 +98,8 @@ folderPresenters: {Array<WordGeneratorFolderPresenter>}
         </a>
       </div>
     </div>
-    <ul id="results-list" class="word-generator-unstyled-list word-generator-scrollable">
+    <ul class="word-generator-unstyled-list word-generator-scrollable"
+      id="content-area-2">
       {{#each generatedWords as |generatedWord index|}}
       <div id="generated-word-{{index}}" class="word-generator-flex row word-generator-generated-word">
         <button 

@@ -10,6 +10,7 @@ import WordGeneratorItemPresenter from "../../component/word-generator-item/word
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
 import DialogUtility from "../../util/dialog-utility.mjs"
+import WordGeneratorListPresenter from "../../component/word-generator-list/word-generator-list-presenter.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -64,6 +65,14 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _data = new WordGeneratorApplicationData();
+
+  /**
+   * The presenter of the folders and generators.
+   * 
+   * @type {WordGeneratorListPresenter}
+   * @private
+   */
+  _contentListPresenter = undefined;
 
   /**
    * The array of generator list item presenters. 
@@ -129,8 +138,10 @@ export default class WordGeneratorApplication extends Application {
     const dataSource = new WordGeneratorApplicationDataDataSource();
     this._data = dataSource.get(game.userId);
 
-    this._regenerateGeneratorItemPresenters();
-    this._regenerateFolderPresenters();
+    this._generateChildPresenters();
+    // The list presenter must be generated **after** the folders and generators 
+    // presenters have been generated, as it depends on them. 
+    this._regenerateContentListPresenter();
   }
 
   /** @override */
@@ -149,12 +160,12 @@ export default class WordGeneratorApplication extends Application {
 
     // Word generator creation
     html.find("#create-generator").click(() => {
-      thiz._createGenerator();
+      thiz.createGenerator();
     });
 
     // Folder creation
     html.find("#create-folder").click(async () => {
-      await thiz._createFolder();
+      await thiz.createFolder();
     });
 
     // Sorting word generators
@@ -199,15 +210,8 @@ export default class WordGeneratorApplication extends Application {
     this._activateListenersClipboardButtons(html);
 
     // Child event handlers
-    // Generators
-    for (const presenter of this._generatorItemPresenters) {
-      presenter.activateListeners(html);
-    }
-
-    // Folders
-    for (const presenter of this._folderPresenters) {
-      presenter.activateListeners(html);
-    }
+    
+    this._contentListPresenter.activateListeners(html);
   }
 
   /**
@@ -250,8 +254,7 @@ export default class WordGeneratorApplication extends Application {
     return {
       data: this._data,
       generatedWords: this._generatedWords,
-      generatorItemPresenters: this._generatorItemPresenters,
-      folderPresenters: this._folderPresenters,
+      contentListPresenter: this._contentListPresenter,
     }
   }
 
@@ -268,6 +271,157 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
+   * Click-handler to create a new generator. 
+   * 
+   * @param {WordGeneratorFolder | undefined} parentFolder A folder to assign the 
+   * newly created generator to. 
+   */
+  createGenerator(parentFolder) {
+    // Create the generator. 
+    const newGenerator = new WordGeneratorItem({
+      name: game.i18n.localize("wg.generator.defaultName"),
+    });
+    this._data.generatorItems.push(newGenerator);
+
+    // Create the generator presenter. 
+    const newGeneratorPresenter = new WordGeneratorItemPresenter({
+      application: this,
+      entity: newGenerator,
+      sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
+      spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
+    });
+
+    if (parentFolder === undefined) {
+      // Assign the generator presenter to the root level. 
+      this._generatorItemPresenters.push(newGeneratorPresenter);
+    } else {
+      // Assign the generator to the folder. 
+      parentFolder.itemIds.push(newGenerator.id);
+      
+      // Assign the generator presenter to the parent folder presenter. 
+      const folderPresenter = this.getFolderPresenterById(parentFolder.id);
+      folderPresenter.items.push(newGeneratorPresenter);
+    }
+
+    this._persistData();
+    this.render();
+  }
+
+  /**
+   * Prompts the user to enter a folder name and then creates a new folder with 
+   * that name. 
+   * 
+   * @param {WordGeneratorFolder | undefined} parentFolder A folder to assign the 
+   * newly created folder to. 
+   * 
+   * @async
+   */
+  async createFolder(parentFolder) {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.folder.create"),
+      localizedInputLabel: game.i18n.localize("wg.folder.name"),
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    // Create the folder. 
+    const newFolder = new WordGeneratorFolder({
+      name: dialog.input,
+    });
+    this._data.folders.push(newFolder);
+
+    // Create the folder presenter. 
+    const newFolderPresenter = new WordGeneratorFolderPresenter({
+      application: this,
+      entity: newFolder,
+    });
+
+    if (parentFolder === undefined) {
+      this._folderPresenters.push(newFolderPresenter);
+    } else {
+      const parentFolderPresenter = this.getFolderPresenterById(parentFolder.id);
+      parentFolderPresenter.children.push(newFolderPresenter);
+    }
+
+    this._persistData();
+    this.render();
+  }
+
+  /**
+   * Moves a folder with the given ID into another folder with another given ID. 
+   * 
+   * @param {String} idOfFolderToMove ID of the folder to move. 
+   * @param {String} idOfDestinationFolder ID of the folder to move the other 
+   * into. 
+   * @param {Number | undefined} index The new index to move it to. 
+   * * By default, adds to the end of the list. 
+   */
+  moveFolder(idOfFolderToMove, idOfDestinationFolder, index) {
+    if (idOfFolderToMove === idOfDestinationFolder) {
+      // Illegal operation - ignore.
+      return;
+    }
+
+    const subjectPresenter = this.getFolderPresenterById(idOfFolderToMove);
+    const destinationPresenter = this.getFolderPresenterById(idOfDestinationFolder);
+
+    if (subjectPresenter.parent === undefined) {
+      // Remove from root level. 
+      const i = this._folderPresenters.findIndex(it => it.entity.id === subjectPresenter.entity.id);
+      this._folderPresenters.splice(i, 1);
+    } else {
+      // Remove subject from its current parent. 
+      subjectPresenter.parent.removeChild(subjectPresenter);
+    }
+
+    destinationPresenter.addChild(subjectPresenter, index);
+
+    this._persistData();
+    this.render();
+  }
+  
+  /**
+   * Returns the folder presenter whose entity ID matches with the given.
+   * 
+   * @param {String} id ID of the folder presenter to get. 
+   * 
+   * @returns {WordGeneratorFolderPresenter | undefined} The found folder presenter. 
+   */
+  getFolderPresenterById(id) {
+    let result;
+    for (let i = 0; i < this._folderPresenters.length; i++) {
+      const presenter = this._folderPresenters[i];
+
+      result = presenter.getPresenterByFolderId(id);
+      if (result !== undefined) {
+        break;
+      }
+    }
+    return result
+  }
+  
+  
+  /**
+   * Returns the generator presenter whose entity ID matches with the given.
+   * 
+   * @param {String} id ID of the generator presenter to get. 
+   * 
+   * @returns {WordGeneratorItemPresenter | undefined} The found generator presenter. 
+   */
+  getGeneratorPresenterById(id) {
+    let result;
+    for (let i = 0; i < this._generatorItemPresenters.length; i++) {
+      const presenter = this._generatorItemPresenters[i];
+
+      if (presenter.entity.id === id) {
+        result = presenter.entity.id;
+        break;
+      }
+    }
+    return result
+  }
+  
+  /**
    * Persists the current working data. 
    * 
    * @private
@@ -278,16 +432,19 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Re-generates the generator item presenters.
-   * 
    * @private
    */
-  _regenerateGeneratorItemPresenters() {
+  _generateChildPresenters() {
+    this._folderPresenters = [];
     this._generatorItemPresenters = [];
-    for (let i = 0; i < this._data.generatorItems.length; i++) {
-      const generator = this._data.generatorItems[i];
+    
+    // This is a flat list that contains **all** generator presenters, 
+    // regardless of hierarchy. Used for easy look-ups. 
+    const generatorPresenters = [];
 
-      this._generatorItemPresenters.push(
+    // Generate a presenter for every generator. 
+    this._data.generatorItems.forEach(generator => {
+      generatorPresenters.push(
         new WordGeneratorItemPresenter({
           application: this,
           entity: generator,
@@ -295,68 +452,69 @@ export default class WordGeneratorApplication extends Application {
           spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
         })
       );
-    }
-  }
+    });
 
-  /**
-   * Re-generates the folder presenters. 
-   * 
-   * @private
-   */
-  _regenerateFolderPresenters() {
-    this._folderPresenters = [];
-    for (let i = 0; i < this._data.folders.length; i++) {
-      const folder = this._data.folders[i];
+    // This is a flat list that contains **all** folder presenters, 
+    // regardless of hierarchy. Used for easy look-ups. 
+    const folderPresenters = [];
 
-      const parentFolder = this._data.folders.find(it => it.id === folder.id);
-      const childFolders = folder.childIds
-        .map(childId => 
-          this._data.folders.find(it => 
-            it.id === childId
-          )
-        );
-      const folderItems = folder.itemIds
-        .map(itemId => 
-          this._data.generatorItems.find(it => 
-            it.id === itemId
-          )
-        );
-
-      this._folderPresenters.push(
+    // Generate a presenter for every folder. 
+    this._data.folders.forEach(folder => {
+      folderPresenters.push(
         new WordGeneratorFolderPresenter({
           application: this,
           entity: folder,
-          parent: parentFolder,
-          children: childFolders,
-          items: folderItems,
         })
       );
-    }
+    });
+
+    // Build the reference hierarchy. 
+    folderPresenters.forEach(folderPresenter => {
+      // Assign child folders. 
+      folderPresenter.entity.childIds.forEach(childId => {
+        const childPresenter = folderPresenters.find(it => it.entity.id === childId);
+        folderPresenter.children.push(childPresenter);
+        childPresenter.parent = folderPresenter;
+      });
+
+      // Assign generators. 
+      folderPresenter.entity.itemIds.forEach(itemId => {
+        const generatorPresenter = generatorPresenters.find(it => it.entity.id === itemId);
+        folderPresenter.items.push(generatorPresenter);
+        generatorPresenter.parent = folderPresenter;
+      });
+      
+      // Ensure folder content list presenter is up to speed.
+      // TODO: This is a HACK! Refactor it so the content list presenter updates itself, as necessary. 
+      folderPresenter.contentListPresenter = new WordGeneratorListPresenter({
+        application: this,
+        folders: folderPresenter.children,
+        generators: folderPresenter.items,
+      });
+    });
+
+    // Assign the root-level presenters. 
+    this._folderPresenters = folderPresenters.filter(it => 
+      it.parent === undefined
+    );
+    this._generatorItemPresenters = generatorPresenters.filter(it => 
+      it.parent === undefined
+    );
   }
 
   /**
-   * Click-handler to create a new generator. 
+   * Re-generates the folder and generator list presenter. 
+   * 
+   * @private
    */
-  _createGenerator() {
-    // Add a new generator item. 
-    const newGeneratorItem = new WordGeneratorItem({
-      name: game.i18n.localize("wg.generator.defaultName"),
-    });
-    this._data.generatorItems.push(newGeneratorItem);
-
-    // Add a new presenter for the item. 
-    this._generatorItemPresenters.push(new WordGeneratorItemPresenter({
+  _regenerateContentListPresenter() {
+    this._contentListPresenter = new WordGeneratorListPresenter({
       application: this,
-      entity: newGeneratorItem,
-      sequencingStrategies: WordGeneratorApplication.registeredSequencingStrategies.getAll(),
-      spellingStrategies: WordGeneratorApplication.registeredSpellingStrategies.getAll(),
-    }));
-
-    this._persistData();
-
-    this.render();
+      folders: this._folderPresenters,
+      generators: this._generatorItemPresenters,
+    });
   }
-  
+
   /**
    * Click-handler to remove a generator. 
    * 
@@ -442,6 +600,10 @@ export default class WordGeneratorApplication extends Application {
     this._data.generatorItems = sortByName(this._data.generatorItems, sortingOrder);
     // Sort the generator item presenters.
     this._generatorItemPresenters = sortPresentersByReference(this._generatorItemPresenters, this._data.generatorItems);
+
+    // Update list presenter.
+    this._contentListPresenter.folders = this._folderPresenters;
+    this._contentListPresenter.generators = this._generatorItemPresenters;
 
     this._persistData();
 
@@ -535,31 +697,5 @@ export default class WordGeneratorApplication extends Application {
         return false;
       }
     }
-  }
-
-  /**
-   * Prompts the user to enter a folder name and then creates a new folder with 
-   * that name. 
-   * 
-   * @async
-   * @private
-   */
-  async _createFolder() {
-    const dialog = await new DialogUtility().showSingleInputDialog({
-      localizedTitle: game.i18n.localize("wg.folder.create"),
-      localizedInputLabel: game.i18n.localize("wg.folder.name"),
-    });
-
-    if (dialog.confirmed !== true) return;
-
-    const newFolder = new WordGeneratorFolder({
-      name: dialog.input,
-    });
-
-    this._data.folders.push(newFolder);
-    
-    this._persistData();
-
-    this.render();
   }
 }

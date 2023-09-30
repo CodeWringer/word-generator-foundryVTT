@@ -1,0 +1,23 @@
+{{!-- Params:
+presenter: WordGeneratorListPresenter
+--}}
+{{!-- Folders --}}
+<ul class="word-generator-unstyled-list">
+  {{#each presenter.folders as |presenter index|}}
+  <li>
+    {{#with presenter.template as |template|}}
+    {{> (template) presenter=presenter }}
+    {{/with}}
+  </li>
+  {{/each}}
+</ul>
+{{!-- Generators --}}
+<ul class="word-generator-unstyled-list">
+  {{#each presenter.generators as |presenter index|}}
+  <li>
+    {{#with presenter.template as |template|}}
+    {{> (template) presenter=presenter }}
+    {{/with}}
+  </li>
+  {{/each}}
+</ul>

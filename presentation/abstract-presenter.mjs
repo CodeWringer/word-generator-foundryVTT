@@ -5,17 +5,16 @@
  * and to prepare the UI for user-interactivity by registering event-callbacks to elements on the DOM, 
  * via the `activateListeners` method. 
  * 
- * @property {String} template Path to the Handlebars template that represents the entity. 
+ * @property {String} template Path to the Handlebars template. 
  * * Read-only
  * * Abstract
  * @property {Application} application The parent application. 
- * @property {Object} entity The represented entity. 
  * 
  * @abstract
  */
 export default class AbstractPresenter {
   /**
-   * Path to the Handlebars template that represents the entity. 
+   * Path to the Handlebars template. 
    * 
    * @type {String}
    * @readonly
@@ -26,11 +25,9 @@ export default class AbstractPresenter {
   /**
    * @param {Object} args 
    * @param {Application} args.application The parent application. 
-   * @param {Object} args.entity The represented entity. 
    */
   constructor(args = {}) {
     this.application = args.application;
-    this.entity = args.entity;
   }
 
   /**
@@ -44,11 +41,10 @@ export default class AbstractPresenter {
     };
   }
 
-
   /**
    * Registers event listeners to enable user-interactivity. 
    * 
-   * @param {JQuery} html The DOM of the rendered entity. 
+   * @param {JQuery} html The DOM of the rendered template. 
    * 
    * @abstract
    */

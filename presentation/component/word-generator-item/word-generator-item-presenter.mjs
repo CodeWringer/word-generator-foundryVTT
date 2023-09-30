@@ -3,12 +3,12 @@ import { StrategySettingValueTypes } from "../../../business/generator/strategy-
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import WordGeneratorSamplesApplication from "../../application/word-generator-samples-application/word-generator-samples-application.mjs";
-import AbstractPresenter from "../../abstract-presenter.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
 import WordGeneratorItem from "../../../business/model/word-generator-item.mjs";
 import AbstractSequencingStrategy from "../../../business/generator/sequencing/abstract-sequencing-strategy.mjs";
 import AbstractSpellingStrategy from "../../../business/generator/postprocessing/abstract-spelling-strategy.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -24,8 +24,10 @@ import AbstractSpellingStrategy from "../../../business/generator/postprocessing
  * 
  * @property {Array<AbstractSpellingStrategy>} spellingStrategies
  * @property {Array<DropDownOption>} spellingStrategyOptions
+ * 
+ * @property {WordGeneratorFolderPresenter | undefined} parent
  */
-export default class WordGeneratorItemPresenter extends AbstractPresenter {
+export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
   get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
 
   /**
@@ -36,6 +38,7 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
    * * default `false`
    * @param {Array<AbstractSequencingStrategy>} args.sequencingStrategies
    * @param {Array<AbstractSpellingStrategy>} args.spellingStrategies
+   * @param {WordGeneratorFolderPresenter | undefined} args.parent
    */
   constructor(args = {}) {
     super(args);
@@ -55,6 +58,8 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
         value: it.getDefinitionID(),
         localizedTitle: it.getHumanReadableName(),
       }));
+
+    this.parent = args.parent;
   }
 
   activateListeners(html) {
@@ -83,35 +88,35 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
     });
 
     html.find(`#${id}-name`).change((data) => {
-      thiz.entity.name = $(data.target).val();
+      this.entity.name = $(data.target).val();
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMin`).change((data) => {
-      thiz.entity.targetLengthMin = this.parseEmptyToGiven(data, 1);
+      this.entity.targetLengthMin = this.parseEmptyToGiven(data, 1);
       this._updateRender()
     });
     html.find(`#${id}-targetLengthMax`).change((data) => {
-      thiz.entity.targetLengthMax = this.parseEmptyToGiven(data, 7);
+      this.entity.targetLengthMax = this.parseEmptyToGiven(data, 7);
       this._updateRender()
     });
     html.find(`#${id}-entropy`).change((data) => {
-      thiz.entity.entropy = this.parseEmptyToGiven(data, 0.0);
+      this.entity.entropy = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyStart`).change((data) => {
-      thiz.entity.entropyStart = this.parseEmptyToGiven(data, 0.0);
+      this.entity.entropyStart = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyMiddle`).change((data) => {
-      thiz.entity.entropyMiddle = this.parseEmptyToGiven(data, 0.0);
+      this.entity.entropyMiddle = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-entropyEnd`).change((data) => {
-      thiz.entity.entropyEnd = this.parseEmptyToGiven(data, 0.0);
+      this.entity.entropyEnd = this.parseEmptyToGiven(data, 0.0);
       this._updateRender()
     });
     html.find(`#${id}-seed`).change((data) => {
-      thiz.entity.seed = this.parseEmptyToUndefined(data);
+      this.entity.seed = this.parseEmptyToUndefined(data);
       this._updateRender()
     });
 
@@ -215,14 +220,14 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
 
     // ## collapse button
     html.find(`#${id}-collapse`).click(() => {
-      thiz.isExpanded = !(thiz.isExpanded ?? false);
+      this.isExpanded = !(this.isExpanded ?? false);
       this._updateRender()
     });
 
     // Drop-Downs
     const idEndingPickMode = `${id}-endingPickMode`;
     html.find(`#${idEndingPickMode}`).change((data) => {
-      thiz.entity.endingPickMode = $(data.target).val();
+      this.entity.endingPickMode = $(data.target).val();
       this._updateRender()
     });
     this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode);
@@ -230,10 +235,10 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
     const idSequencingStrategy = `${id}-sequencingStrategy`;
     html.find(`#${idSequencingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      thiz.entity.sequencingStrategyId = strategyId;
+      this.entity.sequencingStrategyId = strategyId;
       
       const strategyDefinition = this.sequencingStrategies.find(it => it.id === strategyId);
-      thiz.entity.sequencingStrategySettings = strategyDefinition.getSettings();
+      this.entity.sequencingStrategySettings = strategyDefinition.getSettings();
 
       this._updateRender()
     });
@@ -242,7 +247,7 @@ export default class WordGeneratorItemPresenter extends AbstractPresenter {
     const idSpellingStrategy = `${id}-spellingStrategy`;
     html.find(`#${idSpellingStrategy}`).change((data) => {
       const strategyId = $(data.target).val();
-      thiz.entity.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
+      this.entity.spellingStrategyId = strategyId === "undefined" ? undefined : strategyId;
 
       if (strategyId !== undefined) {
         const strategyDefinition = this.spellingStrategies.find(it => it.id === strategyId);
