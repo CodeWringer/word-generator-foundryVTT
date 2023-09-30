@@ -52,7 +52,9 @@ export class DragDropHandler {
    * of unrecognized data types. 
    * @param {String | undefined} args.dragOverClass CSS class to automatically add to the element 
    * when something is dragged over it. 
-   * @param {String | undefined} args.elementId ID of the element that allows receiving dragged elements. 
+   * @param {String | undefined} args.draggableElementId ID of the element that allows being dragged. 
+   * * By default uses `entityId`. 
+   * @param {String | undefined} args.receiverElementId ID of the element that allows receiving dragged elements. 
    * * By default uses `entityId`. 
    * @param {Function | undefined} args.dragStartHandler Callback that is invoked when the dragging of 
    * the element is begun. 
@@ -66,7 +68,8 @@ export class DragDropHandler {
   constructor(args = {}) {
     this.entityId = args.entityId;
     this.entityDataType = args.entityDataType;
-    this._elementId = args.elementId ?? args.entityId;
+    this._draggableElementId = args.draggableElementId ?? args.entityId;
+    this._receiverElementId = args.receiverElementId ?? args.entityId;
 
     this.dragOverClass = args.dragOverClass ?? this.defaultDragOverClass;
 
@@ -83,11 +86,12 @@ export class DragDropHandler {
    * @param {JQuery} html 
    */
   activateListeners(html) {
-    const element = html.find(`#${this._elementId}`);
+    const draggableElement = html.find(`#${this._draggableElementId}`);
+    const receiverElement = html.find(`#${this._receiverElementId}`);
 
     // Event handlers of a source element. 
 
-    element.bind("dragstart", (event) => {
+    draggableElement.bind("dragstart", (event) => {
       event.originalEvent.dataTransfer.setData(this.keyEntityId, this.entityId);
       event.originalEvent.dataTransfer.setData(this.keyEntityDataType, this.entityDataType);
       this._dragStartHandler();
@@ -95,17 +99,17 @@ export class DragDropHandler {
     
     // Event handlers of a target element. 
 
-    element.bind("dragover", (event) => {
-      element.addClass(this.dragOverClass);
+    receiverElement.bind("dragover", (event) => {
+      receiverElement.addClass(this.dragOverClass);
       this._dragOverHandler(event);
     });
-    element.bind("dragleave", (event) => {
-      element.removeClass(this.dragOverClass);
+    receiverElement.bind("dragleave", (event) => {
+      receiverElement.removeClass(this.dragOverClass);
       this._dragLeaveHandler(event);
     });
-    element.bind("drop", (event) => {
+    receiverElement.bind("drop", (event) => {
       event.preventDefault(); // Prevent effects of a normal click. 
-      element.removeClass(this.dragOverClass);
+      receiverElement.removeClass(this.dragOverClass);
       
       const draggedEntityId = event.originalEvent.dataTransfer.getData(this.keyEntityId);
       const draggedEntityDataType = event.originalEvent.dataTransfer.getData(this.keyEntityDataType);

@@ -179,4 +179,22 @@ export default class ObservableWordGeneratorFolder {
     }
     return undefined;
   }
+
+  /**
+   * Returns true, if this folder is a direct or indirect child of the 
+   * given other folder. 
+   * 
+   * @param {ObservableWordGeneratorFolder} otherFolder 
+   * 
+   * @returns {Boolean}
+   */
+  isChildOf(otherFolder) {
+    if (this.parent.value == otherFolder) {
+      return true;
+    } else if (this.parent.value === undefined) {
+      return false;
+    } else {
+      return this.parent.value.isChildOf(otherFolder);
+    }
+  }
 }

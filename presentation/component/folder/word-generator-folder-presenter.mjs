@@ -70,11 +70,25 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
       entityDataType: this.entityDataType,
-      elementId: `${this.entity.id}-header`,
+      receiverElementId: `${this.entity.id}-header`,
+      draggableElementId: `${this.entity.id}-header`,
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
         if (droppedEntityDataType === this.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
           const folderToNest = this.application.getFolderById(droppedEntityId);
+
+          // Avoid recursion. 
+          if (folderToNest.id === this.entity.id) return; 
+          if (this.entity.isChildOf(folderToNest)) return;
+
+          // Remove from origin. 
+          if (folderToNest.parent.value === undefined) {
+            this.application._data.folders.remove(folderToNest);
+          } else {
+            folderToNest.parent.value.children.remove(folderToNest);
+          }
+
+          // Add to the represented folder's children. 
           this.entity.children.add(folderToNest);
         }
       }
