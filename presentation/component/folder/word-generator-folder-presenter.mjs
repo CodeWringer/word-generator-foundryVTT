@@ -81,12 +81,16 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
           if (folderToNest.id === this.entity.id) return; 
           if (this.entity.isChildOf(folderToNest)) return;
 
+          this.application.suspendRendering = true;
+
           // Remove from origin. 
           if (folderToNest.parent.value === undefined) {
             this.application._data.folders.remove(folderToNest);
           } else {
             folderToNest.parent.value.children.remove(folderToNest);
           }
+
+          this.application.suspendRendering = false;
 
           // Add to the represented folder's children. 
           this.entity.children.add(folderToNest);

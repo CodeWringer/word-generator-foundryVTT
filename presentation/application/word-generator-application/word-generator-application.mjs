@@ -121,6 +121,16 @@ export default class WordGeneratorApplication extends Application {
    */
   _currentScrollResultList = 0;
 
+  /**
+   * If true, will not re-render the application when the data changes. 
+   * 
+   * Useful to avoid frequent re-renders or even render calls being dropped, 
+   * when performing bulk data modifications. 
+   * 
+   * @type {Boolean}
+   */
+  suspendRendering = false;
+
   constructor() {
     super();
 
@@ -245,6 +255,8 @@ export default class WordGeneratorApplication extends Application {
 
   /** @override */
   render(args) {
+    if (this.suspendRendering === true) return;
+
     if (this._contentAreaElement1 !== undefined) {
       this._currentScrollGeneratorList = this._contentAreaElement1.scrollTop();
     }
