@@ -41,22 +41,112 @@ presenter: WordGeneratorItemPresenter
     </div>
   </header>
   {{#if presenter.isExpanded}}
-  <div class="wg-flex column wg-generator-item-content">
+  <div class="wg-flex column wg-generator-item-content wg-dark">
     {{!-- Sample Set --}}
-    <div class="wg-grid-2 gap-2 wg-border-box wg-margin-t-3 wg-margin-b-3 wg-dark">
+    <div class="wg-grid-2 gap-2 wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3">
+      {{!-- Sample Set Strategy --}}
       <div class="wg-flex middle">
-        <label for="{{presenter.id}}-sample-set-strategy" 
-          class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.sampleSet.strategy"}}</label>
+        <label for="{{presenter.id}}-sample-set-strategy" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.sampleSet.strategy"}}</label>
         <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-sample-set-strategy-info"></i>
       </div>
-      <select id="{{presenter.id}}-sample-set-strategy">
+      <select id="{{presenter.id}}-sample-set-strategy" class="wg-light">
         {{#each presenter.sampleSetStrategyOptions as |strategy index|}}
-        <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
+        <option value="{{strategy.value}}">{{strategy.localizedLabel}}</option>
         {{/each}}
       </select>
+      {{!-- Sample Set Settings --}}
+      {{#each presenter.sampleSetStrategySettings as |setting index|}}
+        <label for="{{../presenter.id}}-{{setting.id}}">{{setting.localizedLabel}}</label>
+        {{{setting.inputElement}}}
+      {{/each}}
     </div>
     <div class="wg-grid-2 gap-2">
-
+      {{!-- targetLengthMin --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-target-length-min" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.targetLength.min"}}</label>
+        <i id="{{presenter.id}}-target-length-min-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-target-length-min" type="number" min="1" value="{{presenter.entity.targetLengthMin.value}}" class="wg-light" />
+      {{!-- targetLengthMax --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-target-length-max" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.targetLength.max"}}</label>
+        <i id="{{presenter.id}}-target-length-max-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-target-length-max" type="number" min="1" value="{{presenter.entity.targetLengthMax.value}}" class="wg-light" />
+      {{!-- entropy --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-entropy" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.entropy.label"}}</label>
+        <i id="{{presenter.id}}-entropy-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-entropy" type="number" min="1" value="{{presenter.entity.entropy.value}}" class="wg-light" />
+      {{!-- entropyStart --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-entropy-start" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.entropy.start.label"}}</label>
+        <i id="{{presenter.id}}-entropy-start-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-entropy-start" type="number" min="1" value="{{presenter.entity.entropyStart.value}}" class="wg-light" />
+      {{!-- entropyMiddle --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-entropy-middle" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.entropy.middle.label"}}</label>
+        <i id="{{presenter.id}}-entropy-middle-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-entropy-middle" type="number" min="1" value="{{presenter.entity.entropyMiddle.value}}" class="wg-light" />
+      {{!-- entropyEnd --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-entropy-end" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.entropy.end.label"}}</label>
+        <i id="{{presenter.id}}-entropy-end-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-entropy-end" type="number" min="1" value="{{presenter.entity.entropyEnd.value}}" class="wg-light" />
+      {{!-- endingPickMode --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-ending-pick-mode" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.endingPickMode.label"}}</label>
+        <i id="{{presenter.id}}-ending-pick-mode-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <select id="{{presenter.entity.id}}-ending-pick-mode" class="wg-light" style="margin-right: 2px">
+        <option value="0">{{localize "wg.generator.endingPickModes.none"}}</option>
+        <option value="1">{{localize "wg.generator.endingPickModes.random"}}</option>
+        <option value="2">{{localize "wg.generator.endingPickModes.followBranch"}}</option>
+      </select>
+      {{!-- seed --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-seed" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.seed.label"}}</label>
+        <i id="{{presenter.id}}-seed-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-seed" type="number" min="1" value="{{presenter.entity.seed.value}}" class="wg-light" />
+    </div>
+    {{!-- Sequencing Strategy --}}
+    <div class="wg-grid-2 gap-2 wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3">
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-sequencing-strategy" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.sequencingStrategy.label"}}</label>
+        <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-sequencing-strategy-info"></i>
+      </div>
+      <select id="{{presenter.id}}-sequencing-strategy" class="wg-light">
+        {{#each presenter.sequencingStrategyOptions as |strategy index|}}
+        <option value="{{strategy.value}}">{{strategy.localizedLabel}}</option>
+        {{/each}}
+      </select>
+      {{!-- Sequencing Strategy Settings --}}
+      {{#each presenter.sequencingStrategySettings as |setting index|}}
+        <label for="{{../presenter.id}}-{{setting.id}}">{{setting.localizedLabel}}</label>
+        {{{setting.inputElement}}}
+      {{/each}}
+    </div>
+    {{!-- Spelling Strategy --}}
+    <div class="wg-grid-2 gap-2 wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3">
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-spelling-strategy" class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.spellingStrategy.label"}}</label>
+        <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-spelling-strategy-info"></i>
+      </div>
+      <select id="{{presenter.id}}-spelling-strategy" class="wg-light">
+        {{#each presenter.spellingStrategyOptions as |strategy index|}}
+        <option value="{{strategy.value}}">{{strategy.localizedLabel}}</option>
+        {{/each}}
+      </select>
+      {{!-- Spelling Strategy Settings --}}
+      {{#each presenter.spellingStrategySettings as |setting index|}}
+        <label for="{{../presenter.id}}-{{setting.id}}">{{setting.localizedLabel}}</label>
+        {{{setting.inputElement}}}
+      {{/each}}
     </div>
   </div>
   {{/if}}

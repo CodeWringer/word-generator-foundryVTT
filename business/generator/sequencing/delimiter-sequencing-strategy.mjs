@@ -8,7 +8,8 @@ import Sequence from "./sequence.mjs";
  * delimiter (= separator). 
  * @property {String} delimiter This delimiter is used to separate chars into sequences. 
  * @property {Boolean} preserveCase If true, will not transform found sequences 
- * to lower case, but instead preserve the casing found in the sequence. Default false. 
+ * to lower case, but instead preserve the casing found in the sequence. 
+ * * Default `false`
  */
 export default class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   /**

@@ -78,31 +78,89 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   constructor(args = {}) {
     super(args);
 
+    this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
+    this.sampleSetStrategyOptions = this.sampleSetStrategies
+    .map(it => new DropDownOption({
+      value: it.getDefinitionID(),
+      localizedLabel: it.getHumanReadableName(),
+    }));
+
     this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
     this.sequencingStrategyOptions = this.sequencingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
-        localizedTitle: it.getHumanReadableName(),
+        localizedLabel: it.getHumanReadableName(),
       }));
 
     this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
     this.spellingStrategyOptions = this.spellingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
-        localizedTitle: it.getHumanReadableName(),
+        localizedLabel: it.getHumanReadableName(),
       }));
 
-      this._dragDropHandler = new DragDropHandler({
-        entityId: this.entity.id,
-        entityDataType: WordGeneratorItemPresenter.entityDataType,
-        receiverElementId: `${this.entity.id}-header`,
-        draggableElementId: `${this.entity.id}-header`,
-      });
+    this._dragDropHandler = new DragDropHandler({
+      entityId: this.entity.id,
+      entityDataType: WordGeneratorItemPresenter.entityDataType,
+      receiverElementId: `${this.entity.id}-header`,
+      draggableElementId: `${this.entity.id}-header`,
+    });
   }
 
   activateListeners(html) {
-    const thiz = this;
     const id = this.entity.id;
+
+    this._infoBubble = new InfoBubble({
+      html: html,
+      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
+      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
+      map: [
+        {
+          element: html.find(`#${this.id}-sample-set-strategy-info`),
+          text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-target-length-min-info`),
+          text: game.i18n.localize("wg.generator.targetLength.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-target-length-max-info`),
+          text: game.i18n.localize("wg.generator.targetLength.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-entropy-info`),
+          text: game.i18n.localize("wg.generator.entropy.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-entropy-start-info`),
+          text: game.i18n.localize("wg.generator.entropy.start.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-entropy-middle-info`),
+          text: game.i18n.localize("wg.generator.entropy.middle.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-entropy-end-info`),
+          text: game.i18n.localize("wg.generator.entropy.end.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-ending-pick-mode-info`),
+          text: game.i18n.localize("wg.generator.endingPickMode.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-seed-info`),
+          text: game.i18n.localize("wg.generator.seed.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-sequencing-strategy-info`),
+          text: game.i18n.localize("wg.generator.sequencingStrategy.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-spelling-strategy-info`),
+          text: game.i18n.localize("wg.generator.spellingStrategy.infoHint"),
+        },
+      ]
+    });
 
     const headerElement = html.find(`#${id}-header`);
     headerElement.click((event) => {
@@ -119,32 +177,21 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
           name: game.i18n.localize("wg.generator.edit"),
           icon: '<i class="fas fa-edit"></i>',
           callback: async () => {
-            const dialog = await new DialogUtility().showSingleInputDialog({
-              localizedTitle: game.i18n.localize("wg.generator.create"),
-              localizedInputLabel: game.i18n.localize("wg.generator.name"),
-              value: thiz.entity.name.value,
-              modal: true,
-            });
-        
-            if (dialog.confirmed !== true) return;
-
-            thiz.entity.name.value = dialog.input;
+            this._edit();
+          }
+        },
+        {
+          name: game.i18n.localize("wg.generator.generate"),
+          icon: '<i class="fas fa-pen-nib"></i>',
+          callback: async () => {
+            this._generate();
           }
         },
         {
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.application.suspendRendering = true;
-
-            // Remove from current parent. 
-            const collection = this._getContainingCollection();
-            collection.remove(this.entity);
-
-            this.application.suspendRendering = false;
-
-            // Add to root level collection. 
-            this.application._data.generators.add(this.entity);
+            this._moveToRootLevel();
           },
           condition: () => {
             return this.entity.parent.value !== undefined;
@@ -154,202 +201,96 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
           name: game.i18n.localize("wg.generator.delete"),
           icon: '<i class="fas fa-trash"></i>',
           callback: async () => {
-            const dialog = await new DialogUtility().showConfirmationDialog({
-              localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
-              content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
-              modal: true,
-            });
-
-            if (dialog.confirmed !== true) return;
-
-            const collection = this._getContainingCollection();
-            collection.remove(this.entity);
+            this._delete();
           }
         },
       ]
     );
 
-    // Drag & drop
-    this._dragDropHandler.activateListeners(html);
+    html.find(`#${id}-generate`).click((event) => {
+      event.stopPropagation();
+      this._generate();
+    });
+    
+    html.find(`#${id}-move-up`).click(async (event) => {
+      event.stopPropagation();
 
-
-
-
-
-    html.find(`#${id}-edit-sample-set`).click(() => {
-      // new WordGeneratorSamplesApplication(this.entity, (data) => {
-      //   if (data.confirmed === true) {
-      //     this.entity.sampleSet.value = data.sampleSet;
-      //     this.entity.sampleSetSeparator.value = data.sampleSetSeparator;
-      //     this._updateRender()
-      //   }
-      // }).render(true);
+      if (event.ctrlKey || event.shiftKey) {
+        this._moveUp(true);
+      } else {
+        this._moveUp(false);
+      }
     });
 
-    html.find(`#${id}-name`).change((data) => {
-      this.entity.name.value = $(data.target).val();
-    });
-    html.find(`#${id}-targetLengthMin`).change((data) => {
-      this.entity.targetLengthMin.value = this.parseEmptyToGiven(data, 1);
-    });
-    html.find(`#${id}-targetLengthMax`).change((data) => {
-      this.entity.targetLengthMax.value = this.parseEmptyToGiven(data, 7);
-    });
-    html.find(`#${id}-entropy`).change((data) => {
-      this.entity.entropy.value = this.parseEmptyToGiven(data, 0.0);
-    });
-    html.find(`#${id}-entropyStart`).change((data) => {
-      this.entity.entropyStart.value = this.parseEmptyToGiven(data, 0.0);
-    });
-    html.find(`#${id}-entropyMiddle`).change((data) => {
-      this.entity.entropyMiddle.value = this.parseEmptyToGiven(data, 0.0);
-    });
-    html.find(`#${id}-entropyEnd`).change((data) => {
-      this.entity.entropyEnd.value = this.parseEmptyToGiven(data, 0.0);
-    });
-    html.find(`#${id}-seed`).change((data) => {
-      this.entity.seed.value = this.parseEmptyToUndefined(data);
+    html.find(`#${id}-move-down`).click(async (event) => {
+      event.stopPropagation();
+
+      if (event.ctrlKey || event.shiftKey) {
+        this._moveDown(true);
+      } else {
+        this._moveDown(false);
+      }
     });
 
-    // Sequencing settings
-    html.find(`#${id}-sequencing-settings > li > input`).change(data => {
-      const id = $(data.target)[0].id;
-      const setting = this.entity.sequencingStrategySettings.getAll().find(it => it.name === id);
-      setting.value = this._parseSettingValue(setting, data.target);
+    html.find(`input#${id}-target-length-min`).change((data) => {
+      this.entity.targetLengthMin.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-target-length-max`).change((data) => {
+      this.entity.targetLengthMax.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-entropy`).change((data) => {
+      this.entity.entropy.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-entropy-start`).change((data) => {
+      this.entity.entropyStart.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-entropy-middle`).change((data) => {
+      this.entity.entropyMiddle.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-entropy-end`).change((data) => {
+      this.entity.entropyEnd.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${id}-seed`).change((data) => {
+      this.entity.seed.value = this.getValueOrDefault(data, 1);
     });
 
-    // Spelling settings
-    html.find(`#${id}-spelling-settings > li > input`).change(data => {
-      const id = $(data.target)[0].id;
-      const setting = this.entity.spellingStrategySettings.getAll().find(it => it.name === id);
-      setting.value = this._parseSettingValue(setting, data.target);
-    });
-
-    // # Info-bubbles
-    // ## Sample-Set
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.sample-set#${id}`),
-      text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## target-length
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.target-length#${id}`),
-      text: game.i18n.localize("wg.generator.targetLength.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## entropy
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.entropy#${id}`),
-      text: game.i18n.localize("wg.generator.entropy.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## entropy-start
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.entropy-start#${id}`),
-      text: game.i18n.localize("wg.generator.entropy.start.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## entropy-middle
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.entropy-middle#${id}`),
-      text: game.i18n.localize("wg.generator.entropy.middle.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## entropy-end
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.entropy-end#${id}`),
-      text: game.i18n.localize("wg.generator.entropy.end.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## ending-pick-mode
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.ending-pick-mode#${id}`),
-      text: game.i18n.localize("wg.generator.endingPickMode.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## sequencing-strategy
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.sequencing-strategy#${id}`),
-      text: game.i18n.localize("wg.generator.sequencingStrategy.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## spelling-strategy
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.spelling-strategy#${id}`),
-      text: game.i18n.localize("wg.generator.spellingStrategy.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-    // ## seed
-    new InfoBubble({
-      html: html,
-      parent: html.find(`.word-generator-info.seed#${id}`),
-      text: game.i18n.localize("wg.generator.seed.infoHint"),
-      autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
-      autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
-    });
-
-    // ## collapse button
-    html.find(`#${id}-collapse`).click(() => {
-      this.entity.isExpanded.value = !this.entity.isExpanded.value;
-    });
-
-    // Drop-Downs
-    const idEndingPickMode = `${id}-endingPickMode`;
+    // Ending pick mode
+    const idEndingPickMode = `${id}-ending-pick-mode`;
     html.find(`#${idEndingPickMode}`).change((data) => {
       this.entity.endingPickMode.value = $(data.target).val();
     });
     this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode.value);
 
-    const idSequencingStrategy = `${id}-sequencingStrategy`;
-    html.find(`#${idSequencingStrategy}`).change((data) => {
-      const strategyId = $(data.target).val();
-      this.entity.sequencingStrategyId.value = strategyId;
-      
-      const strategyDefinition = this.sequencingStrategies.find(it => it.id === strategyId);
-      this.entity.sequencingStrategySettings.clear();
-      this.entity.sequencingStrategySettings.addAll(strategyDefinition.getSettings());
-    });
-    this.syncDropDownValue(html, idSequencingStrategy, this.entity.sequencingStrategyId.value);
+    
+    // html.find(`#${id}-edit-sample-set`).click(() => {
+    //   new WordGeneratorSamplesApplication(this.entity, (data) => {
+    //     if (data.confirmed === true) {
+    //       this.entity.sampleSet.value = data.sampleSet;
+    //       this.entity.sampleSetSeparator.value = data.sampleSetSeparator;
+    //       this._updateRender()
+    //     }
+    //   }).render(true);
+    // });
 
-    const idSpellingStrategy = `${id}-spellingStrategy`;
-    html.find(`#${idSpellingStrategy}`).change((data) => {
-      const strategyId = $(data.target).val();
-      this.entity.spellingStrategyId.value = strategyId === "undefined" ? undefined : strategyId;
+    // Sample set
 
-      if (strategyId !== undefined) {
-        const strategyDefinition = this.spellingStrategies.find(it => it.id === strategyId);
-        thiz.entity.spellingStrategySettings.clear();
-        if (strategyDefinition !== undefined) {
-          thiz.entity.spellingStrategySettings.addAll(strategyDefinition.getSettings());
-        }
-      }
-    });
-    this.syncDropDownValue(html, idSpellingStrategy, this.entity.spellingStrategyId.value);
 
-    // Generate
-    html.find(`#${id}-generate`).click(() => {
-      const generator = this.entity.toGenerator();
-      this.application._generate(generator);
-    });
+    // Sequencing settings
+    // html.find(`#${id}-sequencing-settings > li > input`).change(data => {
+    //   const id = $(data.target)[0].id;
+    //   const setting = this.entity.sequencingStrategySettings.getAll().find(it => it.name === id);
+    //   setting.value = this._parseSettingValue(setting, data.target);
+    // });
+
+    // // Spelling settings
+    // html.find(`#${id}-spelling-settings > li > input`).change(data => {
+    //   const id = $(data.target)[0].id;
+    //   const setting = this.entity.spellingStrategySettings.getAll().find(it => it.name === id);
+    //   setting.value = this._parseSettingValue(setting, data.target);
+    // });
+
+    // Drag & drop
+    this._dragDropHandler.activateListeners(html);
   }
 
   /**
@@ -390,5 +331,127 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
       generators = this.entity.parent.value.items;
     }
     return generators;
+  }
+
+  /**
+   * Moves this generator to the root level, if possible. 
+   * 
+   * @private
+   */
+  _moveToRootLevel() {
+    if (this.entity.parent.value === undefined) return; // Already at root level. 
+
+    this.application.suspendRendering = true;
+
+    // Remove from current parent. 
+    const collection = this._getContainingCollection();
+    collection.remove(this.entity);
+
+    this.application.suspendRendering = false;
+
+    // Add to root level collection. 
+    this.application._data.generators.add(this.entity);
+  }
+
+  /**
+   * Moves the generator up one index in its containing collection, if possible. 
+   * 
+   * @param {Boolean | undefined} toStart If `true`, moves up all the way to the first index. 
+   * * default `false`
+   * 
+   * @private
+   */
+  _moveUp(toStart = false) {
+    if (this.disableMoveUp === true) return;
+
+      const collection = this._getContainingCollection();
+      const index = collection.getAll().findIndex(it => it.id === this.entity.id);
+
+      let newIndex;
+      if (toStart === true) {
+        newIndex = 0;
+      } else {
+        newIndex = Math.max(0, index - 1);
+      }
+
+      collection.move(index, newIndex);
+  }
+
+  /**
+   * Moves the generator down one index in its containing collection, if possible. 
+   * 
+   * @param {Boolean | undefined} toEnd If `true`, moves down all the way to the last index. 
+   * * default `false`
+   * 
+   * @private
+   */
+  _moveDown(toEnd = false) {
+    if (this.disableMoveDown === true) return;
+
+    const collection = this._getContainingCollection();
+    const index = collection.getAll().findIndex(it => it.id === this.entity.id);
+    const maxIndex = collection.length - 1;
+    
+    let newIndex;
+    if (toEnd === true) {
+      newIndex = maxIndex;
+    } else {
+      newIndex = Math.max(maxIndex, index + 1);
+    }
+
+    collection.move(index, newIndex);
+  }
+
+  /**
+   * Generates results using the represented generator. 
+   * 
+   * @private
+   */
+  _generate() {
+    const generator = this.entity.toGenerator();
+    const results = generator.generate(this.application._data.amountToGenerate.value);
+
+    this.application.suspendRendering = true;
+    this.application._data.generatedResults.clear();
+    this.application.suspendRendering = false;
+    this.application._data.generatedResults.addAll(results);
+  }
+
+  /**
+   * Prompts the user to enter a new name and if confirmed, applies it. 
+   * 
+   * @private
+   * @async
+   */
+  async _edit() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.generator.create"),
+      localizedInputLabel: game.i18n.localize("wg.generator.name"),
+      value: this.entity.name.value,
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    this.entity.name.value = dialog.input;
+  }
+  
+  /**
+   * Prompts the user to confirm and if confirmed, deletes this generator. 
+   * 
+   * @private
+   * @async
+   */
+  async _delete() {
+    const dialog = await new DialogUtility().showConfirmationDialog({
+      localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
+      content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    const collection = this._getContainingCollection();
+    collection.remove(this.entity);
   }
 }

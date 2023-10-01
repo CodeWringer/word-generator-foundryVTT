@@ -85,7 +85,7 @@ export default class AbstractPresenter {
    * 
    * @protected
    */
-  parseEmptyToGiven(data, emptyValue) {
+  getValueOrDefault(data, emptyValue) {
     const newVal = $(data.target).val().trim();
     return newVal === "" ? emptyValue : newVal;
   }

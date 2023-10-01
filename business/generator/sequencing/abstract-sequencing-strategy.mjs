@@ -5,6 +5,7 @@
  * Implementing types **must** override these methods:
  * * `getDefinitionID`
  * * `getHumanReadableName`
+ * * `newInstanceWithArgs`
  * * `getSequencesOfSample`
  * * `getSettings`
  * 

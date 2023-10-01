@@ -6,8 +6,9 @@
  * Implementing types **must** override these methods:
  * * `getDefinitionID`
  * * `getHumanReadableName`
- * * `apply`
+ * * `newInstanceWithArgs`
  * * `getSettings`
+ * * `apply`
  * 
  * @abstract
  */

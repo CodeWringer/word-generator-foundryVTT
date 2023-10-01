@@ -9,6 +9,7 @@ import CustomUserSettings from "./data/settings/custom-user-settings.mjs";
 import WordGeneratorApplication from "./presentation/application/word-generator-application/word-generator-application.mjs";
 import HandlebarsGlobals from "./presentation/handlebars-globals.mjs";
 import { TEMPLATES } from "./presentation/templates.mjs";
+import WordListSamplingStrategy from "./business/generator/sampling/word-list-sampling-strategy.mjs";
 
 /* -------------------------------------------- */
 /*  Initialization                              */
@@ -25,6 +26,9 @@ Hooks.once('init', function() {
 Hooks.once('ready', function() {
   // Settings initialization.
   new CustomUserSettings().ensureAllSettings();
+
+  // Ensure default sampling strategy definitions are registered. 
+  WordGeneratorApplication.registeredSamplingStrategies.register(new WordListSamplingStrategy());
 
   // Ensure default sequencing strategy definitions are registered. 
   WordGeneratorApplication.registeredSequencingStrategies.register(new CharDepthSequencingStrategy());

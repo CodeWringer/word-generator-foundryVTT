@@ -50,6 +50,13 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
+   * Holds all registered sampling strategy definitons. 
+   * @type {TypeRegistrar}
+   * @static
+   */
+  static registeredSamplingStrategies = new TypeRegistrar();
+
+  /**
    * Holds all registered sequencing strategy definitons. 
    * @type {TypeRegistrar}
    * @static
