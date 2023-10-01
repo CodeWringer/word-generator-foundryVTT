@@ -168,7 +168,7 @@ export default class ObservableWordGeneratorFolder {
   getGeneratorById(id) {
     for (const generator of this.items.getAll()) {
       if (generator.id === id) {
-        return id;
+        return generator;
       }
     }
     for (const child of this.children.getAll()) {
