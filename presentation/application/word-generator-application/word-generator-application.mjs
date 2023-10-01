@@ -297,7 +297,12 @@ export default class WordGeneratorApplication extends Application {
    */
   getGeneratorById(id) {
     for (const generator of this._data.generators.getAll()) {
-      const r = generator.getGeneratorById(id);
+      if (generator.id === id) {
+        return generator;
+      }
+    }
+    for (const folder of this._data.folders.getAll()) {
+      const r = folder.getGeneratorById(id);
       if (r !== undefined) {
         return r;
       }

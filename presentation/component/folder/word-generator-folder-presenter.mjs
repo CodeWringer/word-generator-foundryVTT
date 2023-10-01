@@ -27,6 +27,18 @@ import ObservableCollection from "../../../common/observables/observable-collect
  * * Read-only
  */
 export default class WordGeneratorFolderPresenter extends AbstractEntityPresenter {
+  /**
+   * Returns the data type of the represented entity. 
+   * 
+   * For use in the drag and drop handler, so that drop events 
+   * can be handled appropriately. 
+   * 
+   * @type {String}
+   * @readonly
+   * @static
+   */
+  static entityDataType = "WordGeneratorFolder";
+
   get template() { return TEMPLATES.WORD_GENERATOR_FOLDER; }
 
   get id() { return this.entity.id; }
@@ -36,7 +48,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
   get isExpanded() { return this.entity.isExpanded.value; }
 
   get disableMoveUp() {
-    const folders = this._getContainingFolderCollection().getAll();
+    const folders = this._getContainingCollection().getAll();
     const index = folders.findIndex(it => it.id === this.entity.id);
     
     if (index <= 0) {
@@ -47,7 +59,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
   }
 
   get disableMoveDown() {
-    const folders = this._getContainingFolderCollection().getAll();
+    const folders = this._getContainingCollection().getAll();
     const maxIndex = folders.length - 1;
     const index = folders.findIndex(it => it.id === this.entity.id);
     
@@ -57,17 +69,6 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
       return false;
     }
   }
-
-  /**
-   * Returns the data type of the represented entity. 
-   * 
-   * For use in the drag and drop handler, so that drop events 
-   * can be handled appropriately. 
-   * 
-   * @type {String}
-   * @readonly
-   */
-  get entityDataType() { return "WordGeneratorFolder"; }
 
   /**
    * @param {Object} args
@@ -99,13 +100,17 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: this.entityDataType,
-      acceptedDataTypes: [this.entityDataType],
+      entityDataType: WordGeneratorFolderPresenter.entityDataType,
+      acceptedDataTypes: [
+        WordGeneratorFolderPresenter.entityDataType,
+        WordGeneratorItemPresenter.entityDataType,
+      ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
-        if (droppedEntityDataType === this.entityDataType) {
+        if (droppedEntityDataType === WordGeneratorFolderPresenter.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
+
           const folderToNest = this.application.getFolderById(droppedEntityId);
 
           // Avoid recursion. 
@@ -125,6 +130,27 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
           // Add to the represented folder's children. 
           this.entity.children.add(folderToNest);
+        } else if (droppedEntityDataType === WordGeneratorItemPresenter.entityDataType) {
+          // Assign the dragged generator to this folder, as a child. 
+
+          const generatorToNest = this.application.getGeneratorById(droppedEntityId);
+
+          // Avoid unnecessary operations. 
+          if (this.entity.items.contains(generatorToNest)) return;
+
+          this.application.suspendRendering = true;
+
+          // Remove from origin. 
+          if (generatorToNest.parent.value === undefined) {
+            this.application._data.generators.remove(generatorToNest);
+          } else {
+            generatorToNest.parent.value.items.remove(generatorToNest);
+          }
+
+          this.application.suspendRendering = false;
+
+          // Add to the represented folder's generators. 
+          this.entity.items.add(generatorToNest);
         }
       }
     });
@@ -168,7 +194,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
             this.application.suspendRendering = true;
 
             // Remove from current parent. 
-            const folders = this._getContainingFolderCollection();
+            const folders = this._getContainingCollection();
             folders.remove(this.entity);
 
             this.application.suspendRendering = false;
@@ -234,7 +260,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
       if (this.disableMoveUp === true) return;
 
-      const folders = this._getContainingFolderCollection();
+      const folders = this._getContainingCollection();
       const index = folders.getAll().findIndex(it => it.id === this.entity.id);
 
       let newIndex;
@@ -252,7 +278,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
       if (this.disableMoveDown === true) return;
 
-      const folders = this._getContainingFolderCollection();
+      const folders = this._getContainingCollection();
       const index = folders.getAll().findIndex(it => it.id === this.entity.id);
       const maxIndex = folders.length - 1;
       
@@ -279,7 +305,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
    * 
    * @returns {ObservableCollection<ObservableWordGeneratorFolder>}
    */
-  _getContainingFolderCollection() {
+  _getContainingCollection() {
     let folders;
     if (this.entity.parent.value === undefined) {
       folders = this.application._data.folders;

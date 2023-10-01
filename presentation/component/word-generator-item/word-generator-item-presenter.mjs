@@ -25,6 +25,18 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * @property {Array<DropDownOption>} spellingStrategyOptions
  */
 export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
+  /**
+   * Returns the data type of the represented entity. 
+   * 
+   * For use in the drag and drop handler, so that drop events 
+   * can be handled appropriately. 
+   * 
+   * @type {String}
+   * @readonly
+   * @static
+   */
+  static entityDataType = "WordGeneratorItem";
+
   get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
 
   get id() { return this.entity.id; }
