@@ -6,25 +6,31 @@
     },
     "folder": {
       "create": "Create Folder",
-      "name": "Folder Name",
-      "defaultName": "New Folder"
+      "confirmDeletion": "Delete Folder?",
+      "edit": "Edit Folder",
+      "defaultName": "New Folder",
+      "delete": "Delete Folder",
+      "name": "Folder Name"
     },
     "general": {
       "copy": {
         "toClipboard": "Copy to clipboard",
         "success": "Copied!"
       },
+      "cancel": "Cancel",
       "confirm": "Confirm",
       "confirmDeletionOf": "Confirm deletion of '%s'",
       "save": "Save",
-      "cancel": "Cancel"
+      "moveToRootLevel": "Move To Root Level"
     },
     "generator": {
       "create": "Create Generator",
       "confirmDeletion": "Delete Generator?",
       "delete": "Delete Generator",
       "defaultName": "New Generator",
+      "edit": "Edit Generator",
       "generate": "Generate",
+      "name": "Generator Name",
       "targetLength": {
         "infoHint": "The generator will try to keep resulting word length within this boundary, but no guarantee is made.",
         "min": "Target length minimum",

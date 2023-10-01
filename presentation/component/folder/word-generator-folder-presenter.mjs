@@ -172,7 +172,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
       `#${id}-header`,
       [
         {
-          name: "Edit Folder",
+          name: game.i18n.localize("wg.folder.edit"),
           icon: '<i class="fas fa-edit"></i>',
           callback: async () => {
             const dialog = await new DialogUtility().showSingleInputDialog({
@@ -188,7 +188,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
           }
         },
         {
-          name: "Move To Root Level",
+          name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
             this.application.suspendRendering = true;
@@ -207,11 +207,11 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
           }
         },
         {
-          name: "Delete",
+          name: game.i18n.localize("wg.folder.delete"),
           icon: '<i class="fas fa-trash"></i>',
           callback: async () => {
             const dialog = await new DialogUtility().showConfirmationDialog({
-              localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
+              localizedTitle: game.i18n.localize("wg.folder.confirmDeletion"),
               content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
               modal: true,
             });
