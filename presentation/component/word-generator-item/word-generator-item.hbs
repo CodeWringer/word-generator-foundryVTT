@@ -1,167 +1,63 @@
 {{!-- Params:
 presenter: WordGeneratorItemPresenter
 --}}
-<div class="wg-card">
-  {{!-- Move controls --}}
-  {{> "modules/word-generator/presentation/template/move-controls.hbs" listItemId=presenter.entity.id }}
-  <div class="wg-flex flexcol grow">
-    {{!-- Header Row --}}
-    <div class="wg-flex column">
-      <header class="wg-flex middle">
-        {{!-- Delete Button --}}
-        <button 
-          class="word-generator-square-button danger"
-          type="button" 
-          id="{{presenter.entity.id}}-delete"
-          data-id="{{presenter.entity.id}}"
-          title="{{localize "wg.generator.delete"}}"
-          >
-          <i class="fas fa-trash"></i>
-        </button>
-        <h3 class="wg-flex row grow">
-          {{!-- Name Input --}}
-          <input 
-            type="text"
-            id="{{presenter.entity.id}}-name"
-            data-id="{{presenter.entity.id}}"
-            placeholder="{{localize "wg.generator.placeholder.name"}}"
-            value="{{presenter.entity.name}}"
-          />
-        </h3>
-      </header>
-      <div class="wg-flex grow"></div>
-    </div>
-    {{!-- Sample Set --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-sampleSet">{{localize "wg.generator.sampleSet.field"}}</label>
-      <i class="far fa-question-circle word-generator-info sample-set" id="{{presenter.entity.id}}"></i>
-      <span>{{localize "wg.generator.sampleSize"}}: {{presenter.entity.sampleSet.length}}</span>
-      <button 
-        class="word-generator-square-button"
-        type="button" 
-        id="{{presenter.entity.id}}-edit-sample-set"
-        data-id="{{presenter.entity.id}}"
-        title="{{localize "wg.generator.sampleSet.edit"}}"
-        >
-        <i class="fas fa-edit"></i>
-      </button>
-    </div>
-    {{#if presenter.isExpanded}}
-    {{!-- targetLengthMin --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-targetLengthMin">{{localize "wg.generator.targetLength.min"}}</label>
-      <i class="far fa-question-circle word-generator-info target-length" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-targetLengthMin" type="number" min="1" value="{{presenter.entity.targetLengthMin}}" />
-    </div>
-    {{!-- targetLengthMax --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-targetLengthMax">{{localize "wg.generator.targetLength.max"}}</label>
-      <i class="far fa-question-circle word-generator-info target-length" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-targetLengthMax" type="number" min="1" value="{{presenter.entity.targetLengthMax}}" />
-    </div>
-    {{!-- entropy --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-entropy">{{localize "wg.generator.entropy.label"}}</label>
-      <i class="far fa-question-circle word-generator-info entropy" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-entropy" type="number" min="0" max="1" value="{{presenter.entity.entropy}}" />
-    </div>
-    {{!-- entropyStart --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-entropyStart">{{localize "wg.generator.entropy.start.label"}}</label>
-      <i class="far fa-question-circle word-generator-info entropy-start" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-entropyStart" type="number" min="0" max="1" value="{{presenter.entity.entropyStart}}" />
-    </div>
-    {{!-- entropyMiddle --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-entropyMiddle">{{localize "wg.generator.entropy.middle.label"}}</label>
-      <i class="far fa-question-circle word-generator-info entropy-middle" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-entropyMiddle" type="number" min="0" max="1" value="{{presenter.entity.entropyMiddle}}" />
-    </div>
-    {{!-- entropyEnd --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-entropyEnd">{{localize "wg.generator.entropy.end.label"}}</label>
-      <i class="far fa-question-circle word-generator-info entropy-end" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-entropyEnd" type="number" min="0" max="1" value="{{presenter.entity.entropyEnd}}" />
-    </div>
-    {{!-- endingPickMode --}}
-    <div class="flexrow">
-      <label for="{{presenter.entity.id}}-endingPickMode">{{localize "wg.generator.endingPickMode.label"}}</label>
-      <i class="far fa-question-circle word-generator-info ending-pick-mode" id="{{presenter.entity.id}}"></i>
-      <select id="{{presenter.entity.id}}-endingPickMode">
-        <option value="0">{{localize "wg.generator.endingPickModes.none"}}</option>
-        <option value="1">{{localize "wg.generator.endingPickModes.random"}}</option>
-        <option value="2">{{localize "wg.generator.endingPickModes.followBranch"}}</option>
-      </select>
-    </div>
-    {{!-- sequencingStrategy --}}
-    <div class="wg-card">
-      <div class="flexrow">
-        <label for="{{presenter.entity.id}}-sequencingStrategy">{{localize "wg.generator.sequencingStrategy.label"}}</label>
-        <i class="far fa-question-circle word-generator-info sequencing-strategy" id="{{presenter.entity.id}}"></i>
-        <select id="{{presenter.entity.id}}-sequencingStrategy">
-          {{#each presenter.sequencingStrategyOptions as |strategy index|}}
-          <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
-          {{/each}}
-        </select>
-      </div>
-      {{!-- Sequencing Settings --}}
-      <ul id="{{presenter.entity.id}}-sequencing-settings" class="wg-unstyled-list">
-        {{#each presenter.entity.sequencingStrategySettings as |setting index|}}
-          {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
-        {{/each}}
-      </ul>
-    </div> 
-    {{!-- spellingStrategy --}}
-    <div class="wg-card">
-      <div class="flexrow">
-        <label for="{{presenter.entity.id}}-spellingStrategy">{{localize "wg.generator.spellingStrategy.label"}}</label>
-        <i class="far fa-question-circle word-generator-info spelling-strategy" id="{{presenter.entity.id}}"></i>
-        <select id="{{presenter.entity.id}}-spellingStrategy">
-          {{#each presenter.spellingStrategyOptions as |strategy index|}}
-          <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
-          {{/each}}
-        </select>
-      </div>
-      {{!-- Spelling Settings --}}
-      <ul id="{{presenter.entity.id}}-spelling-settings" class="wg-unstyled-list">
-      {{#each presenter.entity.spellingStrategySettings as |setting index|}}
-        {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
-      {{/each}}
-      </ul>
-    </div>
-    {{!-- Seed --}}
-    <div class="wg-flex row">
-      <label for="{{presenter.entity.id}}-seed">{{localize "wg.generator.seed.label"}}</label>
-      <i class="far fa-question-circle word-generator-info seed" id="{{presenter.entity.id}}"></i>
-      <input id="{{presenter.entity.id}}-seed" type="text" value="{{presenter.entity.seed}}" />
-    </div>
-    {{/if}}
-    {{!-- Collapse Button --}}
-    <div class="wg-flex" style="max-height: 2rem">
-      <a
-        class="wg-flex grow center button"
-        id="{{presenter.entity.id}}-collapse"
-        >
-        <span class="wg-flex center word-generator-square">
-          {{#if presenter.isExpanded}}
-          <i class="fas fa-angle-double-up"></i>
-          {{else}}
-          <i class="fas fa-angle-double-down"></i>
-          {{/if}}
-        </span>
+<div class="wg-generator-item"
+  id="{{presenter.id}}"
+  >
+  <header class="wg-generator-item wg-flex row wg-dark wg-padding-6{{#if presenter.isExpanded}} open{{/if}}"
+    id="{{presenter.id}}-header"
+    draggable="true"
+    >
+    {{!-- Move Controls --}}
+    <div class="wg-flex column center wg-padding-l-2">
+      <a class="wg-square wg-flex center wg-padding-t-3 wg-padding-b-1 wg-interactible{{#if presenter.disableMoveUp}} disabled{{/if}}"
+        id="{{presenter.id}}-move-up">
+        <i class="fas fa-angle-up"></i>
+      </a>
+      <a class="wg-square wg-flex center wg-padding-t-1 wg-padding-b-3 wg-interactible{{#if presenter.disableMoveDown}} disabled{{/if}}"
+        id="{{presenter.id}}-move-down">
+        <i class="fas fa-angle-down"></i>
       </a>
     </div>
+    {{!-- Identity --}}
+    <h3 class="wg-flex grow">
+      {{!-- Icon --}}
+      <div class="wg-square wg-flex center">
+        <i class="fas fa-scroll stackable">
+        {{#if presenter.isExpanded}}{{else}}
+          <i class="fas fa-bars stacked wg-dark"></i>
+        {{/if}}
+        </i>
+      </div>
+      {{!-- Name --}}
+      <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
+    </h3>
+    {{!-- Quick Actions --}}
+    <div class="wg-square wg-flex center">
+      <a class="wg-interactible wg-padding-6" 
+        id="{{presenter.id}}-generate">
+        <i class="fas fa-pen-nib"></i>
+      </a>
+    </div>
+  </header>
+  {{#if presenter.isExpanded}}
+  <div class="wg-flex column wg-generator-item-content">
+    {{!-- Sample Set --}}
+    <div class="wg-grid-2 gap-2 wg-border-box wg-margin-t-3 wg-margin-b-3 wg-dark">
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-sample-set-strategy" 
+          class="wg-flex grow wg-padding-l-6">{{localize "wg.generator.sampleSet.strategy"}}</label>
+        <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-sample-set-strategy-info"></i>
+      </div>
+      <select id="{{presenter.id}}-sample-set-strategy">
+        {{#each presenter.sampleSetStrategyOptions as |strategy index|}}
+        <option value="{{strategy.value}}">{{strategy.localizedTitle}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="wg-grid-2 gap-2">
+
+    </div>
   </div>
-  {{!-- Generate --}}
-  <div class="wg-flex">
-    <button 
-      class="word-generator-square-button grow"
-      type="button" 
-      id="{{presenter.entity.id}}-generate"
-      data-id="{{presenter.entity.id}}"
-      title="{{localize "wg.generator.generate"}}"
-      >
-      <i class="fas fa-pen-nib"></i>
-    </button>
-  </div>
+  {{/if}}
 </div>

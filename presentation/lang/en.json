@@ -89,7 +89,8 @@
         "edit": "Edit Sample-Set",
         "field": "Sample Set",
         "infoHint": "The generator draws from its defined sample set. The more samples there are, the better the variety and cohesion of the results will be.",
-        "separator": "Separator"
+        "separator": "Separator",
+        "strategy": "Sample Set Strategy"
       },
       "placeholder": {
         "name": "Generator name"

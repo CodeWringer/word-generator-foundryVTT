@@ -431,6 +431,26 @@ i.stacked {
     border-top-width: 6px;
   }
 
+  &-grid {
+    &-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      &.gap-1 {
+        gap: 1px;
+      }
+      &.gap-2 {
+        gap: 2px;
+      }
+      &.gap-3 {
+        gap: 3px;
+      }
+      &.gap-6 {
+        gap: 6px;
+      }
+    }
+  }
+
   // Specific element styles
 
   &-application {
@@ -463,12 +483,12 @@ i.stacked {
     }
   }
 
-  &-folder {
+  &-folder, &-generator-item {
     &-content {
       border-left: 6px solid $c-bg-light;
     }
 
-    header.wg-folder {
+    header.wg-folder, header.wg-generator-item {
       border: 1px solid black;
       color: $c-text-light;
       background-color: $c-bg-darkest;

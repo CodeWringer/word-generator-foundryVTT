@@ -17,7 +17,6 @@ export const TEMPLATES = {
   WORD_GENERATOR_LIST_ITEM: `${basePath}/component/word-generator-item/word-generator-item.hbs`,
   WORD_GENERATOR_FOLDER: `${basePath}/component/folder/word-generator-folder.hbs`,
   WORD_GENERATOR_LIST: `${basePath}/component/word-generator-list/word-generator-list.hbs`,
-  MOVE_CONTROLS: `${basePath}/template/move-controls.hbs`,
   SETTING_LIST_ITEM: `${basePath}/template/setting-list-item.hbs`,
   /**
    * Define a set of template paths to pre-load.

@@ -9,6 +9,8 @@ import WordGeneratorItem from "../../../business/model/word-generator-item.mjs";
 import AbstractSequencingStrategy from "../../../business/generator/sequencing/abstract-sequencing-strategy.mjs";
 import AbstractSpellingStrategy from "../../../business/generator/postprocessing/abstract-spelling-strategy.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
+import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
+import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -45,6 +47,29 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
 
   get isExpanded() { return this.entity.isExpanded.value; }
 
+  get disableMoveUp() {
+    const collection = this._getContainingCollection().getAll();
+    const index = collection.findIndex(it => it.id === this.entity.id);
+    
+    if (index <= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  get disableMoveDown() {
+    const collection = this._getContainingCollection().getAll();
+    const maxIndex = collection.length - 1;
+    const index = collection.findIndex(it => it.id === this.entity.id);
+    
+    if (index >= maxIndex) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
@@ -66,22 +91,90 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
         value: it.getDefinitionID(),
         localizedTitle: it.getHumanReadableName(),
       }));
+
+      this._dragDropHandler = new DragDropHandler({
+        entityId: this.entity.id,
+        entityDataType: WordGeneratorItemPresenter.entityDataType,
+        receiverElementId: `${this.entity.id}-header`,
+        draggableElementId: `${this.entity.id}-header`,
+      });
   }
 
   activateListeners(html) {
     const thiz = this;
     const id = this.entity.id;
 
-    html.find(`#${id}-delete`).click(() => {
-      new DialogUtility().showConfirmationDialog({
-        localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
-        content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
-      }).then(result => {
-        if (result.confirmed === true) {
-          // this.application._removeGenerator(id);
-        }
-      });
+    const headerElement = html.find(`#${id}-header`);
+    headerElement.click((event) => {
+      event.stopPropagation();
+
+      this.entity.isExpanded.value = !this.entity.isExpanded.value;
     });
+
+    new ContextMenu(
+      html, 
+      `#${id}-header`,
+      [
+        {
+          name: game.i18n.localize("wg.generator.edit"),
+          icon: '<i class="fas fa-edit"></i>',
+          callback: async () => {
+            const dialog = await new DialogUtility().showSingleInputDialog({
+              localizedTitle: game.i18n.localize("wg.generator.create"),
+              localizedInputLabel: game.i18n.localize("wg.generator.name"),
+              value: thiz.entity.name.value,
+              modal: true,
+            });
+        
+            if (dialog.confirmed !== true) return;
+
+            thiz.entity.name.value = dialog.input;
+          }
+        },
+        {
+          name: game.i18n.localize("wg.general.moveToRootLevel"),
+          icon: '<i class="fas fa-angle-double-up"></i>',
+          callback: async () => {
+            this.application.suspendRendering = true;
+
+            // Remove from current parent. 
+            const collection = this._getContainingCollection();
+            collection.remove(this.entity);
+
+            this.application.suspendRendering = false;
+
+            // Add to root level collection. 
+            this.application._data.generators.add(this.entity);
+          },
+          condition: () => {
+            return this.entity.parent.value !== undefined;
+          }
+        },
+        {
+          name: game.i18n.localize("wg.generator.delete"),
+          icon: '<i class="fas fa-trash"></i>',
+          callback: async () => {
+            const dialog = await new DialogUtility().showConfirmationDialog({
+              localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
+              content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
+              modal: true,
+            });
+
+            if (dialog.confirmed !== true) return;
+
+            const collection = this._getContainingCollection();
+            collection.remove(this.entity);
+          }
+        },
+      ]
+    );
+
+    // Drag & drop
+    this._dragDropHandler.activateListeners(html);
+
+
+
+
 
     html.find(`#${id}-edit-sample-set`).click(() => {
       // new WordGeneratorSamplesApplication(this.entity, (data) => {
@@ -282,5 +375,20 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
       default:
         return $(jElement).val();
     }
+  }
+  
+  /**
+   * Returns the parent collection.
+   * 
+   * @returns {ObservableCollection<ObservableWordGeneratorItem>}
+   */
+  _getContainingCollection() {
+    let generators;
+    if (this.entity.parent.value === undefined) {
+      generators = this.application._data.generators;
+    } else {
+      generators = this.entity.parent.value.items;
+    }
+    return generators;
   }
 }
