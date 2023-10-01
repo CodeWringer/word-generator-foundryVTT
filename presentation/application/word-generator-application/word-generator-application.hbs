@@ -49,7 +49,7 @@ contentListPresenter: {WordGeneratorListPresenter}
       </div>
     </div>
     {{!-- Generators and folders area --}}
-    <div class="wg-scrollable"
+    <div class="wg-scrollable wg-flex column grow"
       id="content-area-1">
       {{#with contentListPresenter.template as |template|}}
         {{> (template) presenter=../contentListPresenter }}
