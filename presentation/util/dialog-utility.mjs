@@ -3,11 +3,31 @@
  */
 export default class DialogUtility {
   /**
+   * Styling class of the back drop element. 
+   * 
+   * @type {String}
+   * @static
+   * @readonly
+   */
+  static BACKDROP_ELEMENT_CLASS = "wg-modal-backdrop";
+
+  /**
+   * Id of the back drop element. 
+   * 
+   * @type {String}
+   * @readonly
+   * @private
+   */
+  get _backdropElementId() { return "wg-modal-backdrop"; }
+
+  /**
    * Shows a confirmation dialog. 
    * 
    * @param {Object} args Arguments to pass to the rendering function. 
    * @param {String | undefined} args.localizedTitle Localized text for the dialog title. 
-   * @param {String | undefined} args.content Optional. HTML content to show as the body of the dialog. 
+   * @param {String | undefined} args.content HTML content to show as the body of the dialog. 
+   * @param {Boolean | undefined} args.modal Whether to make the dialog modal. 
+   * * Default `false`
    * 
    * @returns {Promise<Object>} Resolves when the dialog is closed. 
    * * Returns the instance of the closed dialog, its DOM and the user input. 
@@ -43,13 +63,22 @@ export default class DialogUtility {
         default: "cancel",
         render: html => { },
         close: html => {
+          this._removeModalBackdrop();
+
           resolve({
             dialog: dialog,
             html: html,
             confirmed: mergedDialogData.confirmed,
           });
         }
+      }, {
+        classes: ["dialog", "wg-dialog"],
       });
+
+      if (args.modal === true) {
+        this._ensureModalBackdrop(dialog);
+      }
+
       dialog.render(true);
     });
   }
@@ -61,6 +90,8 @@ export default class DialogUtility {
    * @param {String | undefined} args.localizedTitle Localized text for the dialog title. 
    * @param {String | undefined} args.localizedInputLabel Localized text for the label above the input. 
    * @param {String | undefined} args.value Initial value to set. 
+   * @param {Boolean | undefined} args.modal Whether to make the dialog modal. 
+   * * Default `false`
    * 
    * @returns {Promise<Object>} Resolves when the dialog is closed. 
    * * Returns the instance of the closed dialog, its DOM and the user input. 
@@ -92,9 +123,11 @@ export default class DialogUtility {
             }
           },
         },
-        default: "cancel",
+        default: "confirm",
         render: html => { },
         close: html => {
+          this._removeModalBackdrop();
+
           resolve({
             dialog: dialog,
             html: html,
@@ -102,8 +135,45 @@ export default class DialogUtility {
             confirmed: dialog.confirmed,
           });
         }
+      }, {
+        classes: ["dialog", "wg-dialog"],
       });
+
+      if (args.modal === true) {
+        this._ensureModalBackdrop(dialog);
+      }
+
       dialog.render(true);
     });
+  }
+
+
+  /**
+   * Ensures the backdrop element is present on the DOM. 
+   * 
+   * @param {Dialog | Application} dialog
+   * 
+   * @private
+   */
+  _ensureModalBackdrop(dialog) {
+    let element = $(`#${this._backdropElementId}`);
+
+    if (element.length < 1) {
+      $('body').append(`<div id="${this._backdropElementId}" class="${DialogUtility.BACKDROP_ELEMENT_CLASS}"></div>`);
+      element = $(`#${this._backdropElementId}`);
+    }
+
+    element.click(function (e) {
+      dialog.close();
+    });
+  }
+
+  /**
+   * Removes the back drop element. 
+   * 
+   * @private
+   */
+  _removeModalBackdrop() {
+    $(`#${this._backdropElementId}`).remove();
   }
 }
