@@ -175,51 +175,38 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
           name: game.i18n.localize("wg.folder.edit"),
           icon: '<i class="fas fa-edit"></i>',
           callback: async () => {
-            const dialog = await new DialogUtility().showSingleInputDialog({
-              localizedTitle: game.i18n.localize("wg.folder.create"),
-              localizedInputLabel: game.i18n.localize("wg.folder.name"),
-              value: thiz.entity.name.value,
-              modal: true,
-            });
-        
-            if (dialog.confirmed !== true) return;
-
-            thiz.entity.name.value = dialog.input;
+            this._edit();
           }
         },
         {
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.application.suspendRendering = true;
-
-            // Remove from current parent. 
-            const folders = this._getContainingCollection();
-            folders.remove(this.entity);
-
-            this.application.suspendRendering = false;
-
-            // Add to root level collection. 
-            this.application._data.folders.add(this.entity);
+            this._moveToRootLevel();
           },
           condition: () => {
             return this.entity.parent.value !== undefined;
           }
         },
         {
+          name: game.i18n.localize("wg.generator.create"),
+          icon: '<i class="fas fa-scroll stackable"><i class="fas fa-plus stacked wg-dark"></i></i>',
+          callback: async () => {
+            this._createGenerator();
+          }
+        },
+        {
+          name: game.i18n.localize("wg.folder.create"),
+          icon: '<i class="fas fa-folder stackable"><i class="fas fa-plus stacked wg-dark"></i></i>',
+          callback: async () => {
+            await this._createFolder();
+          }
+        },
+        {
           name: game.i18n.localize("wg.folder.delete"),
           icon: '<i class="fas fa-trash"></i>',
           callback: async () => {
-            const dialog = await new DialogUtility().showConfirmationDialog({
-              localizedTitle: game.i18n.localize("wg.folder.confirmDeletion"),
-              content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
-              modal: true,
-            });
-
-            if (dialog.confirmed !== true) return;
-
-            const collection = this._getContainingCollection();
-            collection.remove(this.entity);
+            this._delete();
           }
         },
       ]
@@ -228,65 +215,33 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     html.find(`#${id}-add-generator`).click(async (event) => {
       event.stopPropagation();
       
-      // Create the generator. 
-      const newGenerator = new ObservableWordGeneratorItem({
-        name: game.i18n.localize("wg.generator.defaultName"),
-      });
-      this.entity.items.add(newGenerator);
+      this._createGenerator();
     });
 
     html.find(`#${id}-add-folder`).click(async (event) => {
       event.stopPropagation();
 
-      const dialog = await new DialogUtility().showSingleInputDialog({
-        localizedTitle: game.i18n.localize("wg.folder.create"),
-        localizedInputLabel: game.i18n.localize("wg.folder.name"),
-      });
-  
-      if (dialog.confirmed !== true) return;
-  
-      // Create the folder. 
-      const newFolder = new ObservableWordGeneratorFolder({
-        name: dialog.input,
-      });
-      this.entity.children.add(newFolder);
+      this._createFolder();
     });
 
     html.find(`#${id}-move-up`).click(async (event) => {
       event.stopPropagation();
 
-      if (this.disableMoveUp === true) return;
-
-      const folders = this._getContainingCollection();
-      const index = folders.getAll().findIndex(it => it.id === this.entity.id);
-
-      let newIndex;
       if (event.ctrlKey || event.shiftKey) {
-        newIndex = 0;
+        this._moveUp(true);
       } else {
-        newIndex = Math.max(0, index - 1);
+        this._moveUp(false);
       }
-
-      folders.move(index, newIndex);
     });
 
     html.find(`#${id}-move-down`).click(async (event) => {
       event.stopPropagation();
 
-      if (this.disableMoveDown === true) return;
-
-      const folders = this._getContainingCollection();
-      const index = folders.getAll().findIndex(it => it.id === this.entity.id);
-      const maxIndex = folders.length - 1;
-      
-      let newIndex;
       if (event.ctrlKey || event.shiftKey) {
-        newIndex = maxIndex;
+        this._moveDown(true);
       } else {
-        newIndex = Math.max(maxIndex, index + 1);
+        this._moveDown(false);
       }
-
-      folders.move(index, newIndex);
     });
 
     // Drag & drop
@@ -310,5 +265,146 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
       folders = this.entity.parent.value.children;
     }
     return folders;
+  }
+
+  /**
+   * Prompts the user for a name and then creates a new child folder. 
+   * 
+   * @private
+   * @async
+   */
+  async _createFolder() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.folder.create"),
+      localizedInputLabel: game.i18n.localize("wg.folder.name"),
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    // Create the folder. 
+    const newFolder = new ObservableWordGeneratorFolder({
+      name: dialog.input,
+    });
+    this.entity.children.add(newFolder);
+  }
+
+  /**
+   * Creates a new child generator. 
+   * 
+   * @private
+   */
+  _createGenerator() {
+    // Create the generator. 
+    const newGenerator = new ObservableWordGeneratorItem({
+      name: game.i18n.localize("wg.generator.defaultName"),
+    });
+    this.entity.items.add(newGenerator);
+  }
+
+  /**
+   * Moves this folder to the root level, if possible. 
+   * 
+   * @private
+   */
+  _moveToRootLevel() {
+    if (this.entity.parent.value === undefined) return; // Already at root level. 
+
+    this.application.suspendRendering = true;
+
+    // Remove from current parent. 
+    const folders = this._getContainingCollection();
+    folders.remove(this.entity);
+
+    this.application.suspendRendering = false;
+
+    // Add to root level collection. 
+    this.application._data.folders.add(this.entity);
+  }
+
+  /**
+   * Moves the folder up one index in its containing collection, if possible. 
+   * 
+   * @param {Boolean | undefined} toStart If `true`, moves up all the way to the first index. 
+   * * default `false`
+   * 
+   * @private
+   */
+  _moveUp(toStart = false) {
+    if (this.disableMoveUp === true) return;
+
+      const folders = this._getContainingCollection();
+      const index = folders.getAll().findIndex(it => it.id === this.entity.id);
+
+      let newIndex;
+      if (toStart === true) {
+        newIndex = 0;
+      } else {
+        newIndex = Math.max(0, index - 1);
+      }
+
+      folders.move(index, newIndex);
+  }
+
+  /**
+   * Moves the folder down one index in its containing collection, if possible. 
+   * 
+   * @param {Boolean | undefined} toEnd If `true`, moves down all the way to the last index. 
+   * * default `false`
+   * 
+   * @private
+   */
+  _moveDown(toEnd = false) {
+    if (this.disableMoveDown === true) return;
+
+    const folders = this._getContainingCollection();
+    const index = folders.getAll().findIndex(it => it.id === this.entity.id);
+    const maxIndex = folders.length - 1;
+    
+    let newIndex;
+    if (toEnd === true) {
+      newIndex = maxIndex;
+    } else {
+      newIndex = Math.max(maxIndex, index + 1);
+    }
+
+    folders.move(index, newIndex);
+  }
+
+  /**
+   * Prompts the user to enter a new name and if confirmed, applies it. 
+   * 
+   * @private
+   * @async
+   */
+  async _edit() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.folder.create"),
+      localizedInputLabel: game.i18n.localize("wg.folder.name"),
+      value: thiz.entity.name.value,
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    thiz.entity.name.value = dialog.input;
+  }
+
+  /**
+   * Prompts the user to confirm and if confirmed, deletes this folder. 
+   * 
+   * @private
+   * @async
+   */
+  async _delete() {
+    const dialog = await new DialogUtility().showConfirmationDialog({
+      localizedTitle: game.i18n.localize("wg.folder.confirmDeletion"),
+      content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
+    const collection = this._getContainingCollection();
+    collection.remove(this.entity);
   }
 }
