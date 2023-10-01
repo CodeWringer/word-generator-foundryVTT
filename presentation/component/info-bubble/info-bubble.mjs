@@ -1,6 +1,10 @@
 /**
  * Represents a floating "info bubble" to display to the user. 
  * 
+ * This type is primarily expected to be instantiated in an `activateListeners` method, 
+ * where the DOM is available and because the `InfoBubble` attempts to register 
+ * any event handling as soon as it is instantiated. 
+ * 
  * @property {JQuery} html Root element of the `FormApplication`. 
  * @property {JQuery} parent The element beneath which to show the info bubble. 
  * @property {String} text The text to show in the info bubble. 
