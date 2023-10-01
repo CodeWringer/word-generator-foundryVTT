@@ -8,6 +8,7 @@ $c-bg-darkest: #1d1d1d;
 $c-text-light: #d5d5d5;
 $c-text-dark: #1e1e1e;
 $c-text-higlight: #e1bdbd;
+$c-text-disabled: #838383;
 
 $c-border-light-1: var(--color-border-light-1);
 $c-border-light-2: var(--color-border-light-2);
@@ -196,6 +197,19 @@ i.stacked {
 
     &.wg-border-box:hover {
       filter: drop-shadow(0 0 4px $c-shadow-primary);
+    }
+
+    &.disabled {
+      color: $c-text-disabled;
+
+      &:hover {
+        cursor: default;
+        text-shadow: unset;
+
+        i.stacked {
+          color: unset;
+        }
+      }
     }
   }
 

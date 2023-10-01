@@ -8,7 +8,20 @@ presenter: WordGeneratorFolderPresenter
     id="{{presenter.id}}-header"
     draggable="true"
     >
+    {{!-- Move Controls --}}
+    <div class="wg-flex column center wg-padding-l-2">
+      <a class="wg-square wg-flex center wg-padding-t-3 wg-padding-b-1 wg-interactible{{#if presenter.disableMoveUp}} disabled{{/if}}"
+        id="{{presenter.id}}-move-up">
+        <i class="fas fa-angle-up"></i>
+      </a>
+      <a class="wg-square wg-flex center wg-padding-t-1 wg-padding-b-3 wg-interactible{{#if presenter.disableMoveDown}} disabled{{/if}}"
+        id="{{presenter.id}}-move-down">
+        <i class="fas fa-angle-down"></i>
+      </a>
+    </div>
+    {{!-- Identity --}}
     <h3 class="wg-flex grow">
+      {{!-- Icon --}}
       <div class="wg-square wg-flex center">
         {{#if presenter.isExpanded}}
         <i class="fas fa-folder-open"></i>
@@ -16,8 +29,10 @@ presenter: WordGeneratorFolderPresenter
         <i class="fas fa-folder"></i>
         {{/if}}
       </div>
+      {{!-- Name --}}
       <span class="wg-flex middle grow">{{presenter.name}}</span>
     </h3>
+    {{!-- Creation Controls --}}
     <div class="wg-square wg-flex center">
       <a class="wg-interactible wg-pad-6" 
         id="{{presenter.id}}-add-generator">
