@@ -157,7 +157,6 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
   }
 
   activateListeners(html) {
-    const thiz = this;
     const id = this.entity.id;
 
     const headerElement = html.find(`#${id}-header`);
@@ -380,13 +379,13 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     const dialog = await new DialogUtility().showSingleInputDialog({
       localizedTitle: game.i18n.localize("wg.folder.create"),
       localizedInputLabel: game.i18n.localize("wg.folder.name"),
-      value: thiz.entity.name.value,
+      value: this.entity.name.value,
       modal: true,
     });
 
     if (dialog.confirmed !== true) return;
 
-    thiz.entity.name.value = dialog.input;
+    this.entity.name.value = dialog.input;
   }
 
   /**
