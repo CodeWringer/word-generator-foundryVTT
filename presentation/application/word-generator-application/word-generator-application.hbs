@@ -3,53 +3,53 @@ data: {WordGeneratorApplicationData}
 generatedWords: {Array<String></String>}
 contentListPresenter: {WordGeneratorListPresenter}
 --}}
-<form class="word-generator-application-form">
+<form class="wg-application-form">
   {{!-- List of generators --}}
-  <div class="word-generator-flex column wg-content-area">
-    <div class="word-generator-flex row word-generator-controls-bar wg-border-shadow-b">
-      {{!-- Creation controls --}}
-      {{!-- Create generator --}}
-      <a class="word-generator-flex word-generator-button center row grow" 
-        id="create-generator"
-      >
-        <div class="word-generator-flex word-generator-button-icon center">
-          <i class="fas fa-scroll"></i>
-        </div>
-        <div class="word-generator-flex middle">
-          <span>{{localize "wg.generator.create"}}</span>
-        </div>
-      </a>
-      {{!-- Create folder --}}
-      <a class="word-generator-flex word-generator-button center row grow" 
-        id="create-folder"
-      >
-        <div class="word-generator-flex word-generator-button-icon center">
-          <i class="fas fa-folder"></i>
-        </div>
-        <div class="word-generator-flex middle">
-          <span>{{localize "wg.folder.create"}}</span>
-        </div>
-      </a>
-      {{!-- Sorting controls --}}
-      <a
-        class="word-generator-square-button word-generator-button"
-        type="button"
-        title="{{localize "wg.generator.sortAlphaDesc"}}"
-        id="move-sort-alpha-desc"
+  <div class="wg-flex column wg-content-area">
+    <div class="wg-dark wg-border-shadow-b">
+      <div class="wg-flex row" style="height: 2.3rem;">
+        {{!-- Creation controls --}}
+        {{!-- Create generator --}}
+        <a class="wg-flex center row grow wg-border-box wg-light wg-margin-3" 
+          id="create-generator"
         >
-        <i class="fas fa-sort-alpha-down"></i>
-      </a>
-      <a
-        class="word-generator-square-button word-generator-button"
-        type="button"
-        title="{{localize "wg.generator.sortAlphaAsc"}}"
-        id="move-sort-alpha-asc"
+          <div class="wg-flex wg-margin-r-3 center">
+            <i class="fas fa-scroll"></i>
+          </div>
+          <div class="wg-flex middle">
+            <span>{{localize "wg.generator.create"}}</span>
+          </div>
+        </a>
+        {{!-- Create folder --}}
+        <a class="wg-flex center row grow wg-border-box wg-light wg-margin-3" 
+          id="create-folder"
         >
-        <i class="fas fa-sort-alpha-up"></i>
-      </a>
+          <div class="wg-flex wg-margin-r-3 center">
+            <i class="fas fa-folder"></i>
+          </div>
+          <div class="wg-flex middle">
+            <span>{{localize "wg.folder.create"}}</span>
+          </div>
+        </a>
+        {{!-- Sorting controls --}}
+        <a
+          class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+          title="{{localize "wg.generator.sortAlphaDesc"}}"
+          id="move-sort-alpha-desc"
+          >
+          <i class="fas fa-sort-alpha-down"></i>
+        </a>
+        <a
+          class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+          title="{{localize "wg.generator.sortAlphaAsc"}}"
+          id="move-sort-alpha-asc"
+          >
+          <i class="fas fa-sort-alpha-up"></i>
+        </a>
+      </div>
     </div>
     {{!-- Generators and folders area --}}
-    <div class="word-generator-scrollable"
+    <div class="wg-scrollable"
       id="content-area-1">
       {{#with contentListPresenter.template as |template|}}
         {{> (template) presenter=../contentListPresenter }}
@@ -59,15 +59,15 @@ contentListPresenter: {WordGeneratorListPresenter}
   {{!-- Spacer --}}
   {{!-- <div style="width: 1rem;"></div> --}}
   {{!-- List of generated results --}}
-  <div class="word-generator-flex column grow wg-content-area">
-    <div class="word-generator-flex column word-generator-controls-bar wg-border-shadow-b">
-      <div class="word-generator-flex row align-end middle">
+  <div class="wg-flex column grow wg-content-area">
+    <div class="wg-flex column wg-dark wg-border-shadow-b">
+      <div class="wg-flex row align-end middle" style="height: 2.3rem;">
         <label 
-          class="word-generator-flex align-center" 
+          class="wg-flex align-center" 
           for="amountToGenerate"
         >{{localize "wg.generator.generateCount"}}</label>
         <span style="width: 6px;"></span>
-        <span class="word-generator-amountToGenerate">
+        <span style="width: 5rem;">
           <input 
             id="amountToGenerate" 
             type="number" 
@@ -77,34 +77,32 @@ contentListPresenter: {WordGeneratorListPresenter}
         </span>
       </div>
       {{!-- Sorting controls --}}
-      <div class="word-generator-flex row">
-        {{!-- Spacer --}}
-        <div class="word-generator-flex grow"></div>
-        <a
-          class="word-generator-square-button word-generator-button"
-          type="button"
-          title="{{localize "wg.generator.sortAlphaDesc"}}"
-          id="results-move-sort-alpha-desc"
-          >
-          <i class="fas fa-sort-alpha-down"></i>
-        </a>
-        <a
-          class="word-generator-square-button word-generator-button"
-          type="button"
-          title="{{localize "wg.generator.sortAlphaAsc"}}"
-          id="results-move-sort-alpha-asc"
-          >
-          <i class="fas fa-sort-alpha-up"></i>
-        </a>
+      <div class="wg-flex row align-end">
+        <div class="wg-flex row" style="height: 2.3rem;">
+          <a
+            class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+            title="{{localize "wg.generator.sortAlphaDesc"}}"
+            id="results-move-sort-alpha-desc"
+            >
+            <i class="fas fa-sort-alpha-down"></i>
+          </a>
+          <a
+            class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+            title="{{localize "wg.generator.sortAlphaAsc"}}"
+            id="results-move-sort-alpha-asc"
+            >
+            <i class="fas fa-sort-alpha-up"></i>
+          </a>
+        </div>
       </div>
     </div>
-    <ul class="word-generator-unstyled-list word-generator-scrollable"
+    <ul class="wg-unstyled-list wg-scrollable"
       id="content-area-2">
       {{#each generatedWords as |generatedWord index|}}
-      <div id="generated-word-{{index}}" class="word-generator-flex row word-generator-generated-word">
+      <div id="generated-word-{{index}}" class="wg-flex row">
         <button 
           id="word-generator-clipboard-{{index}}" 
-          class="word-generator-square-button hidden" 
+          class="wg-square hidden" 
           type="button"
           title="{{localize "wg.general.copy.toClipboard"}}"
         >
@@ -115,7 +113,7 @@ contentListPresenter: {WordGeneratorListPresenter}
           readonly="true"
           id="{{index}}"
           value="{{generatedWord}}"
-          class="word-generator-generated-word-input"
+          class="wg-generated-word-input"
         >
       </div>
       {{/each}}

@@ -1,13 +1,13 @@
 {{!-- Params:
 presenter: WordGeneratorItemPresenter
 --}}
-<div class="word-generator-setting-entry word-generator-card">
+<div class="wg-card">
   {{!-- Move controls --}}
   {{> "modules/word-generator/presentation/template/move-controls.hbs" listItemId=presenter.entity.id }}
-  <div class="word-generator-flex flexcol grow">
+  <div class="wg-flex flexcol grow">
     {{!-- Header Row --}}
-    <div class="word-generator-flex column">
-      <header class="word-generator-flex middle">
+    <div class="wg-flex column">
+      <header class="wg-flex middle">
         {{!-- Delete Button --}}
         <button 
           class="word-generator-square-button danger"
@@ -18,10 +18,9 @@ presenter: WordGeneratorItemPresenter
           >
           <i class="fas fa-trash"></i>
         </button>
-        <h3 class="word-generator-flex row grow">
+        <h3 class="wg-flex row grow">
           {{!-- Name Input --}}
           <input 
-            class="word-generator-input-textfield"
             type="text"
             id="{{presenter.entity.id}}-name"
             data-id="{{presenter.entity.id}}"
@@ -30,7 +29,7 @@ presenter: WordGeneratorItemPresenter
           />
         </h3>
       </header>
-      <div class="word-generator-flex grow"></div>
+      <div class="wg-flex grow"></div>
     </div>
     {{!-- Sample Set --}}
     <div class="flexrow">
@@ -95,7 +94,7 @@ presenter: WordGeneratorItemPresenter
       </select>
     </div>
     {{!-- sequencingStrategy --}}
-    <div class="word-generator-card">
+    <div class="wg-card">
       <div class="flexrow">
         <label for="{{presenter.entity.id}}-sequencingStrategy">{{localize "wg.generator.sequencingStrategy.label"}}</label>
         <i class="far fa-question-circle word-generator-info sequencing-strategy" id="{{presenter.entity.id}}"></i>
@@ -106,14 +105,14 @@ presenter: WordGeneratorItemPresenter
         </select>
       </div>
       {{!-- Sequencing Settings --}}
-      <ul id="{{presenter.entity.id}}-sequencing-settings" class="word-generator-unstyled-list">
+      <ul id="{{presenter.entity.id}}-sequencing-settings" class="wg-unstyled-list">
         {{#each presenter.entity.sequencingStrategySettings as |setting index|}}
           {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
         {{/each}}
       </ul>
     </div> 
     {{!-- spellingStrategy --}}
-    <div class="word-generator-card">
+    <div class="wg-card">
       <div class="flexrow">
         <label for="{{presenter.entity.id}}-spellingStrategy">{{localize "wg.generator.spellingStrategy.label"}}</label>
         <i class="far fa-question-circle word-generator-info spelling-strategy" id="{{presenter.entity.id}}"></i>
@@ -124,26 +123,26 @@ presenter: WordGeneratorItemPresenter
         </select>
       </div>
       {{!-- Spelling Settings --}}
-      <ul id="{{presenter.entity.id}}-spelling-settings" class="word-generator-unstyled-list">
+      <ul id="{{presenter.entity.id}}-spelling-settings" class="wg-unstyled-list">
       {{#each presenter.entity.spellingStrategySettings as |setting index|}}
         {{> "modules/word-generator/presentation/template/setting-list-item.hbs" item=setting}}
       {{/each}}
       </ul>
     </div>
     {{!-- Seed --}}
-    <div class="word-generator-flex row">
+    <div class="wg-flex row">
       <label for="{{presenter.entity.id}}-seed">{{localize "wg.generator.seed.label"}}</label>
       <i class="far fa-question-circle word-generator-info seed" id="{{presenter.entity.id}}"></i>
       <input id="{{presenter.entity.id}}-seed" type="text" value="{{presenter.entity.seed}}" />
     </div>
     {{/if}}
     {{!-- Collapse Button --}}
-    <div class="word-generator-flex" style="max-height: 2rem">
+    <div class="wg-flex" style="max-height: 2rem">
       <a
-        class="word-generator-flex grow center button"
+        class="wg-flex grow center button"
         id="{{presenter.entity.id}}-collapse"
         >
-        <span class="word-generator-flex center word-generator-square">
+        <span class="wg-flex center word-generator-square">
           {{#if presenter.isExpanded}}
           <i class="fas fa-angle-double-up"></i>
           {{else}}
@@ -154,7 +153,7 @@ presenter: WordGeneratorItemPresenter
     </div>
   </div>
   {{!-- Generate --}}
-  <div class="word-generator-flex">
+  <div class="wg-flex">
     <button 
       class="word-generator-square-button grow"
       type="button" 

@@ -2,7 +2,7 @@
 presenter: WordGeneratorListPresenter
 --}}
 {{!-- Folders --}}
-<ul class="word-generator-unstyled-list">
+<ul class="wg-unstyled-list">
   {{#each presenter.folders as |presenter index|}}
   <li>
     {{#with presenter.template as |template|}}
@@ -12,7 +12,7 @@ presenter: WordGeneratorListPresenter
   {{/each}}
 </ul>
 {{!-- Generators --}}
-<ul class="word-generator-unstyled-list">
+<ul class="wg-unstyled-list">
   {{#each presenter.generators as |presenter index|}}
   <li>
     {{#with presenter.template as |template|}}

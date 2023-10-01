@@ -4,21 +4,21 @@ presenter: WordGeneratorFolderPresenter
 <div class="wg-folder"
   id="{{presenter.id}}"
   >
-  <header class="wg-folder word-generator-flex row wg-dark wg-pad-6{{#if presenter.isExpanded}} open{{/if}}"
+  <header class="wg-folder wg-flex row wg-dark wg-pad-6{{#if presenter.isExpanded}} open{{/if}}"
     id="{{presenter.id}}-header"
     draggable="true"
     >
-    <h3 class="word-generator-flex grow">
-      <div class="wg-square word-generator-flex center">
+    <h3 class="wg-flex grow">
+      <div class="wg-square wg-flex center">
         {{#if presenter.isExpanded}}
         <i class="fas fa-folder-open"></i>
         {{else}}
         <i class="fas fa-folder"></i>
         {{/if}}
       </div>
-      <span class="word-generator-flex middle grow">{{presenter.name}}</span>
+      <span class="wg-flex middle grow">{{presenter.name}}</span>
     </h3>
-    <div class="wg-square word-generator-flex center">
+    <div class="wg-square wg-flex center">
       <a class="wg-interactible wg-pad-6" 
         id="{{presenter.id}}-add-generator">
         <i class="fas fa-scroll stackable">
@@ -26,7 +26,7 @@ presenter: WordGeneratorFolderPresenter
         </i>
       </a>
     </div>
-    <div class="wg-square word-generator-flex center">
+    <div class="wg-square wg-flex center">
       <a class="wg-interactible wg-pad-6" 
         id="{{presenter.id}}-add-folder">
         <i class="fas fa-folder stackable">
