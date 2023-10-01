@@ -218,11 +218,8 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
             if (dialog.confirmed !== true) return;
 
-            if (thiz.entity.parent.value === undefined) {
-              thiz.application._data.folders.remove(thiz.entity);
-            } else {
-              thiz.entity.parent.value = undefined;
-            }
+            const collection = this._getContainingCollection();
+            collection.remove(this.entity);
           }
         },
       ]
