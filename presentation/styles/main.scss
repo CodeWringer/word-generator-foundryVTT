@@ -1,4 +1,4 @@
-$c-bg-lightest: #fffff0;
+$c-bg-lightest: #dfdfd8;
 $c-bg-lighter: #484848;
 $c-bg-light: #383838;
 $c-bg-dark: #2e2e2e;
@@ -105,23 +105,6 @@ $c-shadow-highlight: var(--color-shadow-highlight);
     min-height: 1.8rem;
   }
 
-  &-info-bubble {
-    position: absolute;
-    display: inline-block;
-    text-align: center;
-    border-radius: 1.8rem;
-    background-color: rgba($color: #000000, $alpha: 0.6);
-    color: var(--color-text-light-highlight);
-    // filter: drop-shadow(0, 0, 20px, var(--color-shadow-primary));
-    // -webkit-filter: drop-shadow(0, 0, 20px, var(--color-shadow-primary));
-    z-index: 6;
-    padding: 0.25rem;
-
-    &.hidden {
-      display: none;
-    }
-  }
-  
   &-info {
     width: 1.8rem;
     max-width: 1.8rem;
@@ -182,6 +165,10 @@ i.stacked {
     border: 1px solid $c-border-light-2;
     border-radius: 3px;
     box-sizing: border-box;
+
+    &.wg-dark {
+      border-color: $c-border-dark-1;
+    }
   }
 
   &-interactible {
@@ -425,7 +412,7 @@ i.stacked {
   &-card {
     margin-bottom: 0.5rem;
     border-radius: 0.3rem;
-    border-color: #8d8d8d;
+    border-color: $c-border-dark-4;
     border-width: 1px;
     border-style: solid;
     border-top-width: 6px;
@@ -532,5 +519,41 @@ i.stacked {
   
   &-generated-word-input {
     min-height: 1.8rem;
+  }
+  
+  &-info-bubble {
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+    border-radius: 1.8rem;
+    background-color: rgba($color: #000000, $alpha: 0.6);
+    color: var(--color-text-light-highlight);
+    // filter: drop-shadow(0, 0, 20px, var(--color-shadow-primary));
+    // -webkit-filter: drop-shadow(0, 0, 20px, var(--color-shadow-primary));
+    z-index: 6;
+    padding: 0.25rem;
+    max-width: 40rem;
+
+    &.hidden {
+      display: none;
+    }
+  }
+  
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+input[type="search"] {
+  &.wg-dark {
+    background-color: $c-bg-darkest;
+    color: $c-text-light;
+  }
+
+  &.wg-light {
+    background-color: $c-bg-lightest;
+    color: $c-text-dark;
   }
 }
