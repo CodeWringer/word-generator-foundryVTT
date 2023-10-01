@@ -100,6 +100,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
       entityDataType: this.entityDataType,
+      acceptedDataTypes: [this.entityDataType],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
       dropHandler: (droppedEntityId, droppedEntityDataType) => {

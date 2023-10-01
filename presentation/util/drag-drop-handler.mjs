@@ -19,13 +19,27 @@
  */
 export class DragDropHandler {
   /**
+   * @type {String | undefined}
+   * @static
+   * @private
+   */
+  static _draggedEntityId;
+
+  /**
+   * @type {String | undefined}
+   * @static
+   * @private
+   */
+  static _draggedEntityType;
+
+  /**
    * Returns the key to get/set the entity id with on the event. 
    * 
    * @type {String}
    * @readonly
    * @private
    */
-  get keyEntityId() { return "entityId"; }
+  get keyEntityId() { return "entityid"; }
 
   /**
    * Returns the key to get/set the entity data type with on the event. 
@@ -34,7 +48,7 @@ export class DragDropHandler {
    * @readonly
    * @private
    */
-  get keyEntityDataType() { return "entityDataType"; }
+  get keyEntityDataType() { return "entitydatatype"; }
 
   /**
    * Returns the default css class that is added on drag over. 
@@ -50,6 +64,9 @@ export class DragDropHandler {
    * @param {String | undefined} args.entityDataType Data type of the draggable entity. 
    * * Intended to make it easier for a target element to filter out drop events 
    * of unrecognized data types. 
+   * @param {Array<String> | undefined} args.acceptedDataTypes An array of the data types 
+   * that the receiver element should accept. It will only receive the dragover css class 
+   * and trigger the drop event, if the dragged over object is of an accepted type. 
    * @param {String | undefined} args.dragOverClass CSS class to automatically add to the element 
    * when something is dragged over it. 
    * @param {String | undefined} args.draggableElementId ID of the element that allows being dragged. 
@@ -68,6 +85,7 @@ export class DragDropHandler {
   constructor(args = {}) {
     this.entityId = args.entityId;
     this.entityDataType = args.entityDataType;
+    this.acceptedDataTypes = args.acceptedDataTypes ?? [];
     this._draggableElementId = args.draggableElementId ?? args.entityId;
     this._receiverElementId = args.receiverElementId ?? args.entityId;
 
@@ -92,14 +110,24 @@ export class DragDropHandler {
     // Event handlers of a source element. 
 
     draggableElement.bind("dragstart", (event) => {
-      event.originalEvent.dataTransfer.setData(this.keyEntityId, this.entityId);
-      event.originalEvent.dataTransfer.setData(this.keyEntityDataType, this.entityDataType);
+      DragDropHandler._draggedEntityId = this.entityId;
+      DragDropHandler._draggedEntityType = this.entityDataType;
+
       this._dragStartHandler();
+    });
+    
+
+    draggableElement.bind("dragend", (event) => {
+      DragDropHandler._draggedEntityId = undefined;
+      DragDropHandler._draggedEntityType = undefined;
     });
     
     // Event handlers of a target element. 
 
     receiverElement.bind("dragover", (event) => {
+      const draggedEntityDataType = DragDropHandler._draggedEntityType;
+      if (this._isAcceptedType(draggedEntityDataType) !== true) return;
+
       receiverElement.addClass(this.dragOverClass);
       this._dragOverHandler(event);
     });
@@ -109,11 +137,33 @@ export class DragDropHandler {
     });
     receiverElement.bind("drop", (event) => {
       event.preventDefault(); // Prevent effects of a normal click. 
-      receiverElement.removeClass(this.dragOverClass);
+
+      const draggedEntityDataType = DragDropHandler._draggedEntityType;
+
+      if (this._isAcceptedType(draggedEntityDataType) === true) {
+        this._dropHandler(DragDropHandler._draggedEntityId, draggedEntityDataType);
+      }
       
-      const draggedEntityId = event.originalEvent.dataTransfer.getData(this.keyEntityId);
-      const draggedEntityDataType = event.originalEvent.dataTransfer.getData(this.keyEntityDataType);
-      this._dropHandler(draggedEntityId, draggedEntityDataType);
+      receiverElement.removeClass(this.dragOverClass);
+      DragDropHandler._draggedEntityId = undefined;
+      DragDropHandler._draggedEntityType = undefined;
     });
+  }
+
+  /**
+   * Returns `true`, if the given type is accepted. 
+   * 
+   * @param {String} dataType 
+   * 
+   * @returns {Boolean} `true`, if the given type is accepted. 
+   * 
+   * @private
+   */
+  _isAcceptedType(dataType) {
+    if (this.acceptedDataTypes.find(it => it == dataType) !== undefined) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
