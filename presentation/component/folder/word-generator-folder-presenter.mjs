@@ -121,7 +121,8 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
             const dialog = await new DialogUtility().showSingleInputDialog({
               localizedTitle: game.i18n.localize("wg.folder.create"),
               localizedInputLabel: game.i18n.localize("wg.folder.name"),
-              value: thiz.entity.name.value
+              value: thiz.entity.name.value,
+              modal: true,
             });
         
             if (dialog.confirmed !== true) return;
@@ -136,6 +137,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
             const dialog = await new DialogUtility().showConfirmationDialog({
               localizedTitle: game.i18n.localize("wg.generator.confirmDeletion"),
               content: game.i18n.localize("wg.general.confirmDeletionOf").replace("%s", this.entity.name.value),
+              modal: true,
             });
 
             if (dialog.confirmed !== true) return;
