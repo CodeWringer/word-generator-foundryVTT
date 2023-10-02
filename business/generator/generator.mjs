@@ -150,6 +150,7 @@ export default class WordGenerator {
       } while (word === undefined || generatedResults.find(it => { return it === word; }) !== undefined);
       
       generatedResults.push(word);
+      attempt = 0;
     }
     
     // Apply spelling strategy. 
