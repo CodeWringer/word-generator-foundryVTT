@@ -66,10 +66,6 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   constructor(args = {}) {
     super();
 
-    if (isInteger(depth) !== true || parseInt(depth) <= 0) {
-      throw new Error("`args.depth` must be an integer, greater or equal to 1!");
-    }
-
     this.depth = new ObservableField({ value: args.depth ?? 1 });
     this.preserveCase = new ObservableField({ value: args.preserveCase ?? false });
 
