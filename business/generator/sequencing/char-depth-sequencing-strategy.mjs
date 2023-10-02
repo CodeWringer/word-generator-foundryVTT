@@ -1,74 +1,96 @@
+import ObservableField from "../../../common/observables/observable-field.mjs";
 import { isInteger } from "../../util/validation.mjs";
-import { StrategySettingValueTypes } from "../strategy-setting.mjs";
-import { StrategySetting } from "../strategy-setting.mjs";
+import AbstractStrategyDefinition from "../common/abstract-strategy-definition.mjs";
 import AbstractSequencingStrategy from "./abstract-sequencing-strategy.mjs";
 import Sequence from "./sequence.mjs";
 
 /**
+ * Defines a `CharDepthSequencingStrategy`. 
+ * 
+ * @extends AbstractStrategyDefinition
+ */
+export class CharDepthSequencingStrategyDefinition extends AbstractStrategyDefinition {
+  /** @override */
+  get id() { return "CharDepthSequencingStrategy" }
+
+  /** @override */
+  get localizedName() { return game.i18n.localize("wg.generator.sequencingStrategies.charDepth"); }
+  
+  /** @override */
+  newInstance(settings) {
+    return new CharDepthSequencingStrategy(settings);
+  }
+}
+
+/**
  * This sequencing strategy creates sequences of characters, based on a given depth 
  * (= character count/length). 
- * @property {Number | undefined} depth The depth of the look-back for the algorithm. 
+ * 
+ * @property {ObservableField<Number>} depth The depth of the look-back for the algorithm. 
  * Higher numbers result in results more similar to the provided sample set, 
  * but also in less variety. 
  * * Default `1`.
- * @property {Boolean | undefined} preserveCase If true, will not transform found sequences 
+ * @property {ObservableField<Boolean>} preserveCase If true, will not transform found sequences 
  * to lower case, but instead preserve the casing found in the sequence. 
  * * Default `false`. 
+ * 
+ * @extends AbstractSequencingStrategy
  */
 export default class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
-  /**
-   * @private
-   */
-  _depth = undefined;
-  /**
-   * Returns the provided depth. 
-   * @type {Number}
-   * @readonly
-   */
-  get depth() { return this._depth; }
+  /** @override */
+  static fromDto(dto) {
+    return new CharDepthSequencingStrategy({
+      depth: dto.depth,
+      preserveCase: dto.preserveCase,
+    });
+  }
+
+  /** @override */
+  get settingsPresenter() { return this._settingsPresenter; }
 
   /**
-   * If true, will not transform found sequences to lower case, but instead preserve 
-   * the casing found in the sequences. 
-   * @type {Boolean}
-   * @default false
-   */
-  preserveCase = false;
-
-  /**
-   * @param {Number | undefined} depth The depth of the look-back for the algorithm. 
+   * @param {Object} args
+   * @param {Application | undefined} args.application The parent application. 
+   * @param {Number | undefined} args.depth The depth of the look-back for the algorithm. 
    * Higher numbers result in results more similar to the provided sample set, 
    * but also in less variety. 
-   * 
-   * Note, that a number less than 1 will result in an error. 
-   * @param {Boolean | undefined} preserveCase If true, will not transform found sequences 
+   * * Note, that a number less than 1 will result in an error. 
+   * * default `1`
+   * @param {Boolean | undefined} args.preserveCase If true, will not transform found sequences 
    * to lower case, but instead preserve the casing found in the sequence. Default false. 
+   * * default `false`
    * 
    * @throws {Error} Thrown, if the passed parameter 'depth' is not an integer greater 0. 
    */
-  constructor(depth = 1, preserveCase = false) {
+  constructor(args = {}) {
     super();
 
     if (isInteger(depth) !== true || parseInt(depth) <= 0) {
       throw new Error("`args.depth` must be an integer, greater or equal to 1!");
     }
 
-    this._depth = depth;
-    this.preserveCase = preserveCase ?? false;
+    this.depth = new ObservableField({ value: args.depth ?? 1 });
+    this.preserveCase = new ObservableField({ value: args.preserveCase ?? false });
+
+    this._settingsPresenter = new CharDepthSequencingStrategySettingsPresenter({
+      application: args.application,
+      entity: this,
+    });
   }
 
   /** @override */
-  getDefinitionID() {
-    return "CharDepthSequencingStrategy";
+  toDto() {
+    return {
+      definitionId: new CharDepthSequencingStrategyDefinition().id,
+      settings: {
+        depth: this.depth.value,
+        preserveCase: this.preserveCase.value,
+      },
+    }
   }
-
+  
   /** @override */
-  getHumanReadableName() {
-    return game.i18n.localize("wg.generator.sequencingStrategies.charDepth");
-  }
-
-  /** @override */
-  getSequencesOfSet(sampleSet) {
+  async getSequencesOfSet(sampleSet) {
     return super.getSequencesOfSet(sampleSet);
   }
   
@@ -96,32 +118,33 @@ export default class CharDepthSequencingStrategy extends AbstractSequencingStrat
 
     return sequences;
   }
+}
 
+/**
+ * Handles presentation of a `CharDepthSequencingStrategy`'s settings. 
+ * 
+ * @property {String} template Returns the **HTML literal** that represents the strategy's settings.  
+ * * Read-only
+ * @property {Application} application The parent application. 
+ * @property {CharDepthSequencingStrategy} entity The represented strategy. 
+ * 
+ * @extends AbstractEntityPresenter
+ */
+export class CharDepthSequencingStrategySettingsPresenter extends AbstractEntityPresenter {
   /** @override */
-  getSettings() {
-    return [
-      new StrategySetting({
-        name: "depth",
-        localizableName: "wg.generator.depth",
-        valueType: StrategySettingValueTypes.INTEGER,
-        value: this.depth,
-        defaultValue: 1,
-      }),
-      new StrategySetting({
-        name: "preserveCase",
-        localizableName: "wg.generator.preserveCase",
-        valueType: StrategySettingValueTypes.BOOLEAN,
-        value: this.preserveCase,
-        defaultValue: false,
-      }),
-    ];
+  get template() {
+    return `<label for="${this.entity.id}-depth">${game.i18n.localize("wg.generator.depth")}</label>
+<input id="${this.entity.id}-depth" type="number" min="1" value="${this.entity.depth.value}" class="wg-light" />
+<label for="${this.entity.id}-preserveCase">${game.i18n.localize("wg.generator.preserveCase")}</label>
+<input id="${this.entity.id}-preserveCase" type="checkbox"${this.entity.preserveCase.value === true ? ' checked="true"' : ''} class="wg-light" />`;
   }
-
-  /** @override */
-  newInstanceWithArgs(args) {
-    const depth = args.find(it => it.name === "depth").value;
-    const preserveCase = args.find(it => it.name === "preserveCase").value;
-
-    return new CharDepthSequencingStrategy(depth, preserveCase);
+  
+  activateListeners(html) {
+    html.find(`input#${this.entity.id}-depth`).change((data) => {
+      this.entity.depth.value = this.getValueOrDefault(data, 1);
+    });
+    html.find(`input#${this.entity.id}-preserveCase`).change((data) => {
+      this.entity.preserveCase.value = this.getValueOrDefault(data, false);
+    });
   }
 }

@@ -13,8 +13,8 @@ const basePath = "modules/word-generator/presentation";
  */
 export const TEMPLATES = {
   WORD_GENERATOR_APPLICATION: `${basePath}/application/word-generator-application/word-generator-application.hbs`,
-  WORD_GENERATOR_SAMPLES_APPLICATION: `${basePath}/application/word-generator-samples-application/word-generator-samples-application.hbs`,
   WORD_GENERATOR_LIST_ITEM: `${basePath}/component/word-generator-item/word-generator-item.hbs`,
+  WORD_GENERATOR_STRATEGY: `${basePath}/component/strategy/word-generator-strategy.hbs`,
   WORD_GENERATOR_FOLDER: `${basePath}/component/folder/word-generator-folder.hbs`,
   WORD_GENERATOR_LIST: `${basePath}/component/word-generator-list/word-generator-list.hbs`,
   SETTING_LIST_ITEM: `${basePath}/template/setting-list-item.hbs`,

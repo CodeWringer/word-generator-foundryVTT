@@ -1,16 +1,13 @@
 import DialogUtility from "../../util/dialog-utility.mjs";
-import { StrategySettingValueTypes } from "../../../business/generator/strategy-setting.mjs";
+import { StrategySettingValueTypes } from "../../../business/generator/common/strategy-setting.mjs";
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
-import WordGeneratorSamplesApplication from "../../application/word-generator-samples-application/word-generator-samples-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
-import WordGeneratorItem from "../../../business/model/word-generator-item.mjs";
-import AbstractSequencingStrategy from "../../../business/generator/sequencing/abstract-sequencing-strategy.mjs";
-import AbstractSpellingStrategy from "../../../business/generator/postprocessing/abstract-spelling-strategy.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
+import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-presenter.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -78,27 +75,52 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   constructor(args = {}) {
     super(args);
 
+    // Sample set presenter preparations.
     this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
     this.sampleSetStrategyOptions = this.sampleSetStrategies
     .map(it => new DropDownOption({
       value: it.getDefinitionID(),
       localizedLabel: it.getHumanReadableName(),
     }));
+    this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      strategyOptions: this.sampleSetStrategyOptions,
+      activeStrategyField: this.entity.samplingStrategy,
+      strategies: this.sampleSetStrategies,
+    });
 
+    // Sequencing presenter preparations.
     this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
     this.sequencingStrategyOptions = this.sequencingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
         localizedLabel: it.getHumanReadableName(),
       }));
+    this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      strategyOptions: this.sequencingStrategyOptions,
+      activeStrategyField: this.entity.sequencingStrategy,
+      strategies: this.sequencingStrategies,
+    });
 
+    // Spelling presenter preparations.
     this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
     this.spellingStrategyOptions = this.spellingStrategies
       .map(it => new DropDownOption({
         value: it.getDefinitionID(),
         localizedLabel: it.getHumanReadableName(),
       }));
+    this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      strategyOptions: this.spellingStrategyOptions,
+      activeStrategyField: this.entity.spellingStrategy,
+      strategies: this.spellingStrategies,
+    });
 
+    // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
       entityDataType: WordGeneratorItemPresenter.entityDataType,
@@ -233,25 +255,25 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     });
 
     html.find(`input#${id}-target-length-min`).change((data) => {
-      this.entity.targetLengthMin.value = this.getValueOrDefault(data, 1);
+      this.entity.targetLengthMin.value = this.getValueOrDefault(data, 3);
     });
     html.find(`input#${id}-target-length-max`).change((data) => {
-      this.entity.targetLengthMax.value = this.getValueOrDefault(data, 1);
+      this.entity.targetLengthMax.value = this.getValueOrDefault(data, 10);
     });
     html.find(`input#${id}-entropy`).change((data) => {
-      this.entity.entropy.value = this.getValueOrDefault(data, 1);
+      this.entity.entropy.value = this.getValueOrDefault(data, 0);
     });
     html.find(`input#${id}-entropy-start`).change((data) => {
-      this.entity.entropyStart.value = this.getValueOrDefault(data, 1);
+      this.entity.entropyStart.value = this.getValueOrDefault(data, 0);
     });
     html.find(`input#${id}-entropy-middle`).change((data) => {
-      this.entity.entropyMiddle.value = this.getValueOrDefault(data, 1);
+      this.entity.entropyMiddle.value = this.getValueOrDefault(data, 0);
     });
     html.find(`input#${id}-entropy-end`).change((data) => {
-      this.entity.entropyEnd.value = this.getValueOrDefault(data, 1);
+      this.entity.entropyEnd.value = this.getValueOrDefault(data, 0);
     });
     html.find(`input#${id}-seed`).change((data) => {
-      this.entity.seed.value = this.getValueOrDefault(data, 1);
+      this.entity.seed.value = this.getValueOrDefault(data, "");
     });
 
     // Ending pick mode
@@ -261,63 +283,10 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     });
     this.syncDropDownValue(html, idEndingPickMode, this.entity.endingPickMode.value);
 
-    
-    // html.find(`#${id}-edit-sample-set`).click(() => {
-    //   new WordGeneratorSamplesApplication(this.entity, (data) => {
-    //     if (data.confirmed === true) {
-    //       this.entity.sampleSet.value = data.sampleSet;
-    //       this.entity.sampleSetSeparator.value = data.sampleSetSeparator;
-    //       this._updateRender()
-    //     }
-    //   }).render(true);
-    // });
-
-    // Sample set
-
-
-    // Sequencing settings
-    // html.find(`#${id}-sequencing-settings > li > input`).change(data => {
-    //   const id = $(data.target)[0].id;
-    //   const setting = this.entity.sequencingStrategySettings.getAll().find(it => it.name === id);
-    //   setting.value = this._parseSettingValue(setting, data.target);
-    // });
-
-    // // Spelling settings
-    // html.find(`#${id}-spelling-settings > li > input`).change(data => {
-    //   const id = $(data.target)[0].id;
-    //   const setting = this.entity.spellingStrategySettings.getAll().find(it => it.name === id);
-    //   setting.value = this._parseSettingValue(setting, data.target);
-    // });
-
     // Drag & drop
     this._dragDropHandler.activateListeners(html);
   }
 
-  /**
-   * Returns a value that the given `StrategySetting` instance would accept,
-   * based on the given DOM element's current value. 
-   * @param {StrategySetting} setting 
-   * @param {JQuery | HTMLElement} element 
-   * 
-   * @returns {String | Number | Boolean}
-   * 
-   * @private
-   */
-  _parseSettingValue(setting, element) {
-    const jElement = $(element);
-
-    switch (setting.valueType) {
-      case StrategySettingValueTypes.INTEGER:
-        return parseInt($(jElement).val());
-      case StrategySettingValueTypes.FLOAT:
-        return parseFloat($(jElement).val());
-      case StrategySettingValueTypes.BOOLEAN:
-        return $(jElement)[0].checked;
-      default:
-        return $(jElement).val();
-    }
-  }
-  
   /**
    * Returns the parent collection.
    * 

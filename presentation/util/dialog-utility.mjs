@@ -84,7 +84,7 @@ export default class DialogUtility {
   }
 
   /**
-   * Shows a dialog with the given content. 
+   * Shows a confirmable dialog with a single line input. 
    * 
    * @param {Object} args Arguments to pass to the rendering function. 
    * @param {String | undefined} args.localizedTitle Localized text for the dialog title. 
@@ -103,50 +103,57 @@ export default class DialogUtility {
    * @async
    */
   async showSingleInputDialog(args = {}) {
-    return new Promise(async (resolve, reject) => {
-      const dialog = new Dialog({
-        title: args.localizedTitle ?? "",
-        content: `<span>${args.localizedInputLabel}</span><input id="inputField" type="text" value="${args.value ?? ""}"></input>`,
-        buttons: {
-          confirm: {
-            icon: '<i class="fas fa-check"></i>',
-            label: game.i18n.localize("wg.general.confirm"),
-            callback: () => {
-              dialog.confirmed = true;
-            }
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: game.i18n.localize("wg.general.cancel"),
-            callback: () => {
-              dialog.confirmed = false;
-            }
-          },
-        },
-        default: "confirm",
-        render: html => { },
-        close: html => {
-          this._removeModalBackdrop();
+    const content = `<span>${args.localizedInputLabel}</span><input id="inputField" type="text" value="${args.value ?? ""}"></input>`;
 
-          resolve({
-            dialog: dialog,
-            html: html,
-            input: html.find("#inputField").val(),
-            confirmed: dialog.confirmed,
-          });
-        }
-      }, {
-        classes: ["dialog", "wg-dialog"],
+    return new Promise(async (resolve, reject) => {
+      const dialog = await this.showConfirmationDialog({
+        ...args,
+        content: content
       });
 
-      if (args.modal === true) {
-        this._ensureModalBackdrop(dialog);
+      if (dialog.confirmed === true) {
+        dialog.input = dialog.html.find("#inputField").val();
       }
-
-      dialog.render(true);
+      
+      resolve(dialog);
     });
   }
 
+  /**
+   * Shows a confirmable dialog with a multi line input. 
+   * 
+   * @param {Object} args Arguments to pass to the rendering function. 
+   * @param {String | undefined} args.localizedTitle Localized text for the dialog title. 
+   * @param {String | undefined} args.localizedInputLabel Localized text for the label above the input. 
+   * @param {String | undefined} args.value Initial value to set. 
+   * @param {Boolean | undefined} args.modal Whether to make the dialog modal. 
+   * * Default `false`
+   * 
+   * @returns {Promise<Object>} Resolves when the dialog is closed. 
+   * * Returns the instance of the closed dialog, its DOM and the user input. 
+   * * `dialog: {Dialog}`
+   * * `html: {JQuery}`
+   * * `input: {String}`
+   * * `confirmed: {Boolean}`
+   * 
+   * @async
+   */
+  async showMultiInputDialog(args = {}) {
+    const content = `<span>${args.localizedInputLabel}</span><textarea class="wg-flex grow wg-light" id="inputField">${args.value}</textarea>`;
+
+    return new Promise(async (resolve, reject) => {
+      const dialog = await this.showConfirmationDialog({
+        ...args,
+        content: content
+      });
+
+      if (dialog.confirmed === true) {
+        dialog.input = dialog.html.find("#inputField").val();
+      }
+      
+      resolve(dialog);
+    });
+  }
 
   /**
    * Ensures the backdrop element is present on the DOM. 

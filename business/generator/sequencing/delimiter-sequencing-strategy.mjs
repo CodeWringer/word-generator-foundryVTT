@@ -1,58 +1,84 @@
-import { StrategySettingValueTypes } from "../strategy-setting.mjs";
-import { StrategySetting } from "../strategy-setting.mjs";
+import ObservableField from "../../../common/observables/observable-field.mjs";
+import AbstractEntityPresenter from "../../../presentation/abstract-entity-presenter.mjs";
+import AbstractStrategyDefinition from "../common/abstract-strategy-definition.mjs";
 import AbstractSequencingStrategy from "./abstract-sequencing-strategy.mjs";
 import Sequence from "./sequence.mjs";
 
 /**
+ * Defines a `DelimiterSequencingStrategy`. 
+ * 
+ * @extends AbstractStrategyDefinition
+ */
+export class DelimiterSequencingStrategyDefinition extends AbstractStrategyDefinition {
+  /** @override */
+  get id() { return "DelimiterSequencingStrategy" }
+
+  /** @override */
+  get localizedName() { return game.i18n.localize("wg.generator.sequencingStrategies.delimiter"); }
+  
+  /** @override */
+  newInstance(settings) {
+    return new DelimiterSequencingStrategy(settings);
+  }
+}
+
+/**
  * This sequencing strategy creates sequences of characters, based on a given 
  * delimiter (= separator). 
- * @property {String} delimiter This delimiter is used to separate chars into sequences. 
- * @property {Boolean} preserveCase If true, will not transform found sequences 
+ * 
+ * @property {ObservableField<String>} delimiter This delimiter is used to separate chars into sequences. 
+ * * default `","`
+ * @property {ObservableField<Boolean>} preserveCase If true, will not transform found sequences 
  * to lower case, but instead preserve the casing found in the sequence. 
- * * Default `false`
+ * * default `false`
+ * 
+ * @extends AbstractSequencingStrategy
  */
 export default class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
-  /**
-   * This delimiter is used to separate chars into sequences. 
-   * @type {String}
-   */
-  delimiter = undefined;
+  /** @override */
+  static fromDto(dto) {
+    return new DelimiterSequencingStrategy({
+      delimiter: dto.delimiter,
+      preserveCase: dto.preserveCase,
+    });
+  }
+
+  /** @override */
+  get settingsPresenter() { return this._settingsPresenter; }
 
   /**
-   * If true, will not transform found sequences to lower case, but instead preserve 
-   * the casing found in the sequence. 
-   * @type {Boolean}
-   * @default false
-   */
-  preserveCase = false;
-
-  /**
-   * @param {String} delimiter This delimiter is used to separate chars into sequences. 
-   * @param {Boolean | undefined} preserveCase If true, will not transform found sequences 
+   * @param {Object} args
+   * @param {String | undefined} args.delimiter This delimiter is used to separate chars into sequences. 
+   * * default `","`
+   * @param {Boolean | undefined} args.preserveCase If true, will not transform found sequences 
    * to lower case, but instead preserve the casing found in the sequence. Default false. 
+   * * default `false`
    */
-  constructor(delimiter, preserveCase = false) {
+  constructor(args = {}) {
     super();
-    if (delimiter === undefined) {
-      throw new Error("Parameter delimiter must not be undefined!");
+
+    this.delimiter = new ObservableField({ value: args.delimiter ?? "," });
+    this.preserveCase = new ObservableField({ value: args.preserveCase ?? false });
+
+    this._settingsPresenter = new DelimiterSequencingStrategySettingsPresenter({
+      application: args.application,
+      entity: this,
+    });
+  }
+
+  /** @override */
+  toDto() {
+    return {
+      definitionId: new DelimiterSequencingStrategyDefinition().id,
+      settings: {
+        delimiter: this.delimiter.value,
+        preserveCase: this.preserveCase.value,
+      },
     }
-
-    this.delimiter = delimiter;
-    this.preserveCase = preserveCase;
   }
-
+  
   /** @override */
-  getDefinitionID() {
-    return "DelimiterSequencingStrategy";
-  }
-
-  /** @override */
-  getHumanReadableName() {
-    return game.i18n.localize("wg.generator.sequencingStrategies.delimiter");
-  }
-
-  /** @override */
-  getSequencesOfSet(sampleSet) {
+  async getSequencesOfSet(sampleSet) {
     return super.getSequencesOfSet(sampleSet);
   }
   
@@ -76,32 +102,33 @@ export default class DelimiterSequencingStrategy extends AbstractSequencingStrat
     }
     return sequences;
   }
+}
 
+/**
+ * Handles presentation of a `DelimiterSequencingStrategy`'s settings. 
+ * 
+ * @property {String} template Returns the **HTML literal** that represents the strategy's settings.  
+ * * Read-only
+ * @property {Application} application The parent application. 
+ * @property {DelimiterSequencingStrategy} entity The represented strategy. 
+ * 
+ * @extends AbstractEntityPresenter
+ */
+export class DelimiterSequencingStrategySettingsPresenter extends AbstractEntityPresenter {
   /** @override */
-  getSettings() {
-    return [
-      new StrategySetting({
-        name: "delimiter",
-        localizableName: "wg.generator.sequencingStrategies.delimiter",
-        valueType: StrategySettingValueTypes.STRING,
-        value: this.delimiter,
-        defaultValue: ",",
-      }),
-      new StrategySetting({
-        name: "preserveCase",
-        localizableName: "wg.generator.preserveCase",
-        valueType: StrategySettingValueTypes.BOOLEAN,
-        value: this.preserveCase,
-        defaultValue: false,
-      }),
-    ];
+  get template() {
+    return `<label for="${this.entity.id}-delimiter">${game.i18n.localize("wg.generator.delimiter")}</label>
+<input id="${this.entity.id}-delimiter" type="number" min="1" value="${this.entity.delimiter.value}" class="wg-light" />
+<label for="${this.entity.id}-preserveCase">${game.i18n.localize("wg.generator.preserveCase")}</label>
+<input id="${this.entity.id}-preserveCase" type="checkbox"${this.entity.preserveCase.value === true ? ' checked="true"' : ''} class="wg-light" />`;
   }
-
-  /** @override */
-  newInstanceWithArgs(args) {
-    const delimiter = args.find(it => it.name === "delimiter").value;
-    const preserveCase = args.find(it => it.name === "preserveCase").value;
-
-    return new DelimiterSequencingStrategy(delimiter, preserveCase);
+  
+  activateListeners(html) {
+    html.find(`input#${this.entity.id}-delimiter`).change((data) => {
+      this.entity.delimiter.value = this.getValueOrDefault(data, ",");
+    });
+    html.find(`input#${this.entity.id}-preserveCase`).change((data) => {
+      this.entity.preserveCase.value = this.getValueOrDefault(data, false);
+    });
   }
 }
