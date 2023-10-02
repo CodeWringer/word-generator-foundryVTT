@@ -164,20 +164,29 @@ export default class ObservableWordGeneratorItem {
    * @static
    */
   static fromDto(obj, parent) {
-    const samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
-      obj.samplingStrategy.definitionId,
-      obj.samplingStrategy.settings
-    );
-      
-    const sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
-      obj.sequencingStrategy.definitionId,
-      obj.sequencingStrategy.settings
-    );
+    let samplingStrategy;
+    if (obj.samplingStrategy !== undefined) {
+      samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
+        obj.samplingStrategy.definitionId,
+        obj.samplingStrategy.settings
+      );
+    }
+    
+    let sequencingStrategy;
+    if (obj.sequencingStrategy !== undefined) {
+      sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
+        obj.sequencingStrategy.definitionId,
+        obj.sequencingStrategy.settings
+      );
+    }
 
-    const spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
-      obj.spellingStrategy.definitionId,
-      obj.spellingStrategy.settings
-    );
+    let spellingStrategy;
+    if (obj.spellingStrategy !== undefined) {
+      spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
+        obj.spellingStrategy.definitionId,
+        obj.spellingStrategy.settings
+      );
+    }
 
     return new ObservableWordGeneratorItem({
       id: obj.id,
