@@ -254,22 +254,30 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     });
 
     html.find(`input#${id}-target-length-min`).change((data) => {
-      this.entity.targetLengthMin.value = this.getValueOrDefault(data, 3);
+      this.entity.targetLengthMin.value = parseInt(this.getValueOrDefault(data, 3));
     });
     html.find(`input#${id}-target-length-max`).change((data) => {
-      this.entity.targetLengthMax.value = this.getValueOrDefault(data, 10);
+      this.entity.targetLengthMax.value = parseInt(this.getValueOrDefault(data, 10));
     });
     html.find(`input#${id}-entropy`).change((data) => {
-      this.entity.entropy.value = this.getValueOrDefault(data, 0);
+      let value = parseFloat(this.getValueOrDefault(data, 0));
+      value = Math.max(Math.min(value, 1), 0);
+      this.entity.entropy.value = value;
     });
     html.find(`input#${id}-entropy-start`).change((data) => {
-      this.entity.entropyStart.value = this.getValueOrDefault(data, 0);
+      let value = parseFloat(this.getValueOrDefault(data, 0));
+      value = Math.max(Math.min(value, 1), 0);
+      this.entity.entropyStart.value = value;
     });
     html.find(`input#${id}-entropy-middle`).change((data) => {
-      this.entity.entropyMiddle.value = this.getValueOrDefault(data, 0);
+      let value = parseFloat(this.getValueOrDefault(data, 0));
+      value = Math.max(Math.min(value, 1), 0);
+      this.entity.entropyMiddle.value = value;
     });
     html.find(`input#${id}-entropy-end`).change((data) => {
-      this.entity.entropyEnd.value = this.getValueOrDefault(data, 0);
+      let value = parseFloat(this.getValueOrDefault(data, 0));
+      value = Math.max(Math.min(value, 1), 0);
+      this.entity.entropyEnd.value = value;
     });
     html.find(`input#${id}-seed`).change((data) => {
       this.entity.seed.value = this.getValueOrDefault(data, "");

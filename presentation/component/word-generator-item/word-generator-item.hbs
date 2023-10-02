@@ -64,25 +64,25 @@ presenter: WordGeneratorItemPresenter
         <label for="{{presenter.id}}-entropy" class="wg-flex grow">{{localize "wg.generator.entropy.label"}}</label>
         <i id="{{presenter.id}}-entropy-info" class="far fa-question-circle wg-square wg-padding-6"></i>
       </div>
-      <input id="{{presenter.id}}-entropy" type="number" min="1" value="{{presenter.entity.entropy.value}}" class="wg-light" />
+      <input id="{{presenter.id}}-entropy" type="number" min="0" max="1" value="{{presenter.entity.entropy.value}}" class="wg-light" />
       {{!-- entropyStart --}}
       <div class="wg-flex middle">
         <label for="{{presenter.id}}-entropy-start" class="wg-flex grow">{{localize "wg.generator.entropy.start.label"}}</label>
         <i id="{{presenter.id}}-entropy-start-info" class="far fa-question-circle wg-square wg-padding-6"></i>
       </div>
-      <input id="{{presenter.id}}-entropy-start" type="number" min="1" value="{{presenter.entity.entropyStart.value}}" class="wg-light" />
+      <input id="{{presenter.id}}-entropy-start" type="number" min="0" max="1" value="{{presenter.entity.entropyStart.value}}" class="wg-light" />
       {{!-- entropyMiddle --}}
       <div class="wg-flex middle">
         <label for="{{presenter.id}}-entropy-middle" class="wg-flex grow">{{localize "wg.generator.entropy.middle.label"}}</label>
         <i id="{{presenter.id}}-entropy-middle-info" class="far fa-question-circle wg-square wg-padding-6"></i>
       </div>
-      <input id="{{presenter.id}}-entropy-middle" type="number" min="1" value="{{presenter.entity.entropyMiddle.value}}" class="wg-light" />
+      <input id="{{presenter.id}}-entropy-middle" type="number" min="0" max="1" value="{{presenter.entity.entropyMiddle.value}}" class="wg-light" />
       {{!-- entropyEnd --}}
       <div class="wg-flex middle">
         <label for="{{presenter.id}}-entropy-end" class="wg-flex grow">{{localize "wg.generator.entropy.end.label"}}</label>
         <i id="{{presenter.id}}-entropy-end-info" class="far fa-question-circle wg-square wg-padding-6"></i>
       </div>
-      <input id="{{presenter.id}}-entropy-end" type="number" min="1" value="{{presenter.entity.entropyEnd.value}}" class="wg-light" />
+      <input id="{{presenter.id}}-entropy-end" type="number" min="0" max="1" value="{{presenter.entity.entropyEnd.value}}" class="wg-light" />
       {{!-- endingPickMode --}}
       <div class="wg-flex middle">
         <label for="{{presenter.id}}-ending-pick-mode" class="wg-flex grow">{{localize "wg.generator.endingPickMode.label"}}</label>
@@ -98,7 +98,7 @@ presenter: WordGeneratorItemPresenter
         <label for="{{presenter.id}}-seed" class="wg-flex grow">{{localize "wg.generator.seed.label"}}</label>
         <i id="{{presenter.id}}-seed-info" class="far fa-question-circle wg-square wg-padding-6"></i>
       </div>
-      <input id="{{presenter.id}}-seed" type="number" min="1" value="{{presenter.entity.seed.value}}" class="wg-light" />
+      <input id="{{presenter.id}}-seed" type="text" value="{{presenter.entity.seed.value}}" class="wg-light" />
     </div>
     {{!-- Sequencing Strategy --}}
     {{#with presenter.sequencingStrategyPresenter.template as |template| }}
