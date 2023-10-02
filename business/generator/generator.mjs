@@ -127,7 +127,7 @@ export default class WordGenerator {
 
     // Generate words. 
     const repetitionMaximum = 1000;
-    const words = [];
+    const generatedResults = [];
     for (let i = 0; i < howMany; i++) {
       let word = undefined;
 
@@ -147,12 +147,18 @@ export default class WordGenerator {
         }
         
         attempt++;
-      } while (word === undefined || words.find(it => { return it === word; }) !== undefined);
+      } while (word === undefined || generatedResults.find(it => { return it === word; }) !== undefined);
       
-      words.push(word);
+      generatedResults.push(word);
     }
     
     // Apply spelling strategy. 
-    return words.map(async it => { return await this.spellingStrategy.apply(it); });
+    const postProcessed = [];
+    // words.map(async it => { return await this.spellingStrategy.apply(it); });
+    for (const generatedResult of generatedResults) {
+      const postProcessedResult = await this.spellingStrategy.apply(generatedResult);
+      postProcessed.push(postProcessedResult);
+    }
+    return postProcessed;
   }
 }

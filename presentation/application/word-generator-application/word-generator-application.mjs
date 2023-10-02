@@ -81,14 +81,6 @@ export default class WordGeneratorApplication extends Application {
   _contentListPresenter = undefined;
 
   /**
-   * An array of the last generated words. 
-   * 
-   * @type {Array<String>}
-   * @private
-   */
-  _generatedWords = [];
-
-  /**
    * The DOM element for the scrollable content area of folders and generators.
    * This is needed to preserve the current scroll value. 
    * 
@@ -141,6 +133,11 @@ export default class WordGeneratorApplication extends Application {
 
     // Observe data changes. 
     this._data.amountToGenerate.onChange((_, oldValue, newValue) => {
+      this._persistData();
+      this.render();
+    });
+
+    this._data.generatedResults.onChange(() => {
       this._persistData();
       this.render();
     });
@@ -249,7 +246,7 @@ export default class WordGeneratorApplication extends Application {
     this._regeneratePresenters();
     return {
       data: this._data,
-      generatedWords: this._generatedWords,
+      generatedResults: this._data.generatedResults.getAll(),
       contentListPresenter: this._contentListPresenter,
     }
   }

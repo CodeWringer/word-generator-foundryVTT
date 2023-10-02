@@ -1,10 +1,10 @@
-<div class="wg-grid-2 gap-2 wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3">
+<div class="wg-grid-2 gap-2 wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3 wg-padding-l-6">
 {{!-- Params:
 presenter: WordGeneratorStrategyPresenter
 --}}
   {{!-- Label --}}
   <div class="wg-flex middle">
-    <label for="{{presenter.id}}-strategy" class="wg-flex grow wg-padding-l-6">{{presenter.localizedLabel}}</label>
+    <label for="{{presenter.id}}-strategy" class="wg-flex grow">{{presenter.localizedLabel}}</label>
     <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-strategy-info"></i>
   </div>
   {{!-- Strategy selector --}}
@@ -14,7 +14,5 @@ presenter: WordGeneratorStrategyPresenter
     {{/each}}
   </select>
   {{!-- Strategy Settings --}}
-  {{#with presenter.strategySettingsPresenter.template as |template|}}
-    {{{(template)}}}
-  {{/with}}
+  {{{presenter.strategySettingsPresenter.template}}}
 </div>

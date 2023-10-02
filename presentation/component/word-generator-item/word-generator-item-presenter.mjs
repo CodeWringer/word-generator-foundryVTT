@@ -15,12 +15,6 @@ import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
  * @property {ObservableWordGeneratorItem} entity The represented entity.  
- * 
- * @property {Array<AbstractSequencingStrategy>} sequencingStrategies
- * @property {Array<DropDownOption>} sequencingStrategyOptions
- * 
- * @property {Array<AbstractSpellingStrategy>} spellingStrategies
- * @property {Array<DropDownOption>} spellingStrategyOptions
  */
 export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
   /**
@@ -74,50 +68,53 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   constructor(args = {}) {
     super(args);
 
-    // // Sample set presenter preparations.
-    // this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
-    // this.sampleSetStrategyOptions = this.sampleSetStrategies
-    // .map(it => new DropDownOption({
-    //   value: it.getDefinitionID(),
-    //   localizedLabel: it.getHumanReadableName(),
-    // }));
-    // this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
-    //   application: this.application,
-    //   entity: this.entity,
-    //   strategyOptions: this.sampleSetStrategyOptions,
-    //   activeStrategyField: this.entity.samplingStrategy,
-    //   strategies: this.sampleSetStrategies,
-    // });
+    // Sample set presenter preparations.
+    this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
+    this.sampleSetStrategyOptions = this.sampleSetStrategies
+      .map(it => new DropDownOption({
+        value: it.id,
+        localizedLabel: it.localizedName,
+      }));
+    this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      localizedLabel: game.i18n.localize("wg.generator.sampleSet.label"),
+      strategyOptions: this.sampleSetStrategyOptions,
+      activeStrategyField: this.entity.samplingStrategy,
+      strategyDefinitions: this.sampleSetStrategies,
+    });
 
-    // // Sequencing presenter preparations.
-    // this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
-    // this.sequencingStrategyOptions = this.sequencingStrategies
-    //   .map(it => new DropDownOption({
-    //     value: it.getDefinitionID(),
-    //     localizedLabel: it.getHumanReadableName(),
-    //   }));
-    // this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
-    //   application: this.application,
-    //   entity: this.entity,
-    //   strategyOptions: this.sequencingStrategyOptions,
-    //   activeStrategyField: this.entity.sequencingStrategy,
-    //   strategies: this.sequencingStrategies,
-    // });
+    // Sequencing presenter preparations.
+    this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
+    this.sequencingStrategyOptions = this.sequencingStrategies
+      .map(it => new DropDownOption({
+        value: it.id,
+        localizedLabel: it.localizedName,
+      }));
+    this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      localizedLabel: game.i18n.localize("wg.generator.sequencingStrategy.label"),
+      strategyOptions: this.sequencingStrategyOptions,
+      activeStrategyField: this.entity.sequencingStrategy,
+      strategyDefinitions: this.sequencingStrategies,
+    });
 
-    // // Spelling presenter preparations.
-    // this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
-    // this.spellingStrategyOptions = this.spellingStrategies
-    //   .map(it => new DropDownOption({
-    //     value: it.getDefinitionID(),
-    //     localizedLabel: it.getHumanReadableName(),
-    //   }));
-    // this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
-    //   application: this.application,
-    //   entity: this.entity,
-    //   strategyOptions: this.spellingStrategyOptions,
-    //   activeStrategyField: this.entity.spellingStrategy,
-    //   strategies: this.spellingStrategies,
-    // });
+    // Spelling presenter preparations.
+    this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
+    this.spellingStrategyOptions = this.spellingStrategies
+      .map(it => new DropDownOption({
+        value: it.id,
+        localizedLabel: it.localizedName,
+      }));
+    this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
+      application: this.application,
+      entity: this.entity,
+      localizedLabel: game.i18n.localize("wg.generator.spellingStrategy.label"),
+      strategyOptions: this.spellingStrategyOptions,
+      activeStrategyField: this.entity.spellingStrategy,
+      strategyDefinitions: this.spellingStrategies,
+    });
 
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
@@ -228,7 +225,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
       ]
     );
 
-    html.find(`#${id}-generate`).click((event) => {
+    html.find(`#${id}-generate`).click(async (event) => {
       event.stopPropagation();
       this._generate();
     });
@@ -284,6 +281,12 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
 
     // Drag & drop
     this._dragDropHandler.activateListeners(html);
+
+    // Children
+
+    this.sampleSetStrategyPresenter.activateListeners(html);
+    this.sequencingStrategyPresenter.activateListeners(html);
+    this.spellingStrategyPresenter.activateListeners(html);
   }
 
   /**
@@ -373,11 +376,12 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   /**
    * Generates results using the represented generator. 
    * 
+   * @async
    * @private
    */
-  _generate() {
+  async _generate() {
     const generator = this.entity.toGenerator();
-    const results = generator.generate(this.application._data.amountToGenerate.value);
+    const results = await generator.generate(this.application._data.amountToGenerate.value);
 
     this.application.suspendRendering = true;
     this.application._data.generatedResults.clear();

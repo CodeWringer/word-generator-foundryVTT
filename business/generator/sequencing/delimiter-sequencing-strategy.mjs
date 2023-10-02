@@ -44,7 +44,13 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   }
 
   /** @override */
+  get id() { return new DelimiterSequencingStrategyDefinition().id; }
+
+  /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
+
+  /** @override */
+  get localizedInfoText() { return game.i18n.localize("wg.generator.sequencingStrategy.infoHint"); }
 
   /**
    * @param {Object} args
@@ -85,7 +91,7 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   getSequencesOfSample(sample) {
     const sequences = [];
-    const splits = sample.split(this.delimiter);
+    const splits = sample.split(this.delimiter.value);
     for (let i = 0; i < splits.length; i++) {
       const split = splits[i];
 
@@ -94,7 +100,7 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
       const hasFollowing = i !== (splits.length - 1);
       
       sequences.push(new Sequence({
-        chars: this.preserveCase === true ? split : split.toLowerCase(),
+        chars: this.preserveCase.value === true ? split : split.toLowerCase(),
         isBeginning: i === 0,
         isMiddle: i !== 0 && hasFollowing === true,
         isEnding: hasFollowing !== true

@@ -40,7 +40,13 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   }
 
   /** @override */
+  get id() { return new WordListSamplingStrategyDefinition().id; }
+
+  /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
+
+  /** @override */
+  get localizedInfoText() { return game.i18n.localize("wg.generator.sampleSet.infoHint"); }
 
   /**
    * @param {Object} args

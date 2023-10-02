@@ -21,6 +21,15 @@ export default class AbstractStrategy {
   }
 
   /**
+   * ID of this strategy. 
+   * 
+   * @type {String}
+   * @readonly
+   * @abstract
+   */
+  get id () { throw new Error("Not implemented"); }
+
+  /**
    * Returns the presenter of this strategy instance's settings. 
    * 
    * This presenter must serve both as a means of displaying and allowing 
@@ -31,6 +40,15 @@ export default class AbstractStrategy {
    * @abstract
    */
   get settingsPresenter() { throw new Error("Not implemented"); }
+
+  /**
+   * Returns a localized info text. 
+   * 
+   * @type {String}
+   * @readonly
+   * @abstract
+   */
+  get localizedInfoText() { throw new Error("Not implemented"); }
 
   /**
    * Returns a data transfer object version of this object. 

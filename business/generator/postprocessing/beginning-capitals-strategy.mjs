@@ -30,7 +30,13 @@ export class BeginningCapitalsSpellingStrategy extends AbstractSpellingStrategy 
   }
 
   /** @override */
+  get id() { return new BeginningCapitalsSpellingStrategyDefinition().id; }
+
+  /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
+
+  /** @override */
+  get localizedInfoText() { return game.i18n.localize("wg.generator.spellingStrategy.infoHint"); }
 
   /**
    * @param {Object} args

@@ -47,7 +47,13 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   }
 
   /** @override */
+  get id() { return new CharDepthSequencingStrategyDefinition().id; }
+
+  /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
+
+  /** @override */
+  get localizedInfoText() { return game.i18n.localize("wg.generator.sequencingStrategy.infoHint"); }
 
   /**
    * @param {Object} args
@@ -94,10 +100,10 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   getSequencesOfSample(sample) {
     const sequences = [];
-    for (let i = 0; i < sample.length; i += this.depth) {
-      let chars = sample.substring(i, i + this.depth);
+    for (let i = 0; i < sample.length; i += this.depth.value) {
+      let chars = sample.substring(i, i + this.depth.value);
 
-      if (this.preserveCase !== true) {
+      if (this.preserveCase.value !== true) {
         chars = chars.toLowerCase();
       }
 
