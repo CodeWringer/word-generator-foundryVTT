@@ -1,3 +1,4 @@
+import AbstractEntityPresenter from "../../../presentation/abstract-entity-presenter.mjs";
 import AbstractStrategyDefinition from "../common/abstract-strategy-definition.mjs";
 import AbstractSpellingStrategy from "./abstract-spelling-strategy.mjs";
 
