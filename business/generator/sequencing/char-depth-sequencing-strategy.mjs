@@ -144,10 +144,10 @@ export class CharDepthSequencingStrategySettingsPresenter extends AbstractEntity
   
   activateListeners(html) {
     html.find(`input#${this.entity.id}-depth`).change((data) => {
-      this.entity.depth.value = this.getValueOrDefault(data, 1);
+      this.entity.depth.value = parseInt(data.currentTarget.value);
     });
     html.find(`input#${this.entity.id}-preserveCase`).change((data) => {
-      this.entity.preserveCase.value = this.getValueOrDefault(data, false);
+      this.entity.preserveCase.value = data.currentTarget.checked;
     });
   }
 }

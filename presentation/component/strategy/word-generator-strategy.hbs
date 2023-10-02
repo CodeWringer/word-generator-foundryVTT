@@ -4,11 +4,11 @@ presenter: WordGeneratorStrategyPresenter
 --}}
   {{!-- Label --}}
   <div class="wg-flex middle">
-    <label for="{{presenter.id}}-strategy" class="wg-flex grow">{{presenter.localizedLabel}}</label>
-    <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-strategy-info"></i>
+    <label for="{{presenter.id}}" class="wg-flex grow">{{presenter.localizedLabel}}</label>
+    <i class="far fa-question-circle wg-square wg-padding-6" id="{{presenter.id}}-info"></i>
   </div>
   {{!-- Strategy selector --}}
-  <select id="{{presenter.id}}-strategy" class="wg-light">
+  <select id="{{presenter.id}}" class="wg-light">
     {{#each presenter.strategyOptions as |strategy index|}}
     <option value="{{strategy.value}}">{{strategy.localizedLabel}}</option>
     {{/each}}

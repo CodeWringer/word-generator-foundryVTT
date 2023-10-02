@@ -102,7 +102,7 @@ export class WordListSamplingStrategySettingsPresenter extends AbstractEntityPre
     return `<label for="${this.entity.id}-separator">${game.i18n.localize("wg.generator.sampleSet.separator")}</label>
 <input id="${this.entity.id}-separator" type="text" value="${this.entity.separator.value}" class="wg-light" />
 <label for="${this.entity.id}-edit-samples">${game.i18n.localize("wg.generator.sampleSet.label")}</label>
-<a class="wg-flex center row grow wg-border-box wg-light wg-margin-3" id="${this.entity.id}-edit-samples">
+<a id="${this.entity.id}-edit-samples" class="wg-flex center row grow wg-border-box wg-light wg-margin-3" style="height: 1.8rem">
 <div class="wg-flex wg-margin-r-3 center"><i class="fas fa-edit"></i></div>
 <div class="wg-flex middle"><span>${game.i18n.localize("wg.generator.sampleSet.edit")}</span></div>
 </a>`;
@@ -110,7 +110,7 @@ export class WordListSamplingStrategySettingsPresenter extends AbstractEntityPre
   
   activateListeners(html) {
     html.find(`input#${this.entity.id}-separator`).change((data) => {
-      this.entity.separator.value = this.getValueOrDefault(data, ",");
+      this.entity.separator.value = data.currentTarget.value;
     });
     html.find(`a#${this.entity.id}-edit-samples`).click(async (event) => {
       const dialog = await new DialogUtility().showMultiInputDialog({

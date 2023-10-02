@@ -24,12 +24,11 @@ import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } fro
 export default class WordGeneratorStrategyPresenter extends AbstractEntityPresenter {
   get template() { return TEMPLATES.WORD_GENERATOR_STRATEGY; }
 
-  get id() { return this.entity.id; }
-
-  get elementId() { return `${this.id}-strategy`; }
+  get id() { return this._id; }
 
   /**
    * @param {Object} args
+   * @param {String} args.id ID of the presenter. 
    * @param {WordGeneratorApplication} args.application The parent application. 
    * @param {ObservableWordGeneratorItem} args.entity The represented entity.  
    * @param {String | undefined} args.localizedLabel A localized text for the strategy section. 
@@ -43,6 +42,7 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
   constructor(args = {}) {
     super(args);
 
+    this._id = args.id ?? this.entity.id;
     this.localizedLabel = args.localizedLabel;
     this.strategyOptions = args.strategyOptions;
     this.activeStrategyField = args.activeStrategyField;
@@ -52,27 +52,25 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
   }
 
   activateListeners(html) {
-    const id = this.entity.id;
-
     this._infoBubble = new InfoBubble({
       html: html,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       map: [
         {
-          element: html.find(`#${id}-strategy-info`),
+          element: html.find(`#${this.id}-info`),
           text: ((this.activeStrategyField.value ?? {}).localizedInfoText ?? ""),
         },
       ]
     });
 
-    html.find(this.elementId).change((data) => {
+    html.find(`select#${this.id}`).change((data) => {
       const strategyId = $(data.target).val();
       const strategy = this.strategyDefinitions.find(it => it.id === strategyId);
       this.activeStrategyField.value = strategy.newInstance();
     });
 
-    this.syncDropDownValue(html, this.elementId, this.activeStrategyField.value.id);
+    this.syncDropDownValue(html, this.id, this.activeStrategyField.value.id);
 
     // Children
 

@@ -78,6 +78,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
       application: this.application,
       entity: this.entity,
+      id: `${this.entity.id}-sampling-strategy`,
       localizedLabel: game.i18n.localize("wg.generator.sampleSet.label"),
       strategyOptions: this.sampleSetStrategyOptions,
       activeStrategyField: this.entity.samplingStrategy,
@@ -94,6 +95,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
       application: this.application,
       entity: this.entity,
+      id: `${this.entity.id}-sequencing-strategy`,
       localizedLabel: game.i18n.localize("wg.generator.sequencingStrategy.label"),
       strategyOptions: this.sequencingStrategyOptions,
       activeStrategyField: this.entity.sequencingStrategy,
@@ -110,6 +112,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
       application: this.application,
       entity: this.entity,
+      id: `${this.entity.id}-spelling-strategy`,
       localizedLabel: game.i18n.localize("wg.generator.spellingStrategy.label"),
       strategyOptions: this.spellingStrategyOptions,
       activeStrategyField: this.entity.spellingStrategy,

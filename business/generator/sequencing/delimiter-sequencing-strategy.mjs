@@ -123,18 +123,18 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
 export class DelimiterSequencingStrategySettingsPresenter extends AbstractEntityPresenter {
   /** @override */
   get template() {
-    return `<label for="${this.entity.id}-delimiter">${game.i18n.localize("wg.generator.delimiter")}</label>
-<input id="${this.entity.id}-delimiter" type="number" min="1" value="${this.entity.delimiter.value}" class="wg-light" />
+    return `<label for="${this.entity.id}-delimiter">${game.i18n.localize("wg.generator.sequencingStrategies.delimiter")}</label>
+<input id="${this.entity.id}-delimiter" type="text" value="${this.entity.delimiter.value}" class="wg-light" />
 <label for="${this.entity.id}-preserveCase">${game.i18n.localize("wg.generator.preserveCase")}</label>
 <input id="${this.entity.id}-preserveCase" type="checkbox"${this.entity.preserveCase.value === true ? ' checked="true"' : ''} class="wg-light" />`;
   }
   
   activateListeners(html) {
     html.find(`input#${this.entity.id}-delimiter`).change((data) => {
-      this.entity.delimiter.value = this.getValueOrDefault(data, ",");
+      this.entity.delimiter.value = data.currentTarget.value;
     });
     html.find(`input#${this.entity.id}-preserveCase`).change((data) => {
-      this.entity.preserveCase.value = this.getValueOrDefault(data, false);
+      this.entity.preserveCase.value = data.currentTarget.checked;
     });
   }
 }
