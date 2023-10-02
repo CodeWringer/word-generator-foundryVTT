@@ -34,7 +34,7 @@ export class DelimiterSequencingStrategyDefinition extends AbstractStrategyDefin
  * 
  * @extends AbstractSequencingStrategy
  */
-export default class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
+export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   static fromDto(dto) {
     return new DelimiterSequencingStrategy({

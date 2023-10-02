@@ -1,4 +1,4 @@
-import CharDepthSequencingStrategy from "../../../../business/generator/sequencing/char-depth-sequencing-strategy.mjs";
+import { CharDepthSequencingStrategy } from "../../../../business/generator/sequencing/char-depth-sequencing-strategy.mjs";
 
 describe('CharDepthSequencingStrategy', function() {
   describe('getSequencesOfSample', function() {

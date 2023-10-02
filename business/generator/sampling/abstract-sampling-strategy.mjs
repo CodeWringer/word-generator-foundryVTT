@@ -6,7 +6,7 @@ import AbstractStrategy from "../common/abstract-strategy.mjs";
  * @extends AbstractStrategy
  * @abstract
  */
-export class AbstractSamplingStrategy extends AbstractStrategy {
+export default class AbstractSamplingStrategy extends AbstractStrategy {
   /**
    * Returns a sample set. 
    * 

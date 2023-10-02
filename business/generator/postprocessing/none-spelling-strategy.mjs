@@ -25,7 +25,7 @@ export class NoneSpellingStrategyDefinition extends AbstractStrategyDefinition {
  * 
  * @extends AbstractSpellingStrategy
  */
-export default class NoneSpellingStrategy extends AbstractSpellingStrategy {
+export class NoneSpellingStrategy extends AbstractSpellingStrategy {
   /** @override */
   static fromDto(dto) {
     return new NoneSpellingStrategy();

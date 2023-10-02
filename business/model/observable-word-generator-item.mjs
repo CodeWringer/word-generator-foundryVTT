@@ -1,4 +1,3 @@
-import ObservableCollection from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import WordGeneratorApplication from "../../presentation/application/word-generator-application/word-generator-application.mjs";
@@ -6,10 +5,9 @@ import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatena
 import WordGenerator from "../generator/generator.mjs";
 import AbstractSpellingStrategy from "../generator/postprocessing/abstract-spelling-strategy.mjs";
 import AbstractSamplingStrategy from "../generator/sampling/abstract-sampling-strategy.mjs";
-import WordListSamplingStrategy from "../generator/sampling/word-list-sampling-strategy.mjs";
+import { WordListSamplingStrategy } from "../generator/sampling/word-list-sampling-strategy.mjs";
 import AbstractSequencingStrategy from "../generator/sequencing/abstract-sequencing-strategy.mjs";
-import CharDepthSequencingStrategy from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
-import { StrategySetting } from "../generator/common/strategy-setting.mjs";
+import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 

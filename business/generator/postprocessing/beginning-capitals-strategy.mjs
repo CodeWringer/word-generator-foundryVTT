@@ -21,7 +21,7 @@ export class BeginningCapitalsSpellingStrategyDefinition extends AbstractStrateg
 /**
  * Capitalizes the first letter of the word. 
  */
-export default class BeginningCapitalsSpellingStrategy extends AbstractSpellingStrategy {
+export class BeginningCapitalsSpellingStrategy extends AbstractSpellingStrategy {
   /** @override */
   static fromDto(dto) {
     return new BeginningCapitalsSpellingStrategy();

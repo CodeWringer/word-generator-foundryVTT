@@ -1,5 +1,4 @@
 import DialogUtility from "../../util/dialog-utility.mjs";
-import { StrategySettingValueTypes } from "../../../business/generator/common/strategy-setting.mjs";
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
@@ -75,50 +74,50 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   constructor(args = {}) {
     super(args);
 
-    // Sample set presenter preparations.
-    this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
-    this.sampleSetStrategyOptions = this.sampleSetStrategies
-    .map(it => new DropDownOption({
-      value: it.getDefinitionID(),
-      localizedLabel: it.getHumanReadableName(),
-    }));
-    this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
-      application: this.application,
-      entity: this.entity,
-      strategyOptions: this.sampleSetStrategyOptions,
-      activeStrategyField: this.entity.samplingStrategy,
-      strategies: this.sampleSetStrategies,
-    });
+    // // Sample set presenter preparations.
+    // this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
+    // this.sampleSetStrategyOptions = this.sampleSetStrategies
+    // .map(it => new DropDownOption({
+    //   value: it.getDefinitionID(),
+    //   localizedLabel: it.getHumanReadableName(),
+    // }));
+    // this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
+    //   application: this.application,
+    //   entity: this.entity,
+    //   strategyOptions: this.sampleSetStrategyOptions,
+    //   activeStrategyField: this.entity.samplingStrategy,
+    //   strategies: this.sampleSetStrategies,
+    // });
 
-    // Sequencing presenter preparations.
-    this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
-    this.sequencingStrategyOptions = this.sequencingStrategies
-      .map(it => new DropDownOption({
-        value: it.getDefinitionID(),
-        localizedLabel: it.getHumanReadableName(),
-      }));
-    this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
-      application: this.application,
-      entity: this.entity,
-      strategyOptions: this.sequencingStrategyOptions,
-      activeStrategyField: this.entity.sequencingStrategy,
-      strategies: this.sequencingStrategies,
-    });
+    // // Sequencing presenter preparations.
+    // this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
+    // this.sequencingStrategyOptions = this.sequencingStrategies
+    //   .map(it => new DropDownOption({
+    //     value: it.getDefinitionID(),
+    //     localizedLabel: it.getHumanReadableName(),
+    //   }));
+    // this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    //   application: this.application,
+    //   entity: this.entity,
+    //   strategyOptions: this.sequencingStrategyOptions,
+    //   activeStrategyField: this.entity.sequencingStrategy,
+    //   strategies: this.sequencingStrategies,
+    // });
 
-    // Spelling presenter preparations.
-    this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
-    this.spellingStrategyOptions = this.spellingStrategies
-      .map(it => new DropDownOption({
-        value: it.getDefinitionID(),
-        localizedLabel: it.getHumanReadableName(),
-      }));
-    this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
-      application: this.application,
-      entity: this.entity,
-      strategyOptions: this.spellingStrategyOptions,
-      activeStrategyField: this.entity.spellingStrategy,
-      strategies: this.spellingStrategies,
-    });
+    // // Spelling presenter preparations.
+    // this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
+    // this.spellingStrategyOptions = this.spellingStrategies
+    //   .map(it => new DropDownOption({
+    //     value: it.getDefinitionID(),
+    //     localizedLabel: it.getHumanReadableName(),
+    //   }));
+    // this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    //   application: this.application,
+    //   entity: this.entity,
+    //   strategyOptions: this.spellingStrategyOptions,
+    //   activeStrategyField: this.entity.spellingStrategy,
+    //   strategies: this.spellingStrategies,
+    // });
 
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({

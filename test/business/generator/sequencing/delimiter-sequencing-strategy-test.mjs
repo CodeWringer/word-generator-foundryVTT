@@ -1,4 +1,4 @@
-import DelimiterSequencingStrategy from "../../../../business/generator/sequencing/delimiter-sequencing-strategy.mjs";
+import { DelimiterSequencingStrategy } from "../../../../business/generator/sequencing/delimiter-sequencing-strategy.mjs";
 
 describe('DelimiterSequencingStrategy', function() {
   describe('getSequencesOfSample', function() {

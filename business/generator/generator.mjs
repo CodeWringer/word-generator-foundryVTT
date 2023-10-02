@@ -1,7 +1,7 @@
 import { isInteger } from '../util/validation.mjs';
 import SequenceProbabilityBuilder from './probability-building/sequence-probability-builder.mjs';
 import SequenceConcatenator, { ENDING_PICK_MODES } from './concatenation/sequence-concatenator.mjs';
-import { AbstractSamplingStrategy } from './sampling/abstract-sampling-strategy.mjs';
+import AbstractSamplingStrategy from './sampling/abstract-sampling-strategy.mjs';
 import AbstractSequencingStrategy from './sequencing/abstract-sequencing-strategy.mjs';
 import AbstractSpellingStrategy from './postprocessing/abstract-spelling-strategy.mjs';
 

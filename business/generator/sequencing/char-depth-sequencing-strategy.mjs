@@ -36,7 +36,7 @@ export class CharDepthSequencingStrategyDefinition extends AbstractStrategyDefin
  * 
  * @extends AbstractSequencingStrategy
  */
-export default class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
+export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   static fromDto(dto) {
     return new CharDepthSequencingStrategy({

@@ -1,4 +1,3 @@
-import WordGeneratorApplicationData from "./business/model/word-generator-application-data.mjs";
 import { NoneSpellingStrategyDefinition } from "./business/generator/postprocessing/none-spelling-strategy.mjs";
 import { BeginningCapitalsSpellingStrategyDefinition } from "./business/generator/postprocessing/beginning-capitals-strategy.mjs"
 import { CharDepthSequencingStrategyDefinition } from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
