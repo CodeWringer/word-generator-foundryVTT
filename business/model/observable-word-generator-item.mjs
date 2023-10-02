@@ -96,8 +96,8 @@ export default class ObservableWordGeneratorItem {
     this.endingPickMode = new ObservableField({ value: args.endingPickMode ?? ENDING_PICK_MODES.RANDOM });
 
     this.samplingStrategy = new ObservableField({ value: args.samplingStrategy ?? new WordListSamplingStrategy() });
-    this.sequencingStrategy = new ObservableField({ value: args.samplingStrategy ?? new CharDepthSequencingStrategy() });
-    this.spellingStrategy = new ObservableField({ value: args.samplingStrategy ?? new NoneSpellingStrategy() });
+    this.sequencingStrategy = new ObservableField({ value: args.sequencingStrategy ?? new CharDepthSequencingStrategy() });
+    this.spellingStrategy = new ObservableField({ value: args.spellingStrategy ?? new NoneSpellingStrategy() });
 
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
     this.parent = new ObservableField({ value: args.parent });
@@ -165,7 +165,7 @@ export default class ObservableWordGeneratorItem {
    */
   static fromDto(obj, parent) {
     let samplingStrategy;
-    if (obj.samplingStrategy !== undefined) {
+    if (obj.samplingStrategy !== undefined && obj.samplingStrategy.definitionId !== undefined) {
       samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
         obj.samplingStrategy.definitionId,
         obj.samplingStrategy.settings
@@ -173,7 +173,7 @@ export default class ObservableWordGeneratorItem {
     }
     
     let sequencingStrategy;
-    if (obj.sequencingStrategy !== undefined) {
+    if (obj.sequencingStrategy !== undefined && obj.sequencingStrategy.definitionId !== undefined) {
       sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
         obj.sequencingStrategy.definitionId,
         obj.sequencingStrategy.settings
@@ -181,7 +181,7 @@ export default class ObservableWordGeneratorItem {
     }
 
     let spellingStrategy;
-    if (obj.spellingStrategy !== undefined) {
+    if (obj.spellingStrategy !== undefined && obj.spellingStrategy.definitionId !== undefined) {
       spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
         obj.spellingStrategy.definitionId,
         obj.spellingStrategy.settings
