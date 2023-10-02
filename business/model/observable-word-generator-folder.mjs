@@ -19,6 +19,7 @@ export default class ObservableWordGeneratorFolder {
   /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
+   * * By default, generates a new id. 
    * @param {String | undefined} args.name Human readable name of the folder. 
    * * Default localized `New Folder`
    * @param {Boolean | undefined} args.isExpanded If `true`, the folder is to be presented in expanded state. 

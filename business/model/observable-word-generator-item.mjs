@@ -4,6 +4,7 @@ import WordGeneratorApplication from "../../presentation/application/word-genera
 import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import AbstractSpellingStrategy from "../generator/postprocessing/abstract-spelling-strategy.mjs";
+import { NoneSpellingStrategy } from "../generator/postprocessing/none-spelling-strategy.mjs";
 import AbstractSamplingStrategy from "../generator/sampling/abstract-sampling-strategy.mjs";
 import { WordListSamplingStrategy } from "../generator/sampling/word-list-sampling-strategy.mjs";
 import AbstractSequencingStrategy from "../generator/sequencing/abstract-sequencing-strategy.mjs";
@@ -16,18 +17,21 @@ import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-
  * @property {String} id Unique ID. 
  * * Read-only
  * @property {ObservableField<String | undefined>} name Human readable name. 
- * @property {ObservableField<Number>} depth The depth to use with the sequencing strategy. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
  * @property {ObservableField<Number>} targetLengthMax The target maximum length that generated texts should be. 
  * @property {ObservableField<String>} seed A seed for the randomization. 
  * @property {ObservableField<Number | undefined>} entropy A number between 0 and 1 (inclusive), which determines the 
- * randomness of words, in general. Default 0. 
+ * randomness of words, in general. 
+ * * default 0. 
  * @property {ObservableField<Number | undefined>} entropyStart A number between 0 and 1 (inclusive), which determines the 
- * randomness of starting sequences. Default 0. 
+ * randomness of starting sequences. 
+ * * default 0. 
  * @property {ObservableField<Number | undefined>} entropyMiddle A number between 0 and 1 (inclusive), which determines the 
- * randomness of middle sequences. Default 0. 
+ * randomness of middle sequences. 
+ * * default 0. 
  * @property {ObservableField<Number | undefined>} entropyEnd A number between 0 and 1 (inclusive), which determines the 
- * randomness of ending sequences. Default 0. 
+ * randomness of ending sequences. 
+ * * default 0. 
  * @property {ObservableField<ENDING_PICK_MODES>} endingPickMode Determines how and if an ending sequence 
  * will be picked for generated words. 
  * 
@@ -44,20 +48,34 @@ import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-
 export default class ObservableWordGeneratorItem {
   /**
    * @param {String | undefined} args.id Unique ID. 
+   * * By default, generates a new id. 
    * @param {String | undefined} args.name Human readable name. 
-   * @param {Number | undefined} args.depth 
-   * @param {Number | undefined} args.targetLengthMin
-   * @param {Number | undefined} args.targetLengthMax
-   * @param {String | undefined} args.seed
-   * @param {Number | undefined} args.entropy
-   * @param {Number | undefined} args.entropyStart
-   * @param {Number | undefined} args.entropyMiddle
-   * @param {Number | undefined} args.entropyEnd
-   * @param {ENDING_PICK_MODES | undefined} args.endingPickMode
+   * @param {Number | undefined} args.targetLengthMin The target minimum length that generated texts should be. 
+   * * default `3`
+   * @param {Number | undefined} args.targetLengthMax The target maximum length that generated texts should be. 
+   * * default `10`
+   * @param {String | undefined} args.seed A seed for the randomization. 
+   * @param {Number | undefined} args.entropy A number between 0 and 1 (inclusive), which determines the 
+   * randomness of words, in general. 
+   * * default 0. 
+   * @param {Number | undefined} args.entropyStart A number between 0 and 1 (inclusive), which determines the 
+   * randomness of starting sequences. 
+   * * default 0. 
+   * @param {Number | undefined} args.entropyMiddle A number between 0 and 1 (inclusive), which determines the 
+   * randomness of middle sequences. 
+   * * default 0. 
+   * @param {Number | undefined} args.entropyEnd A number between 0 and 1 (inclusive), which determines the 
+   * randomness of ending sequences. 
+   * * default 0. 
+   * @param {ENDING_PICK_MODES | undefined} args.endingPickMode Determines how and if an ending sequence 
+   * will be picked for generated words. 
    * 
-   * @param {AbstractSamplingStrategy | undefined} args.samplingStrategy
-   * @param {AbstractSequencingStrategy | undefined} args.sequencingStrategy
-   * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy
+   * @param {AbstractSamplingStrategy | undefined} args.samplingStrategy The sampling strategy to use. 
+   * * default `WordListSamplingStrategy`
+   * @param {AbstractSequencingStrategy | undefined} args.sequencingStrategy The sequencing strategy to use. 
+   * * default `CharDepthSequencingStrategy`
+   * @param {AbstractSpellingStrategy | undefined} args.spellingStrategy The spelling post-processing strategy to use. 
+   * * default `NoneSpellingStrategy`
    * 
    * @param {Boolean | undefined} args.isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
    * it is rendered collapsed. 
@@ -68,7 +86,6 @@ export default class ObservableWordGeneratorItem {
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
     this.name = new ObservableField({ value: args.name });
-    this.depth = new ObservableField({ value: args.depth ?? 3 });
     this.targetLengthMin = new ObservableField({ value: args.targetLengthMin ?? 3 });
     this.targetLengthMax = new ObservableField({ value: args.targetLengthMax ?? 10 });
     this.seed = new ObservableField({ value: args.seed });
@@ -79,8 +96,8 @@ export default class ObservableWordGeneratorItem {
     this.endingPickMode = new ObservableField({ value: args.endingPickMode ?? ENDING_PICK_MODES.RANDOM });
 
     this.samplingStrategy = new ObservableField({ value: args.samplingStrategy ?? new WordListSamplingStrategy() });
-    this.sequencingStrategy = new ObservableField({ value: gs.samplingStrategy ?? new CharDepthSequencingStrategy() });
-    this.spellingStrategy = new ObservableField({ value: args.samplingStrategy ?? new CharDepthSequencingStrategy() });
+    this.sequencingStrategy = new ObservableField({ value: args.samplingStrategy ?? new CharDepthSequencingStrategy() });
+    this.spellingStrategy = new ObservableField({ value: args.samplingStrategy ?? new NoneSpellingStrategy() });
 
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
     this.parent = new ObservableField({ value: args.parent });
@@ -96,7 +113,6 @@ export default class ObservableWordGeneratorItem {
 
     this.propagator = new ObservationPropagator(this, [
       this.name,
-      this.depth,
       this.targetLengthMin,
       this.targetLengthMax,
       this.seed,
@@ -122,7 +138,6 @@ export default class ObservableWordGeneratorItem {
    */
   toGenerator() {
     return new WordGenerator({
-      depth: this.depth.value,
       targetLengthMin: this.targetLengthMin.value,
       targetLengthMax: this.targetLengthMax.value,
       seed: this.seed.value,
@@ -167,7 +182,6 @@ export default class ObservableWordGeneratorItem {
     return new ObservableWordGeneratorItem({
       id: obj.id,
       name: obj.name,
-      depth: obj.depth,
       targetLengthMin: obj.targetLengthMin,
       targetLengthMax: obj.targetLengthMax,
       seed: obj.seed,
@@ -194,7 +208,6 @@ export default class ObservableWordGeneratorItem {
       name: this.name.value,
       sampleSet: this.sampleSet.getAll(),
       sampleSetSeparator: this.sampleSetSeparator.value,
-      depth: this.depth.value,
       targetLengthMin: this.targetLengthMin.value,
       targetLengthMax: this.targetLengthMax.value,
       seed: this.seed.value,
