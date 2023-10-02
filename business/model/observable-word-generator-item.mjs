@@ -215,8 +215,6 @@ export default class ObservableWordGeneratorItem {
     return {
       id: this.id,
       name: this.name.value,
-      sampleSet: this.sampleSet.getAll(),
-      sampleSetSeparator: this.sampleSetSeparator.value,
       targetLengthMin: this.targetLengthMin.value,
       targetLengthMax: this.targetLengthMax.value,
       seed: this.seed.value,
