@@ -4,12 +4,12 @@ import 'should-sinon';
 import { BeginningCapitalsSpellingStrategy } from '../../../../business/generator/postprocessing/beginning-capitals-strategy.mjs';
 
 describe('BeginningCapitalsSpellingStrategy', function() {
-  it('capitalizes the given word correctly', function() {
+  it('capitalizes the given word correctly', async () => {
     // Given
     const word = "bob"
     const strategy = new BeginningCapitalsSpellingStrategy();
     // When
-    const result = strategy.apply(word);
+    const result = await strategy.apply(word);
     // Then
     result.should.be.equal("Bob");
   });

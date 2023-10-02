@@ -4,7 +4,10 @@ describe('DelimiterSequencingStrategy', function() {
   describe('getSequencesOfSample', function() {
     it('Correctly determines sequences of "Bob Steve Alice"', function() {
       // Given
-      const strategy = new DelimiterSequencingStrategy(" ");
+      const strategy = new DelimiterSequencingStrategy({
+        delimiter: " ",
+        preserveCase: false,
+      });
       const sample = "Bob Steve Alice";
       // When
       const sequences = strategy.getSequencesOfSample(sample);

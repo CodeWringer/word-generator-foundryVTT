@@ -2,12 +2,15 @@ import { CharDepthSequencingStrategy } from "../../../../business/generator/sequ
 
 describe('CharDepthSequencingStrategy', function() {
   describe('getSequencesOfSample', function() {
-    it('Correctly determines sequences of "Bob" at depth 1', function() {
+    it('Correctly determines sequences of "Bob" at depth 1', async () => {
       // Given
-      const strategy = new CharDepthSequencingStrategy(1);
+      const strategy = new CharDepthSequencingStrategy({
+        depth: 1,
+        preserveCase: false,
+      });
       const sample = "Bob";
       // When
-      const sequences = strategy.getSequencesOfSample(sample);
+      const sequences = await strategy.getSequencesOfSample(sample);
       // Then
       sequences.length.should.be.equal(3);
 
@@ -28,12 +31,15 @@ describe('CharDepthSequencingStrategy', function() {
       sequences[2].isEnding.should.be.equal(true);
     });
 
-    it('Correctly determines sequences of "Bob" at depth 2', function() {
+    it('Correctly determines sequences of "Bob" at depth 2', async () => {
       // Given
-      const strategy = new CharDepthSequencingStrategy(2);
+      const strategy = new CharDepthSequencingStrategy({
+        depth: 2,
+        preserveCase: false,
+      });
       const sample = "Bob";
       // When
-      const sequences = strategy.getSequencesOfSample(sample);
+      const sequences = await strategy.getSequencesOfSample(sample);
       // Then
       sequences.length.should.be.equal(2);
 
@@ -51,12 +57,15 @@ describe('CharDepthSequencingStrategy', function() {
   });
 
   describe('getSequencesOfSet', function() {
-    it('Correctly determines sequences of ["Bob", "Steve] at depth 1', function() {
+    it('Correctly determines sequences of ["Bob", "Steve] at depth 1', async () => {
       // Given
-      const strategy = new CharDepthSequencingStrategy(1);
+      const strategy = new CharDepthSequencingStrategy({
+        depth: 1,
+        preserveCase: false
+      });
       const sampleSet = ["Bob", "Steve"];
       // When
-      const sequences = strategy.getSequencesOfSet(sampleSet);
+      const sequences = await strategy.getSequencesOfSet(sampleSet);
       // Then
       sequences.length.should.be.equal(2);
 
@@ -64,12 +73,15 @@ describe('CharDepthSequencingStrategy', function() {
       sequences[1].length.should.be.equal(5);
     });
 
-    it('Correctly determines sequences of ["Bob", "Steve] at depth 2', function() {
+    it('Correctly determines sequences of ["Bob", "Steve] at depth 2', async () => {
       // Given
-      const strategy = new CharDepthSequencingStrategy(2);
+      const strategy = new CharDepthSequencingStrategy({
+        depth: 2,
+        preserveCase: false,
+      });
       const sampleSet = ["Bob", "Steve"];
       // When
-      const sequences = strategy.getSequencesOfSet(sampleSet);
+      const sequences = await strategy.getSequencesOfSet(sampleSet);
       // Then
       sequences.length.should.be.equal(2);
 
