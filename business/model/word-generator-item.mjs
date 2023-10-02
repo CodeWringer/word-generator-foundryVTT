@@ -38,6 +38,8 @@ import CharDepthSequencingStrategy from "../generator/sequencing/char-depth-sequ
  * 
  * @property {Boolean} isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
  * it is rendered collapsed. 
+ * 
+ * @deprecated in favor of `ObservableWordGeneratorItem`
  */
 export default class WordGeneratorItem {
   /**
