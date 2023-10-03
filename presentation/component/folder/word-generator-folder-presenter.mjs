@@ -276,6 +276,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     const dialog = await new DialogUtility().showSingleInputDialog({
       localizedTitle: game.i18n.localize("wg.folder.create"),
       localizedInputLabel: game.i18n.localize("wg.folder.name"),
+      modal: true,
     });
 
     if (dialog.confirmed !== true) return;
