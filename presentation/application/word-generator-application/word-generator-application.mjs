@@ -132,16 +132,6 @@ export default class WordGeneratorApplication extends Application {
     this._regeneratePresenters();
 
     // Observe data changes. 
-    this._data.amountToGenerate.onChange((_, oldValue, newValue) => {
-      this._persistData();
-      this.render();
-    });
-
-    this._data.generatedResults.onChange(() => {
-      this._persistData();
-      this.render();
-    });
-
     this._data.resultsSortMode.onChange((_, oldValue, newValue) => {
       if (newValue === SORTING_ORDERS.DESC) {
         this._data.generatedResults.sort((a, b) => a.localeCompare(b));
@@ -153,12 +143,8 @@ export default class WordGeneratorApplication extends Application {
       this.render();
     });
 
-    this._data.folders.onChange((_, change, args) => {
-      this._persistData();
-      this.render();
-    });
-
-    this._data.generators.onChange((_, change, args) => {
+    // On **any** data change, persist data and re-render. 
+    this._data.onChange(() => {
       this._persistData();
       this.render();
     });
@@ -189,6 +175,7 @@ export default class WordGeneratorApplication extends Application {
       const dialog = await new DialogUtility().showSingleInputDialog({
         localizedTitle: game.i18n.localize("wg.folder.create"),
         localizedInputLabel: game.i18n.localize("wg.folder.name"),
+        modal: true,
       });
   
       if (dialog.confirmed !== true) return;
