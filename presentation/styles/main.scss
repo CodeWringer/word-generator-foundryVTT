@@ -540,6 +540,11 @@ i.stacked {
   }
 
   &-height {
+    &-regular {
+      height: 1.8rem;
+      line-height: 1.8rem;
+    }
+
     &-header {
       height: 2.3rem;
       line-height: 2.3rem;

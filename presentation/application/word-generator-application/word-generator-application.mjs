@@ -328,27 +328,26 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _activateListenersClipboardButtons(html) {
+    this._infoBubbleCopyToClipboard = new InfoBubble({
+      html: html,
+      parent: html,
+      autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
+    });
+
     html.find(".word-generator-generated-word").each((index, element) => {
       const jElement = $(element);
-      const cliboardButton = html.find(`#word-generator-clipboard-${index}`);
-      const jInput = jElement.find(".word-generator-generated-word-input");
+      const jCliboardButton = html.find(`#generated-word-${index}-copy-to-clipboard`);
+      const jInput = jElement.find(`input#generated-word-${index}-word`);
       jElement.mouseenter(() => {
-        cliboardButton.removeClass("hidden");
+        jCliboardButton.removeClass("hidden");
       });
       jElement.mouseleave(() => {
-        cliboardButton.addClass("hidden");
+        jCliboardButton.addClass("hidden");
       });
-      cliboardButton.click(() => {
+      jCliboardButton.click(() => {
         this._textToClipboard(html, jInput.val()).then((success) => {
           if (success === true) {
-            const infoBubble = new InfoBubble({
-              html: html,
-              parent: cliboardButton,
-              text: game.i18n.localize("wg.general.copy.success"),
-              autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
-              onHide: () => { infoBubble.remove(); },
-            });
-            infoBubble.show();
+            this._infoBubbleCopyToClipboard.show(jCliboardButton, game.i18n.localize("wg.general.copy.success"));
           }
         });
       });

@@ -108,19 +108,18 @@ contentListPresenter: {WordGeneratorListPresenter}
     <ul class="wg-unstyled-list wg-scrollable"
       id="content-area-2">
       {{#each generatedResults as |generatedResult index|}}
-      <div id="generated-word-{{index}}" class="wg-flex row wg-light">
-        <button 
-          id="word-generator-clipboard-{{index}}" 
-          class="wg-square hidden" 
-          type="button"
+      <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light word-generator-generated-word">
+        <a 
+          id="generated-word-{{index}}-copy-to-clipboard" 
+          class="wg-square wg-flex center wg-interactible hidden" 
           title="{{localize "wg.general.copy.toClipboard"}}"
         >
           <i class="far fa-clipboard"></i>
-        </button>
+        </a>
         <input 
           type="text"
           readonly="true"
-          id="{{index}}"
+          id="generated-word-{{index}}-word"
           value="{{generatedResult}}"
           class="wg-generated-word-input"
         >
