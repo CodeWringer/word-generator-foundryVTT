@@ -4,7 +4,7 @@ presenter: WordGeneratorItemPresenter
 <div class="wg-generator-item"
   id="{{presenter.id}}"
   >
-  <header class="wg-generator-item wg-flex row wg-dark wg-padding-6{{#if presenter.isExpanded}} open{{/if}}"
+  <header class="wg-generator-item wg-flex row wg-dark wg-padding-3 wg-height-header{{#if presenter.isExpanded}} open{{/if}}"
     id="{{presenter.id}}-header"
     draggable="true"
     >
@@ -33,12 +33,10 @@ presenter: WordGeneratorItemPresenter
       <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
     </h3>
     {{!-- Quick Actions --}}
-    <div class="wg-square wg-flex center">
-      <a class="wg-interactible wg-padding-6" 
-        id="{{presenter.id}}-generate">
-        <i class="fas fa-pen-nib"></i>
-      </a>
-    </div>
+    <a class="wg-square wg-flex center wg-interactible" 
+      id="{{presenter.id}}-generate">
+      <i class="fas fa-pen-nib"></i>
+    </a>
   </header>
   {{#if presenter.isExpanded}}
   <div class="wg-flex column wg-generator-item-content wg-dark">

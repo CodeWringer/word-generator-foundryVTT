@@ -7,7 +7,7 @@ contentListPresenter: {WordGeneratorListPresenter}
   {{!-- List of generators --}}
   <div class="wg-flex column wg-content-area">
     <div class="wg-dark wg-border-shadow-b">
-      <div class="wg-flex row" style="height: 2.3rem;">
+      <div class="wg-flex row wg-height-header">
         {{!-- Creation controls --}}
         {{!-- Create generator --}}
         <a class="wg-flex center row grow wg-border-box wg-light wg-margin-3" 
@@ -47,6 +47,14 @@ contentListPresenter: {WordGeneratorListPresenter}
           <i class="fas fa-sort-alpha-up"></i>
         </a>
       </div>
+      <div class="wg-flex row middle wg-height-header">
+        {{!-- Filter --}}
+        <div class="wg-square wg-height-header wg-flex center">
+          <i class="fas fa-search"></i>
+        </div>
+        <input id="search-generators" class="wg-light wg-border-box wg-text-align-center" type="search" name="search" value="" placeholder="{{localize "wg.generator.search"}}" autocomplete="off">
+        <a id="collapse-all-folders" class="wg-square wg-height-header wg-flex center wg-interactible" title="{{localize "wg.general.collapseAll"}}"><i class="fas fa-sort-amount-up fa-fw"></i></a>
+      </div>
     </div>
     {{!-- Generators and folders area --}}
     <div class="wg-scrollable wg-flex column grow"
@@ -61,7 +69,7 @@ contentListPresenter: {WordGeneratorListPresenter}
   {{!-- List of generated results --}}
   <div class="wg-flex column grow wg-content-area">
     <div class="wg-flex column wg-dark wg-border-shadow-b">
-      <div class="wg-flex row align-end middle" style="height: 2.3rem;">
+      <div class="wg-flex row align-end middle wg-height-header">
         <label 
           class="wg-flex align-center" 
           for="amountToGenerate"
@@ -79,7 +87,7 @@ contentListPresenter: {WordGeneratorListPresenter}
       </div>
       {{!-- Sorting controls --}}
       <div class="wg-flex row align-end">
-        <div class="wg-flex row" style="height: 2.3rem;">
+        <div class="wg-flex row wg-height-header">
           <a
             class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
             title="{{localize "wg.generator.sortAlphaDesc"}}"

@@ -538,7 +538,16 @@ i.stacked {
       display: none;
     }
   }
+
+  &-height {
+    &-header {
+      height: 2.3rem;
+      line-height: 2.3rem;
+    }
+  }
 }
+
+// Overrides
 
 input[type="text"],
 input[type="number"],
