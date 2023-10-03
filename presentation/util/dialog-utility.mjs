@@ -60,7 +60,7 @@ export default class DialogUtility {
             callback: () => { }
           }
         },
-        default: "cancel",
+        default: args.default ?? "cancel",
         render: html => { },
         close: html => {
           this._removeModalBackdrop();
@@ -108,7 +108,8 @@ export default class DialogUtility {
     return new Promise(async (resolve, reject) => {
       const dialog = await this.showConfirmationDialog({
         ...args,
-        content: content
+        content: content,
+        default: "confirm",
       });
 
       if (dialog.confirmed === true) {
@@ -144,7 +145,8 @@ export default class DialogUtility {
     return new Promise(async (resolve, reject) => {
       const dialog = await this.showConfirmationDialog({
         ...args,
-        content: content
+        content: content,
+        default: "confirm",
       });
 
       if (dialog.confirmed === true) {
