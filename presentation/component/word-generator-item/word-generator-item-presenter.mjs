@@ -137,10 +137,6 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       map: [
         {
-          element: html.find(`#${this.id}-sample-set-strategy-info`),
-          text: game.i18n.localize("wg.generator.sampleSet.infoHint"),
-        },
-        {
           element: html.find(`#${this.id}-target-length-min-info`),
           text: game.i18n.localize("wg.generator.targetLength.infoHint"),
         },
@@ -171,14 +167,6 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
         {
           element: html.find(`#${this.id}-seed-info`),
           text: game.i18n.localize("wg.generator.seed.infoHint"),
-        },
-        {
-          element: html.find(`#${this.id}-sequencing-strategy-info`),
-          text: game.i18n.localize("wg.generator.sequencingStrategy.infoHint"),
-        },
-        {
-          element: html.find(`#${this.id}-spelling-strategy-info`),
-          text: game.i18n.localize("wg.generator.spellingStrategy.infoHint"),
         },
       ]
     });

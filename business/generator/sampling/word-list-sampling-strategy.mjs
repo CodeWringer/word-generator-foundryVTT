@@ -40,7 +40,10 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   }
 
   /** @override */
-  get id() { return new WordListSamplingStrategyDefinition().id; }
+  get definitionId() { return new WordListSamplingStrategyDefinition().id; }
+
+  /** @override */
+  get id() { return this._id; }
 
   /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
@@ -50,6 +53,8 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
 
   /**
    * @param {Object} args
+   * @param {String | undefined} args.id ID of this strategy. 
+   * * By default, generates a new ID. 
    * @param {Application | undefined} args.application The parent application. 
    * * For pass-through to the presenter. 
    * @param {String | undefined} args.separator The separator sequence that is used to  
@@ -60,6 +65,7 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   constructor(args = {}) {
     super();
 
+    this._id = args.id ?? foundry.utils.randomID(16);
     this.separator = new ObservableField({ value: args.separator ?? "," });
     this.sampleSet = new ObservableField({ value: args.sampleSet ?? "" });
 
@@ -72,7 +78,7 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   /** @override */
   toDto() {
     return {
-      definitionId: new WordListSamplingStrategyDefinition().id,
+      definitionId: this.definitionId,
       settings: {
         separator: this.separator.value,
         sampleSet: this.sampleSet.value,

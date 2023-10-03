@@ -58,7 +58,7 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
       autoShowType: InfoBubbleAutoShowingTypes.MOUSE_ENTER,
       map: [
         {
-          element: html.find(`#${this.id}-info`),
+          element: html.find(`i#${this.id}-info`),
           text: ((this.activeStrategyField.value ?? {}).localizedInfoText ?? ""),
         },
       ]
@@ -67,10 +67,10 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
     html.find(`select#${this.id}`).change((data) => {
       const strategyId = $(data.target).val();
       const strategy = this.strategyDefinitions.find(it => it.id === strategyId);
-      this.activeStrategyField.value = strategy.newInstance();
+      this.activeStrategyField.value = strategy.newInstance({ id: this.entity.id });
     });
 
-    this.syncDropDownValue(html, this.id, this.activeStrategyField.value.id);
+    this.syncDropDownValue(html, this.id, this.activeStrategyField.value.definitionId);
 
     // Children
 

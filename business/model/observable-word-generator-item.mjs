@@ -95,9 +95,9 @@ export default class ObservableWordGeneratorItem {
     this.entropyEnd = new ObservableField({ value: args.entropyEnd ?? 0 });
     this.endingPickMode = new ObservableField({ value: args.endingPickMode ?? ENDING_PICK_MODES.RANDOM });
 
-    this.samplingStrategy = new ObservableField({ value: args.samplingStrategy ?? new WordListSamplingStrategy() });
-    this.sequencingStrategy = new ObservableField({ value: args.sequencingStrategy ?? new CharDepthSequencingStrategy() });
-    this.spellingStrategy = new ObservableField({ value: args.spellingStrategy ?? new NoneSpellingStrategy() });
+    this.samplingStrategy = new ObservableField({ value: args.samplingStrategy ?? new WordListSamplingStrategy({ id: `${this.id}-sampling` }) });
+    this.sequencingStrategy = new ObservableField({ value: args.sequencingStrategy ?? new CharDepthSequencingStrategy({ id: `${this.id}-sequencing` }) });
+    this.spellingStrategy = new ObservableField({ value: args.spellingStrategy ?? new NoneSpellingStrategy({ id: `${this.id}-spelling` }) });
 
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
     this.parent = new ObservableField({ value: args.parent });
@@ -168,7 +168,10 @@ export default class ObservableWordGeneratorItem {
     if (obj.samplingStrategy !== undefined && obj.samplingStrategy.definitionId !== undefined) {
       samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
         obj.samplingStrategy.definitionId,
-        obj.samplingStrategy.settings
+        {
+          ...obj.samplingStrategy.settings,
+          id: obj.id,
+        }
       );
     }
     
@@ -176,7 +179,10 @@ export default class ObservableWordGeneratorItem {
     if (obj.sequencingStrategy !== undefined && obj.sequencingStrategy.definitionId !== undefined) {
       sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
         obj.sequencingStrategy.definitionId,
-        obj.sequencingStrategy.settings
+        {
+          ...obj.sequencingStrategy.settings,
+          id: obj.id,
+        }
       );
     }
 
@@ -184,7 +190,10 @@ export default class ObservableWordGeneratorItem {
     if (obj.spellingStrategy !== undefined && obj.spellingStrategy.definitionId !== undefined) {
       spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
         obj.spellingStrategy.definitionId,
-        obj.spellingStrategy.settings
+        {
+          ...obj.spellingStrategy.settings,
+          id: obj.id,
+        }
       );
     }
 

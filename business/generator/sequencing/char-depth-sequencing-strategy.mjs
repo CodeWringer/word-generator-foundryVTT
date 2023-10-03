@@ -47,7 +47,10 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   }
 
   /** @override */
-  get id() { return new CharDepthSequencingStrategyDefinition().id; }
+  get definitionId() { return new CharDepthSequencingStrategyDefinition().id; }
+
+  /** @override */
+  get id() { return this._id; }
 
   /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
@@ -57,6 +60,8 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
 
   /**
    * @param {Object} args
+   * @param {String | undefined} args.id ID of this strategy. 
+   * * By default, generates a new ID. 
    * @param {Application | undefined} args.application The parent application. 
    * @param {Number | undefined} args.depth The depth of the look-back for the algorithm. 
    * Higher numbers result in results more similar to the provided sample set, 
@@ -72,6 +77,7 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   constructor(args = {}) {
     super();
 
+    this._id = args.id ?? foundry.utils.randomID(16);
     this.depth = new ObservableField({ value: args.depth ?? 1 });
     this.preserveCase = new ObservableField({ value: args.preserveCase ?? false });
 
@@ -84,7 +90,7 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   toDto() {
     return {
-      definitionId: new CharDepthSequencingStrategyDefinition().id,
+      definitionId: this.definitionId,
       settings: {
         depth: this.depth.value,
         preserveCase: this.preserveCase.value,

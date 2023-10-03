@@ -44,7 +44,10 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   }
 
   /** @override */
-  get id() { return new DelimiterSequencingStrategyDefinition().id; }
+  get definitionId() { return new DelimiterSequencingStrategyDefinition().id; }
+
+  /** @override */
+  get id() { return this._id; }
 
   /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
@@ -54,6 +57,8 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
 
   /**
    * @param {Object} args
+   * @param {String | undefined} args.id ID of this strategy. 
+   * * By default, generates a new ID. 
    * @param {String | undefined} args.delimiter This delimiter is used to separate chars into sequences. 
    * * default `","`
    * @param {Boolean | undefined} args.preserveCase If true, will not transform found sequences 
@@ -63,6 +68,7 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   constructor(args = {}) {
     super();
 
+    this._id = args.id ?? foundry.utils.randomID(16);
     this.delimiter = new ObservableField({ value: args.delimiter ?? "," });
     this.preserveCase = new ObservableField({ value: args.preserveCase ?? false });
 
@@ -75,7 +81,7 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
   /** @override */
   toDto() {
     return {
-      definitionId: new DelimiterSequencingStrategyDefinition().id,
+      definitionId: this.definitionId,
       settings: {
         delimiter: this.delimiter.value,
         preserveCase: this.preserveCase.value,

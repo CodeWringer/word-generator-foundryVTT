@@ -33,7 +33,10 @@ export class NoneSpellingStrategy extends AbstractSpellingStrategy {
   }
 
   /** @override */
-  get id() { return new NoneSpellingStrategyDefinition().id; }
+  get definitionId() { return new NoneSpellingStrategyDefinition().id; }
+
+  /** @override */
+  get id() { return this._id; }
 
   /** @override */
   get settingsPresenter() { return this._settingsPresenter; }
@@ -43,11 +46,15 @@ export class NoneSpellingStrategy extends AbstractSpellingStrategy {
 
   /**
    * @param {Object} args
+   * @param {String | undefined} args.id ID of this strategy. 
+   * * By default, generates a new ID. 
    * @param {Application | undefined} args.application The parent application. 
    * * For pass-through to the presenter. 
    */
   constructor(args = {}) {
     super();
+
+    this._id = args.id ?? foundry.utils.randomID(16);
 
     this._settingsPresenter = new NoneSpellingStrategySettingsPresenter({
       application: args.application,
@@ -58,7 +65,7 @@ export class NoneSpellingStrategy extends AbstractSpellingStrategy {
   /** @override */
   toDto() {
     return {
-      definitionId: new NoneSpellingStrategy().id,
+      definitionId: this.definitionId,
       settings: {},
     }
   }

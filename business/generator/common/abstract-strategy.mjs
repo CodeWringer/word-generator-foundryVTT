@@ -30,6 +30,15 @@ export default class AbstractStrategy {
   get id () { throw new Error("Not implemented"); }
 
   /**
+   * ID of this strategy's definition. 
+   * 
+   * @type {String}
+   * @readonly
+   * @abstract
+   */
+  get definitionId () { throw new Error("Not implemented"); }
+
+  /**
    * Returns the presenter of this strategy instance's settings. 
    * 
    * This presenter must serve both as a means of displaying and allowing 
