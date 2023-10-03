@@ -182,6 +182,21 @@ export default class ObservableWordGeneratorFolder {
   }
 
   /**
+   * Returns all generators contained in this folder and its chil folders. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getAllGenerators() {
+    let generators = this.items.getAll();
+
+    for (const child of this.children.getAll()) {
+      generators = generators.concat(child.getAllGenerators());
+    }
+
+    return generators;
+  }
+
+  /**
    * Returns true, if this folder is a direct or indirect child of the 
    * given other folder. 
    * 
@@ -196,6 +211,26 @@ export default class ObservableWordGeneratorFolder {
       return false;
     } else {
       return this.parent.value.isChildOf(otherFolder);
+    }
+  }
+
+  /**
+   * Collapses this folder and optionally all child folders and generators. 
+   * 
+   * @param {Boolean | undefined} includeChildren If `true`, also collapses all child 
+   * folders and generators. 
+   * * default `false`
+   */
+  collapse(includeChildren = false) {
+    this.isExpanded.value = false;
+
+    if (includeChildren === true) {
+      for (const child of this.children.getAll()) {
+        child.collapse(includeChildren);
+      }
+      for (const generator of this.items.getAll()) {
+        generator.isExpanded.value = false;
+      }
     }
   }
 }

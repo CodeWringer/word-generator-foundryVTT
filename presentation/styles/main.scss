@@ -331,6 +331,10 @@ i.stacked {
     }
   }
 
+  &-text-align-center {
+    text-align: center;
+  }
+
   // Specific element styles
 
   &-application {
@@ -461,5 +465,9 @@ input[type="search"] {
   &.wg-light {
     background-color: $c-bg-lightest;
     color: $c-text-dark;
+  }
+
+  &.wg-text-align-center {
+    text-align: center;
   }
 }

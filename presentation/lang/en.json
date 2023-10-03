@@ -20,6 +20,7 @@
       "cancel": "Cancel",
       "confirm": "Confirm",
       "confirmDeletionOf": "Confirm deletion of '%s'",
+      "collapseAll": "Collapse All",
       "save": "Save",
       "moveToRootLevel": "Move To Root Level"
     },
@@ -31,6 +32,7 @@
       "edit": "Edit Generator",
       "generate": "Generate",
       "name": "Generator Name",
+      "search": "Search Generators",
       "targetLength": {
         "infoHint": "The generator will try to keep resulting word length within this boundary, but no guarantee is made.",
         "min": "Target length minimum",

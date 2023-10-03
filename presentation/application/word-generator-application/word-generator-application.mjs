@@ -10,6 +10,7 @@ import ObservableWordGeneratorApplicationDataDataSource from "../../../data/data
 import ObservableWordGeneratorApplicationData from "../../../business/model/observable-word-generator-application-data.mjs"
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs"
 import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs"
+import { SEARCH_MODES, Search, SearchItem } from "../../../business/search/search.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -195,6 +196,23 @@ export default class WordGeneratorApplication extends Application {
       this._sort(SORTING_ORDERS.ASC);
     });
 
+    // Generator search
+    html.find("#search-generators").change((data) => {
+      this._data.generatorSearchTerm.value = $(data.target).val();
+    });
+    // Collapse all folders
+    html.find("#collapse-all-folders").click(() => {
+      this.suspendRendering = true;
+      for (const folder of this._data.folders.getAll()) {
+        folder.collapse(true);
+      }
+      for (const generator of this._data.generators.getAll()) {
+        generator.isExpanded.value = false;
+      }
+      this.suspendRendering = false;
+      this.render();
+    });
+
     // Generation count
     html.find("#amountToGenerate").change((data) => {
       const amountToGenerate = parseInt($(data.target).val());
@@ -233,6 +251,7 @@ export default class WordGeneratorApplication extends Application {
       data: this._data,
       generatedResults: this._data.generatedResults.getAll(),
       contentListPresenter: this._contentListPresenter,
+      generatorSearchTerm: this._data.generatorSearchTerm.value ?? "",
     }
   }
 
@@ -299,14 +318,45 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _regeneratePresenters() {
-    const folderPresenters = this._data.folders.getAll().map(folder => 
+    let foldersToShow = [];
+    let generatorsToShow = [];
+
+    const searchTerm = this._data.generatorSearchTerm.value.trim();
+    if (searchTerm.length > 0) {
+      // Show only filtered generators. 
+
+      let flatGeneratorList = this._data.generators.getAll();
+      for (const folder of this._data.folders.getAll()) {
+        flatGeneratorList = flatGeneratorList.concat(folder.getAllGenerators());
+      }
+
+      const searchItems = flatGeneratorList.map(generator => 
+        new SearchItem({
+          id: generator.id,
+          term: generator.name.value,
+        })
+      );
+
+      const searchResults = new Search().search(searchItems, searchTerm, SEARCH_MODES.FUZZY);
+      const relevantSearchResults = searchResults.filter(it => it.score > 0);
+      generatorsToShow = relevantSearchResults.map(result => 
+        flatGeneratorList.find(generator => generator.id === result.id)
+      );
+    } else {
+      // Show all folders and generators. 
+
+      foldersToShow = this._data.folders.getAll();
+      generatorsToShow = this._data.generators.getAll();
+    }
+
+    const folderPresenters = foldersToShow.map(folder => 
       new WordGeneratorFolderPresenter({
         application: this,
         entity: folder
       })
     );
 
-    const generatorPresenters = this._data.generators.getAll().map(generator => 
+    const generatorPresenters = generatorsToShow.map(generator => 
       new WordGeneratorItemPresenter({
         application: this,
         entity: generator
