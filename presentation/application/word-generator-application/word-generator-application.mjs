@@ -133,16 +133,6 @@ export default class WordGeneratorApplication extends Application {
     this._regeneratePresenters();
 
     // Observe data changes. 
-    this._data.amountToGenerate.onChange((_, oldValue, newValue) => {
-      this._persistData();
-      this.render();
-    });
-
-    this._data.generatedResults.onChange(() => {
-      this._persistData();
-      this.render();
-    });
-
     this._data.resultsSortMode.onChange((_, oldValue, newValue) => {
       if (newValue === SORTING_ORDERS.DESC) {
         this._data.generatedResults.sort((a, b) => a.localeCompare(b));
@@ -154,12 +144,8 @@ export default class WordGeneratorApplication extends Application {
       this.render();
     });
 
-    this._data.folders.onChange((_, change, args) => {
-      this._persistData();
-      this.render();
-    });
-
-    this._data.generators.onChange((_, change, args) => {
+    // On **any** data change, persist data and re-render. 
+    this._data.onChange(() => {
       this._persistData();
       this.render();
     });
@@ -168,8 +154,6 @@ export default class WordGeneratorApplication extends Application {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
-
-    const thiz = this;
 
     this._contentAreaElement1 = html.find('#content-area-1');
     this._contentAreaElement1.scrollTop(this._currentScrollGeneratorList);
@@ -192,6 +176,7 @@ export default class WordGeneratorApplication extends Application {
       const dialog = await new DialogUtility().showSingleInputDialog({
         localizedTitle: game.i18n.localize("wg.folder.create"),
         localizedInputLabel: game.i18n.localize("wg.folder.name"),
+        modal: true,
       });
   
       if (dialog.confirmed !== true) return;
@@ -393,27 +378,26 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _activateListenersClipboardButtons(html) {
+    this._infoBubbleCopyToClipboard = new InfoBubble({
+      html: html,
+      parent: html,
+      autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
+    });
+
     html.find(".word-generator-generated-word").each((index, element) => {
       const jElement = $(element);
-      const cliboardButton = html.find(`#word-generator-clipboard-${index}`);
-      const jInput = jElement.find(".word-generator-generated-word-input");
+      const jCliboardButton = html.find(`#generated-word-${index}-copy-to-clipboard`);
+      const jInput = jElement.find(`input#generated-word-${index}-word`);
       jElement.mouseenter(() => {
-        cliboardButton.removeClass("hidden");
+        jCliboardButton.removeClass("hidden");
       });
       jElement.mouseleave(() => {
-        cliboardButton.addClass("hidden");
+        jCliboardButton.addClass("hidden");
       });
-      cliboardButton.click(() => {
+      jCliboardButton.click(() => {
         this._textToClipboard(html, jInput.val()).then((success) => {
           if (success === true) {
-            const infoBubble = new InfoBubble({
-              html: html,
-              parent: cliboardButton,
-              text: game.i18n.localize("wg.general.copy.success"),
-              autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
-              onHide: () => { infoBubble.remove(); },
-            });
-            infoBubble.show();
+            this._infoBubbleCopyToClipboard.show(jCliboardButton, game.i18n.localize("wg.general.copy.success"));
           }
         });
       });
