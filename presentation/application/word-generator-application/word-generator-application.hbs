@@ -2,6 +2,7 @@
 data: {WordGeneratorApplicationData}
 generatedResults: {Array<String>}
 contentListPresenter: {WordGeneratorListPresenter}
+generatorSearchTerm: {String}
 --}}
 <form class="wg-application-form">
   {{!-- List of generators --}}
@@ -52,7 +53,7 @@ contentListPresenter: {WordGeneratorListPresenter}
         <div class="wg-square wg-height-header wg-flex center">
           <i class="fas fa-search"></i>
         </div>
-        <input id="search-generators" class="wg-light wg-border-box wg-text-align-center" type="search" name="search" value="" placeholder="{{localize "wg.generator.search"}}" autocomplete="off">
+        <input id="search-generators" class="wg-light wg-border-box wg-text-align-center" type="search" name="search" value="{{generatorSearchTerm}}" placeholder="{{localize "wg.generator.search"}}" autocomplete="off">
         <a id="collapse-all-folders" class="wg-square wg-height-header wg-flex center wg-interactible" title="{{localize "wg.general.collapseAll"}}"><i class="fas fa-sort-amount-up fa-fw"></i></a>
       </div>
     </div>

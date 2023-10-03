@@ -182,6 +182,21 @@ export default class ObservableWordGeneratorFolder {
   }
 
   /**
+   * Returns all generators contained in this folder and its chil folders. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getAllGenerators() {
+    const generators = this.items.getAll();
+
+    for (const child of this.children.getAll()) {
+      generators.concat(child.getAllGenerators());
+    }
+
+    return generators;
+  }
+
+  /**
    * Returns true, if this folder is a direct or indirect child of the 
    * given other folder. 
    * 

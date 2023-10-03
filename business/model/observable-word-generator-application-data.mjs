@@ -12,7 +12,7 @@ import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
  * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders The collection of root-level folders. 
  * @property {ObservableCollection<String>} generatedResults The generated results. 
  * * Not persisted
- * @property {ObservableField<String>} generatorFilter The current generator filter to apply. 
+ * @property {ObservableField<String>} generatorSearchTerm The current generator filter to apply. 
  * * If not empty, only the generators whose name partially or fully matches this string. 
  * * Not persisted
  */
@@ -25,7 +25,7 @@ export default class ObservableWordGeneratorApplicationData {
    * * Default `SORTING_ORDERS.DESC`
    * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators The collection of root-level generators. 
    * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders The collection of root-level folders. 
-   * @param {String | undefined} args.generatorFilter The current generator filter to apply. 
+   * @param {String | undefined} args.generatorSearchTerm The current generator filter to apply. 
    * * If not empty, only the generators whose name partially or fully matches this string. 
    */
   constructor(args = {}) {
@@ -34,7 +34,7 @@ export default class ObservableWordGeneratorApplicationData {
     this.folders = new ObservableCollection({ elements: (args.folders ?? []) });
     this.generators = new ObservableCollection({ elements: (args.generators ?? []) });
     this.generatedResults = new ObservableCollection();
-    this.generatorFilter = new ObservableField({ value: args.generatorFilter ?? "" });
+    this.generatorSearchTerm = new ObservableField({ value: args.generatorSearchTerm ?? "" });
 
     this.folders.onChange((collection, change, args) => {
       if (change === CollectionChangeTypes.ADD) {
@@ -64,7 +64,7 @@ export default class ObservableWordGeneratorApplicationData {
       this.generators,
       this.folders,
       this.generatedResults,
-      this.generatorFilter,
+      this.generatorSearchTerm,
     ]);
   }
   
