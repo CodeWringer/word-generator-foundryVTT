@@ -14,9 +14,13 @@ export default class RandomSeeded {
   }
 
   /**
-   * Returns a new pseudo-random number between 0 and 1 (inclusive). 
+   * Returns a new pseudo-random number between min and max (inclusive). 
+   * 
    * @param {Number | undefined} min Optional. Lower boundary. 
+   * * default `0`
    * @param {Number | undefined} max Optional. Upper boundary. 
+   * * default `1`
+   * 
    * @returns {Number}
    */
   generate(min, max) {
@@ -33,8 +37,31 @@ export default class RandomSeeded {
   }
 
   /**
+   * Generates and returns an ID, in the form of a string, with the given 
+   * length in characters. 
+   * 
+   * @param {Number} length The string length to generate. 
+   * 
+   * @returns {String} The generated ID. 
+   */
+  randomID(length) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const result = [];
+    for (let count = 0; count < length; count++) {
+      const charIndex = parseInt(this.generate(0, chars.length - 1));
+      result.push(chars[charIndex]);
+    }
+    return result.join("");
+  }
+
+  /**
    * Generates a seed. 
+   * 
    * @param {String} str 
+   * 
+   * @returns {Number}
+   * 
+   * @private
    */
   _xmur3(str) {
     for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
@@ -49,7 +76,12 @@ export default class RandomSeeded {
 
   /**
    * Generates a seeded random number. 
+   * 
    * @param {Function<Any>} seed The seed. 
+   * 
+   * @returns {Number}
+   * 
+   * @private
    */
   _mulberry32(seed) {
     return function () {

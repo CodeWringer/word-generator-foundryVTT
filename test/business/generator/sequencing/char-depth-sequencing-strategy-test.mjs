@@ -1,6 +1,21 @@
 import { CharDepthSequencingStrategy } from "../../../../business/generator/sequencing/char-depth-sequencing-strategy.mjs";
+import RandomSeeded from "../../../../business/util/random-seed.mjs";
 
 describe('CharDepthSequencingStrategy', function() {
+  this.beforeAll(() => {
+    globalThis.foundry = {
+      utils: {
+        randomID(length) {
+          return new RandomSeeded("test").randomID(length);
+        }
+      }
+    }
+  });
+
+  this.afterAll(() => {
+    globalThis.foundry = undefined;
+  });
+
   describe('getSequencesOfSample', function() {
     it('Correctly determines sequences of "Bob" at depth 1', async () => {
       // Given

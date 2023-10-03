@@ -1,7 +1,22 @@
 import SequenceProbabilityBuilder from "../../../../business/generator/probability-building/sequence-probability-builder.mjs";
 import Sequence from "../../../../business/generator/sequencing/sequence.mjs";
+import RandomSeeded from "../../../../business/util/random-seed.mjs";
 
 describe('SequenceProbabilityBuilder', function() {
+  this.beforeAll(() => {
+    globalThis.foundry = {
+      utils: {
+        randomID(length) {
+          return new RandomSeeded("test").randomID(length);
+        }
+      }
+    }
+  });
+
+  this.afterAll(() => {
+    globalThis.foundry = undefined;
+  });
+
   describe('build', function() {
     it('builds probabilities for ["bob"] correctly', function() {
       // Given

@@ -1,6 +1,21 @@
 import { DelimiterSequencingStrategy } from "../../../../business/generator/sequencing/delimiter-sequencing-strategy.mjs";
+import RandomSeeded from "../../../../business/util/random-seed.mjs";
 
 describe('DelimiterSequencingStrategy', function() {
+  this.beforeAll(() => {
+    globalThis.foundry = {
+      utils: {
+        randomID(length) {
+          return new RandomSeeded("test").randomID(length);
+        }
+      }
+    }
+  });
+
+  this.afterAll(() => {
+    globalThis.foundry = undefined;
+  });
+
   describe('getSequencesOfSample', function() {
     it('Correctly determines sequences of "Bob Steve Alice"', function() {
       // Given

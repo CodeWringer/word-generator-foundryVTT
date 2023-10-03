@@ -7,9 +7,25 @@ import { CharDepthSequencingStrategy } from '../business/generator/sequencing/ch
 import { ENDING_PICK_MODES } from '../business/generator/concatenation/sequence-concatenator.mjs';
 import { WordListSamplingStrategy } from '../business/generator/sampling/word-list-sampling-strategy.mjs';
 import { NoneSpellingStrategy } from '../business/generator/postprocessing/none-spelling-strategy.mjs';
+import RandomSeeded from '../business/util/random-seed.mjs';
 
 describe('WordGenerator', function() {
   const testSeed = "Test1234567890";
+
+  this.beforeAll(() => {
+    globalThis.foundry = {
+      utils: {
+        randomID(length) {
+          return new RandomSeeded(testSeed).randomID(length);
+        }
+      }
+    }
+  });
+
+  this.afterAll(() => {
+    globalThis.foundry = undefined;
+  });
+  
 
   describe('generate', function() {
     it('should generate 1 word without spelling strategy', async() => {
