@@ -187,10 +187,10 @@ export default class ObservableWordGeneratorFolder {
    * @returns {Array<ObservableWordGeneratorItem>}
    */
   getAllGenerators() {
-    const generators = this.items.getAll();
+    let generators = this.items.getAll();
 
     for (const child of this.children.getAll()) {
-      generators.concat(child.getAllGenerators());
+      generators = generators.concat(child.getAllGenerators());
     }
 
     return generators;

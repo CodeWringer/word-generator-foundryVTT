@@ -101,52 +101,118 @@ export class Search {
    */
   search(searchItems, searchTerm, searchMode = SEARCH_MODES.STRICT_CASE_INSENSITIVE) {
     const results = [];
+    const deviationTolerance = 2;
 
     for (const searchItem of searchItems) {
-      let score = 0;
-      let deviation = 0;
+      let totalScore = 0;
+      let totalDeviation = 0;
       let compareCharacterIndex = 0;
       let compareCharacter = searchTerm[compareCharacterIndex];
 
-      // Test every single character... 
-      for (const c of searchItem.term) {
-        let characterScore = 0;
-        
-        if (c.toLowerCase() == compareCharacter.toLowerCase()) {
-          // Matching character found. 
+      // The score per matching run. Will only be added to the total score, 
+      // when a matching run is concluded successfully. 
+      let runScore = 0;
+      // The deviation per matching run. 
+      let runDeviation = 0;
+      // Is true, if there is currently a matching run ongoing. 
+      let matchingRunBegun = false;
 
-          if (c === compareCharacter) {
-            // Correct casing.
-            characterScore = this.caseCorrectScore;
-          } else {
-            // Incorrect casing.
-            characterScore = this.caseIncorrectScore;
+      // Test every single character... 
+      for (const char of searchItem.term) {
+        const charMatch = this._matchCharacter(char, compareCharacter, searchMode, runDeviation, deviationTolerance, matchingRunBegun);
+        if (charMatch.success === true) {
+          compareCharacterIndex++;
+          matchingRunBegun = true;
+          runScore += charMatch.score;
+          
+          if (charMatch.deviates === true) {
+            runDeviation++;
           }
 
-          // For the next character comparison, compare with the next character 
-          // of the search term. 
-          compareCharacterIndex++;
-          if (compareCharacterIndex >= searchTerm.length) break;
-          compareCharacter = searchTerm[compareCharacterIndex];
+          if (compareCharacterIndex >= searchTerm.length) {
+            // Matching run concluded with success. 
+            totalScore += runScore;
+            totalDeviation += runDeviation
+            compareCharacterIndex = 0;
+            runScore = 0;
+            runDeviation = 0;
+            matchingRunBegun = false;
+          }
+        } else {
+          compareCharacterIndex = 0;
+          runScore = 0;
+          runDeviation = 0;
+          matchingRunBegun = false;
         }
-
-        if (searchMode === SEARCH_MODES.STRICT_CASE_SENSITIVE && characterScore !== this.caseCorrectScore) {
-          continue;
-        } else if (searchMode === SEARCH_MODES.STRICT_CASE_INSENSITIVE && characterScore === 0) {
-          continue;
-        }
-        
-        score += characterScore;
+        compareCharacter = searchTerm[compareCharacterIndex];
       }
 
       results.push(new SearchResult({
         id: searchItem.id,
         term: searchItem.term,
-        score: score,
-        deviation: deviation,
+        score: totalScore,
+        deviation: totalDeviation,
       }));
     }
 
-    return results.sort((a, b) => a.score > b.score);
+    results.sort((a, b) => {
+      if (a.score < b.score) return 1;
+      else if (a.score > b.score) return -1;
+      else return 0;
+    });
+
+    return results;
+  }
+
+  /**
+   * Tries to match the given character
+   * 
+   * @param {String} char The character to test. 
+   * @param {String} compareCharacter The character to match against. 
+   * @param {SEARCH_MODES} searchMode The search mode. 
+   * @param {Number} runDeviation The deviation during the current matching run. 
+   * @param {Number} deviationTolerance The maximum deviation. 
+   * If the `char` does not match and the search mode is `SEARCH_MODES.FUZZY`, 
+   * then the character may still be considered a match, if it is within the 
+   * given `deviationTolerance`. 
+   * @param {Boolean} matchingRunBegun If `true`, this means a previously tested 
+   * character was successfully matched. Only if this is true, will deviation 
+   * be considered. 
+   * 
+   * @returns {Object} `{ success: Boolean, score: Number, deviates: Boolean }`
+   * 
+   * @private
+   */
+  _matchCharacter(char, compareCharacter, searchMode, runDeviation, deviationTolerance, matchingRunBegun) {
+    if (char == compareCharacter) {
+      return {
+        success: true,
+        score: this.caseCorrectScore,
+        deviates: false,
+      };
+    } else if (char.toLowerCase() == compareCharacter.toLowerCase()) {
+      if (searchMode === SEARCH_MODES.STRICT_CASE_INSENSITIVE 
+        || searchMode === SEARCH_MODES.FUZZY) {
+        return {
+          success: true,
+          score: this.caseIncorrectScore,
+          deviates: false,
+        };
+      }
+    } else if (matchingRunBegun === true && runDeviation + 1 <= deviationTolerance) {
+      if (searchMode === SEARCH_MODES.FUZZY) {
+        return {
+          success: true,
+          score: 0,
+          deviates: true,
+        };
+      }
+    }
+
+    return {
+      success: false,
+      score: 0,
+      deviates: false,
+    };
   }
 }

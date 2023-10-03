@@ -325,9 +325,9 @@ export default class WordGeneratorApplication extends Application {
     if (searchTerm.length > 0) {
       // Show only filtered generators. 
 
-      const flatGeneratorList = this._data.generators.getAll();
+      let flatGeneratorList = this._data.generators.getAll();
       for (const folder of this._data.folders.getAll()) {
-        flatGeneratorList.concat(folder.getAllGenerators());
+        flatGeneratorList = flatGeneratorList.concat(folder.getAllGenerators());
       }
 
       const searchItems = flatGeneratorList.map(generator => 
