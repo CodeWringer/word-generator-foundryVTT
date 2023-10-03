@@ -198,4 +198,24 @@ export default class ObservableWordGeneratorFolder {
       return this.parent.value.isChildOf(otherFolder);
     }
   }
+
+  /**
+   * Collapses this folder and optionally all child folders and generators. 
+   * 
+   * @param {Boolean | undefined} includeChildren If `true`, also collapses all child 
+   * folders and generators. 
+   * * default `false`
+   */
+  collapse(includeChildren = false) {
+    this.isExpanded.value = false;
+
+    if (includeChildren === true) {
+      for (const child of this.children.getAll()) {
+        child.collapse(includeChildren);
+      }
+      for (const generator of this.items.getAll()) {
+        generator.isExpanded.value = false;
+      }
+    }
+  }
 }

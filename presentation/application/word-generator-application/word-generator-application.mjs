@@ -210,6 +210,23 @@ export default class WordGeneratorApplication extends Application {
       this._sort(SORTING_ORDERS.ASC);
     });
 
+    // Generator search
+    html.find("#search-generators").change((data) => {
+      this._data.generatorFilter.value = $(data.target).val();
+    });
+    // Collapse all folders
+    html.find("#collapse-all-folders").click(() => {
+      this.suspendRendering = true;
+      for (const folder of this._data.folders.getAll()) {
+        folder.collapse(true);
+      }
+      for (const generator of this._data.generators.getAll()) {
+        generator.isExpanded.value = false;
+      }
+      this.suspendRendering = false;
+      this.render();
+    });
+
     // Generation count
     html.find("#amountToGenerate").change((data) => {
       const amountToGenerate = parseInt($(data.target).val());
