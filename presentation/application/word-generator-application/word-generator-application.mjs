@@ -168,8 +168,6 @@ export default class WordGeneratorApplication extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
-    const thiz = this;
-
     this._contentAreaElement1 = html.find('#content-area-1');
     this._contentAreaElement1.scrollTop(this._currentScrollGeneratorList);
     
