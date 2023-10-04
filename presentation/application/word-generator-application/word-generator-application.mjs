@@ -69,9 +69,8 @@ export default class WordGeneratorApplication extends Application {
    * The application working data. 
    * 
    * @type {ObservableWordGeneratorApplicationData}
-   * @private
    */
-  _data = new ObservableWordGeneratorApplicationData();
+  data = new ObservableWordGeneratorApplicationData();
 
   /**
    * The presenter of the folders and generators.
@@ -128,16 +127,16 @@ export default class WordGeneratorApplication extends Application {
   constructor() {
     super();
 
-    this._data = new ObservableWordGeneratorApplicationDataDataSource().get(game.userId);
+    this.data = new ObservableWordGeneratorApplicationDataDataSource().get(game.userId);
 
     this._regeneratePresenters();
 
     // Observe data changes. 
-    this._data.resultsSortMode.onChange((_, oldValue, newValue) => {
+    this.data.resultsSortMode.onChange((_, oldValue, newValue) => {
       if (newValue === SORTING_ORDERS.DESC) {
-        this._data.generatedResults.sort((a, b) => a.localeCompare(b));
+        this.data.generatedResults.sort((a, b) => a.localeCompare(b));
       } else {
-        this._data.generatedResults.sort((a, b) => b.localeCompare(a));
+        this.data.generatedResults.sort((a, b) => b.localeCompare(a));
       }
 
       this._persistData();
@@ -145,7 +144,7 @@ export default class WordGeneratorApplication extends Application {
     });
 
     // On **any** data change, persist data and re-render. 
-    this._data.onChange(() => {
+    this.data.onChange(() => {
       this._persistData();
       this.render();
     });
@@ -168,7 +167,7 @@ export default class WordGeneratorApplication extends Application {
       const newGenerator = new ObservableWordGeneratorItem({
         name: game.i18n.localize("wg.generator.defaultName"),
       });
-      this._data.generators.add(newGenerator);
+      this.data.generators.add(newGenerator);
     });
 
     // Folder creation
@@ -185,7 +184,7 @@ export default class WordGeneratorApplication extends Application {
       const newFolder = new ObservableWordGeneratorFolder({
         name: dialog.input,
       });
-      this._data.folders.add(newFolder);
+      this.data.folders.add(newFolder);
     });
 
     // Sorting word generators
@@ -198,15 +197,15 @@ export default class WordGeneratorApplication extends Application {
 
     // Generator search
     html.find("#search-generators").change((data) => {
-      this._data.generatorSearchTerm.value = $(data.target).val();
+      this.data.generatorSearchTerm.value = $(data.target).val();
     });
     // Collapse all folders
     html.find("#collapse-all-folders").click(() => {
       this.suspendRendering = true;
-      for (const folder of this._data.folders.getAll()) {
+      for (const folder of this.data.folders.getAll()) {
         folder.collapse(true);
       }
-      for (const generator of this._data.generators.getAll()) {
+      for (const generator of this.data.generators.getAll()) {
         generator.isExpanded.value = false;
       }
       this.suspendRendering = false;
@@ -216,23 +215,23 @@ export default class WordGeneratorApplication extends Application {
     // Generation count
     html.find("#amountToGenerate").change((data) => {
       const amountToGenerate = parseInt($(data.target).val());
-      this._data.amountToGenerate.value = amountToGenerate;
+      this.data.amountToGenerate.value = amountToGenerate;
     });
 
     // Sorting result list
     const resultsSortDescButtonElement = html.find("#results-move-sort-alpha-desc");
     resultsSortDescButtonElement.click(() => {
-      this._data.resultsSortMode.value = SORTING_ORDERS.DESC;
+      this.data.resultsSortMode.value = SORTING_ORDERS.DESC;
     });
-    if (this._data.resultsSortMode.value === SORTING_ORDERS.DESC) {
+    if (this.data.resultsSortMode.value === SORTING_ORDERS.DESC) {
       resultsSortDescButtonElement.addClass("active");
     }
 
     const resultsSortAscButtonElement = html.find("#results-move-sort-alpha-asc");
     resultsSortAscButtonElement.click(() => {
-      this._data.resultsSortMode.value = SORTING_ORDERS.ASC;
+      this.data.resultsSortMode.value = SORTING_ORDERS.ASC;
     });
-    if (this._data.resultsSortMode.value === SORTING_ORDERS.ASC) {
+    if (this.data.resultsSortMode.value === SORTING_ORDERS.ASC) {
       resultsSortAscButtonElement.addClass("active");
     }
 
@@ -248,10 +247,10 @@ export default class WordGeneratorApplication extends Application {
   async getData(options) {
     this._regeneratePresenters();
     return {
-      data: this._data,
-      generatedResults: this._data.generatedResults.getAll(),
+      data: this.data,
+      generatedResults: this.data.generatedResults.getAll(),
       contentListPresenter: this._contentListPresenter,
-      generatorSearchTerm: this._data.generatorSearchTerm.value ?? "",
+      generatorSearchTerm: this.data.generatorSearchTerm.value ?? "",
     }
   }
 
@@ -279,7 +278,7 @@ export default class WordGeneratorApplication extends Application {
    * @returns {ObservableWordGeneratorFolder | undefined}
    */
   getFolderById(id) {
-    for (const folder of this._data.folders.getAll()) {
+    for (const folder of this.data.folders.getAll()) {
       const r = folder.getFolderById(id);
       if (r !== undefined) {
         return r;
@@ -298,12 +297,12 @@ export default class WordGeneratorApplication extends Application {
    * @returns {ObservableWordGeneratorItem | undefined}
    */
   getGeneratorById(id) {
-    for (const generator of this._data.generators.getAll()) {
+    for (const generator of this.data.generators.getAll()) {
       if (generator.id === id) {
         return generator;
       }
     }
-    for (const folder of this._data.folders.getAll()) {
+    for (const folder of this.data.folders.getAll()) {
       const r = folder.getGeneratorById(id);
       if (r !== undefined) {
         return r;
@@ -321,12 +320,12 @@ export default class WordGeneratorApplication extends Application {
     let foldersToShow = [];
     let generatorsToShow = [];
 
-    const searchTerm = this._data.generatorSearchTerm.value.trim();
+    const searchTerm = this.data.generatorSearchTerm.value.trim();
     if (searchTerm.length > 0) {
       // Show only filtered generators. 
 
-      let flatGeneratorList = this._data.generators.getAll();
-      for (const folder of this._data.folders.getAll()) {
+      let flatGeneratorList = this.data.generators.getAll();
+      for (const folder of this.data.folders.getAll()) {
         flatGeneratorList = flatGeneratorList.concat(folder.getAllGenerators());
       }
 
@@ -345,8 +344,8 @@ export default class WordGeneratorApplication extends Application {
     } else {
       // Show all folders and generators. 
 
-      foldersToShow = this._data.folders.getAll();
-      generatorsToShow = this._data.generators.getAll();
+      foldersToShow = this.data.folders.getAll();
+      generatorsToShow = this.data.generators.getAll();
     }
 
     const folderPresenters = foldersToShow.map(folder => 
@@ -410,7 +409,7 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _persistData() {
-    new ObservableWordGeneratorApplicationDataDataSource().set(game.userId, this._data);
+    new ObservableWordGeneratorApplicationDataDataSource().set(game.userId, this.data);
   }
 
   /**
@@ -423,11 +422,11 @@ export default class WordGeneratorApplication extends Application {
     const sortByNameDesc = (a, b) => a.name.value.localeCompare(b.name.value);
 
     if (sortingOrder === SORTING_ORDERS.ASC) {
-      this._data.folders.sort(sortByNameAsc);
-      this._data.generators.sort(sortByNameAsc);
+      this.data.folders.sort(sortByNameAsc);
+      this.data.generators.sort(sortByNameAsc);
     } else {
-      this._data.folders.sort(sortByNameDesc);
-      this._data.generators.sort(sortByNameDesc);
+      this.data.folders.sort(sortByNameDesc);
+      this.data.generators.sort(sortByNameDesc);
     }
   }
 

@@ -121,7 +121,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
           // Remove from origin. 
           if (folderToNest.parent.value === undefined) {
-            this.application._data.folders.remove(folderToNest);
+            this.application.data.folders.remove(folderToNest);
           } else {
             folderToNest.parent.value.children.remove(folderToNest);
           }
@@ -142,7 +142,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
           // Remove from origin. 
           if (generatorToNest.parent.value === undefined) {
-            this.application._data.generators.remove(generatorToNest);
+            this.application.data.generators.remove(generatorToNest);
           } else {
             generatorToNest.parent.value.items.remove(generatorToNest);
           }
@@ -259,7 +259,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
   _getContainingCollection() {
     let folders;
     if (this.entity.parent.value === undefined) {
-      folders = this.application._data.folders;
+      folders = this.application.data.folders;
     } else {
       folders = this.entity.parent.value.children;
     }
@@ -318,7 +318,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     this.application.suspendRendering = false;
 
     // Add to root level collection. 
-    this.application._data.folders.add(this.entity);
+    this.application.data.folders.add(this.entity);
   }
 
   /**

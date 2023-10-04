@@ -296,7 +296,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   _getContainingCollection() {
     let generators;
     if (this.entity.parent.value === undefined) {
-      generators = this.application._data.generators;
+      generators = this.application.data.generators;
     } else {
       generators = this.entity.parent.value.items;
     }
@@ -320,7 +320,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     this.application.suspendRendering = false;
 
     // Add to root level collection. 
-    this.application._data.generators.add(this.entity);
+    this.application.data.generators.add(this.entity);
   }
 
   /**
@@ -380,12 +380,12 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
    */
   async _generate() {
     const generator = this.entity.toGenerator();
-    const results = await generator.generate(this.application._data.amountToGenerate.value);
+    const results = await generator.generate(this.application.data.amountToGenerate.value);
 
     this.application.suspendRendering = true;
-    this.application._data.generatedResults.clear();
+    this.application.data.generatedResults.clear();
     this.application.suspendRendering = false;
-    this.application._data.generatedResults.addAll(results);
+    this.application.data.generatedResults.addAll(results);
   }
 
   /**
