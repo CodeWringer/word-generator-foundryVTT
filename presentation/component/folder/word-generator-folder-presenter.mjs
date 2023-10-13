@@ -6,7 +6,7 @@ import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
-import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
  * This presenter handles a singular folder. 
@@ -19,7 +19,7 @@ import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-pr
  * * Read-only
  * @property {WordGeneratorListPresenter} contentListPresenter
  */
-export default class WordGeneratorFolderPresenter extends AbstractOrderableEntityPresenter {
+export default class WordGeneratorFolderPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -63,6 +63,7 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
+      dragOverClass: "wg-dragover",
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
         if (droppedEntityDataType === WordGeneratorFolderPresenter.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
@@ -113,8 +114,6 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
   }
 
   activateListeners(html) {
-    super.activateListeners(html);
-
     const id = this.entity.id;
 
     const headerElement = html.find(`#${id}-header`);

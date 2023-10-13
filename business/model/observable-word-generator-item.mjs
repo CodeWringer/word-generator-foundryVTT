@@ -9,6 +9,8 @@ import AbstractSamplingStrategy from "../generator/sampling/abstract-sampling-st
 import { WordListSamplingStrategy } from "../generator/sampling/word-list-sampling-strategy.mjs";
 import AbstractSequencingStrategy from "../generator/sequencing/abstract-sequencing-strategy.mjs";
 import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
+import AbstractContainableEntity from "./abstract-containable-entity.mjs";
+import ObservableWordGeneratorApplicationData from "./observable-word-generator-application-data.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
@@ -16,6 +18,8 @@ import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-
  * 
  * @property {String} id Unique ID. 
  * * Read-only
+ * @property {ObservableWordGeneratorApplicationData} applicationData The application level 
+ * root data object reference. 
  * @property {ObservableField<String | undefined>} name Human readable name. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
  * @property {ObservableField<Number>} targetLengthMax The target maximum length that generated texts should be. 
@@ -45,10 +49,12 @@ import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-
  * 
  * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
  */
-export default class ObservableWordGeneratorItem {
+export default class ObservableWordGeneratorItem extends AbstractContainableEntity {
   /**
    * @param {String | undefined} args.id Unique ID. 
    * * By default, generates a new id. 
+   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * root data object reference. 
    * @param {String | undefined} args.name Human readable name. 
    * @param {Number | undefined} args.targetLengthMin The target minimum length that generated texts should be. 
    * * default `3`
@@ -84,7 +90,8 @@ export default class ObservableWordGeneratorItem {
    * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
    */
   constructor(args = {}) {
-    this.id = args.id ?? foundry.utils.randomID(16);
+    super(args);
+
     this.name = new ObservableField({ value: args.name });
     this.targetLengthMin = new ObservableField({ value: args.targetLengthMin ?? 3 });
     this.targetLengthMax = new ObservableField({ value: args.targetLengthMax ?? 10 });
@@ -172,13 +179,15 @@ export default class ObservableWordGeneratorItem {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
+   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * root data object reference. 
    * @param {ObservableWordGeneratorFolder | undefined} parent 
    * 
    * @returns {ObservableWordGeneratorItem}
    * 
    * @static
    */
-  static fromDto(obj, parent) {
+  static fromDto(obj, applicationData, parent) {
     let samplingStrategy;
     if (obj.samplingStrategy !== undefined && obj.samplingStrategy.definitionId !== undefined) {
       samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
@@ -214,6 +223,7 @@ export default class ObservableWordGeneratorItem {
 
     return new ObservableWordGeneratorItem({
       id: obj.id,
+      applicationData: applicationData,
       name: obj.name,
       targetLengthMin: obj.targetLengthMin,
       targetLengthMax: obj.targetLengthMax,

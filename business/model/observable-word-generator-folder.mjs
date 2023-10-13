@@ -2,6 +2,8 @@ import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
+import AbstractContainableEntity from "./abstract-containable-entity.mjs";
+import ObservableWordGeneratorApplicationData from "./observable-word-generator-application-data.mjs";
 import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
 
 /**
@@ -9,17 +11,21 @@ import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
  * 
  * @property {String} id Unique ID of the folder. 
  * * Read-only
+ * @property {ObservableWordGeneratorApplicationData} applicationData The application level 
+ * root data object reference. 
  * @property {ObservableField<String>} name Human readable name of the folder. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the folder is to be presented in expanded state. 
  * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
  * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders Nested folders. 
  * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The contained word generators. 
  */
-export default class ObservableWordGeneratorFolder {
+export default class ObservableWordGeneratorFolder extends AbstractContainableEntity {
   /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * * By default, generates a new id. 
+   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * root data object reference. 
    * @param {String | undefined} args.name Human readable name of the folder. 
    * * Default localized `New Folder`
    * @param {Boolean | undefined} args.isExpanded If `true`, the folder is to be presented in expanded state. 
@@ -29,7 +35,7 @@ export default class ObservableWordGeneratorFolder {
    * @param {Array<ObservableWordGeneratorItem> | undefined} generators The contained word generators. 
    */
   constructor(args = {}) {
-    this.id = args.id ?? foundry.utils.randomID(16);
+    super(args);
 
     this.name = new ObservableField({ 
       value: args.name ?? game.i18n.localize("wg.folder.defaultName")
@@ -93,25 +99,28 @@ export default class ObservableWordGeneratorFolder {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
+   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * root data object reference. 
    * @param {ObservableWordGeneratorFolder | undefined} parent 
    * 
    * @returns {ObservableWordGeneratorFolder}
    * 
    * @static
    */
-  static fromDto(obj, parent) {
+  static fromDto(obj, applicationData, parent) {
     const result = new ObservableWordGeneratorFolder({
       id: obj.id,
+      applicationData: applicationData,
       name: obj.name,
       parent: parent,
     });
 
     const generators = (obj.generators ?? []).map(itemDto => 
-      ObservableWordGeneratorItem.fromDto(itemDto, result)
+      ObservableWordGeneratorItem.fromDto(itemDto, applicationData, result)
     );
 
     const folders = (obj.folders ?? []).map(childDto => 
-      ObservableWordGeneratorFolder.fromDto(childDto, result)
+      ObservableWordGeneratorFolder.fromDto(childDto, applicationData, result)
     );
 
     result.generators.addAll(generators); 

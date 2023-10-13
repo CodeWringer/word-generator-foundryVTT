@@ -371,6 +371,11 @@ i.stacked {
   &-text-align-center {
     text-align: center;
   }
+  
+  &-dragover {
+    color: $c-text-higlight;
+    background-color: $c-bg-light;
+  }
 
   // Specific element styles
 
@@ -410,20 +415,18 @@ i.stacked {
     }
 
     header.wg-folder, header.wg-generator-item {
-      border: 1px solid black;
       color: $c-text-light;
       background-color: $c-bg-darkest;
       height: 2.5rem;
     
       &.open {
         background-color: $c-bg-lighter;
+  
+        &.wg-dragover {
+          color: $c-text-higlight;
+          background-color: $c-bg-lightest;
+        }
       }
-
-      &.dragover {
-        color: $c-text-higlight;
-        background-color: $c-bg-light;
-      }
-      
       h3 {
         margin: 0;
         border: 0;

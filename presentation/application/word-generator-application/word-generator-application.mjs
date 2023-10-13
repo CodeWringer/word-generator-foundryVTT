@@ -365,24 +365,10 @@ export default class WordGeneratorApplication extends Application {
       generatorsToShow = this.data.generators.getAll();
     }
 
-    const folderPresenters = foldersToShow.map(folder => 
-      new WordGeneratorFolderPresenter({
-        application: this,
-        entity: folder
-      })
-    );
-
-    const generatorPresenters = generatorsToShow.map(generator => 
-      new WordGeneratorItemPresenter({
-        application: this,
-        entity: generator
-      })
-    );
-    
     this._contentListPresenter = new WordGeneratorListPresenter({
       application: this,
-      folders: folderPresenters,
-      generators: generatorPresenters,
+      folders: foldersToShow,
+      generators: generatorsToShow,
     });
   }
 

@@ -3,22 +3,10 @@ TEMPLATES: TEMPLATES
 presenter: WordGeneratorListPresenter
 --}}
 {{!-- Folders --}}
-<ul class="wg-unstyled-list">
-  {{#each presenter.folders as |presenter index|}}
-  <li>
-    {{#with presenter.template as |template|}}
-    {{> (template) presenter=presenter TEMPLATES=../../TEMPLATES }}
-    {{/with}}
-  </li>
-  {{/each}}
-</ul>
+{{#with presenter.foldersPresenter.template as |template|}}
+  {{> (template) presenter=../presenter.foldersPresenter TEMPLATES=../TEMPLATES }}
+{{/with}}
 {{!-- Generators --}}
-<ul class="wg-unstyled-list">
-  {{#each presenter.generators as |presenter index|}}
-  <li>
-    {{#with presenter.template as |template|}}
-    {{> (template) presenter=presenter TEMPLATES=../../TEMPLATES }}
-    {{/with}}
-  </li>
-  {{/each}}
-</ul>
+{{#with presenter.generatorsPresenter.template as |template|}}
+  {{> (template) presenter=../presenter.generatorsPresenter TEMPLATES=../TEMPLATES }}
+{{/with}}

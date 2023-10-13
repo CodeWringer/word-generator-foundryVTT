@@ -6,7 +6,7 @@ import DropDownOption from "../../drop-down-option.mjs";
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-presenter.mjs";
-import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -16,7 +16,7 @@ import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-pr
  * @property {WordGeneratorApplication} application The parent application. 
  * @property {ObservableWordGeneratorItem} entity The represented entity.  
  */
-export default class WordGeneratorItemPresenter extends AbstractOrderableEntityPresenter {
+export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -102,12 +102,12 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
       entityDataType: WordGeneratorItemPresenter.entityDataType,
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
+      dragOverClass: "wg-dragover",
     });
   }
 
+  /** @override */
   activateListeners(html) {
-    super.activateListeners(html);
-
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({

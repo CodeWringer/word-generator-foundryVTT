@@ -78,19 +78,20 @@ export default class ObservableWordGeneratorApplicationData {
    * @static
    */
   static fromDto(obj) {
-    const generators = (obj.generators ?? []).map(generatorDto => 
-      ObservableWordGeneratorItem.fromDto(generatorDto)
-    );
-    const folders = (obj.folders ?? []).map(folderDto => 
-      ObservableWordGeneratorFolder.fromDto(folderDto)
-    );
-
     const result = new ObservableWordGeneratorApplicationData({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
-      folders: folders,
-      generators: generators,
     });
+
+    const generators = (obj.generators ?? []).map(generatorDto => 
+      ObservableWordGeneratorItem.fromDto(generatorDto, result)
+    );
+    const folders = (obj.folders ?? []).map(folderDto => 
+      ObservableWordGeneratorFolder.fromDto(folderDto, result)
+    );
+
+    result.generators.addAll(generators);
+    result.folders.addAll(folders);
 
     return result;
   }

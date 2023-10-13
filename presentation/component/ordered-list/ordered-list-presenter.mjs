@@ -10,6 +10,8 @@ import { TEMPLATES } from "../../templates.mjs";
  * @property {Application} application The parent application. 
  * @property {Array<OrderedListItemPresenter>} itemPresenters Wrapper presenters 
  * of the actual content presenters. 
+ * @property {Boolean} args.showIndices If `true`, will render every 
+   * item's index. 
  * @property {Function} onMoveUpClicked Callback that is 
  * invoked when the "move up" button of an item is clicked. Params:
  * * `maximum: Boolean` - If `true`, the item is to be moved to the boundary.
@@ -29,6 +31,9 @@ export default class OrderedListPresenter extends AbstractPresenter {
    * @param {WordGeneratorApplication} args.application The parent application. 
    * @param {Array<AbstractPresenter> | undefined} args.itemPresenters Presenters 
    * of the actual content. 
+   * @param {Boolean | undefined} args.showIndices If `true`, will render every 
+   * item's index. 
+   * * default `false`
    * @param {Function | undefined} args.onMoveUpClicked Callback that is 
    * invoked when the "move up" button of an item is clicked. Params:
    * * `maximum: Boolean` - If `true`, the item is to be moved to the boundary.
@@ -41,9 +46,11 @@ export default class OrderedListPresenter extends AbstractPresenter {
   constructor(args = {}) {
     super(args);
 
+    this.showIndices = args.showIndices ?? false;
     this.onMoveUpClicked = args.onMoveUpClicked ?? (() => {});
     this.onMoveDownClicked = args.onMoveDownClicked ?? (() => {});
 
+    this.itemPresenters = [];
     for (let i = 0; i < args.itemPresenters.length; i++) {
       const presenter = args.itemPresenters[i];
       
