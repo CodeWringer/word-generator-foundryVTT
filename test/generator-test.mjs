@@ -89,7 +89,6 @@ describe('WordGenerator', function() {
       const generator = new WordGenerator({
         samplingStrategy: samplingStrategy,
         sequencingStrategy: sequencingStrategy,
-        spellingStrategy: new NoneSpellingStrategy(),
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,
@@ -115,7 +114,6 @@ describe('WordGenerator', function() {
       const generator = new WordGenerator({
         samplingStrategy: samplingStrategy,
         sequencingStrategy: sequencingStrategy,
-        spellingStrategy: new NoneSpellingStrategy(),
         targetLengthMin: min,
         targetLengthMax: max,
         seed: testSeed,

@@ -95,6 +95,8 @@ export default class WordGenerator {
   /**
    * Returns the given number of words, randomly generated, based on the parameters of the generator. 
    * 
+   * @param {Number} count The number of results to generate. 
+   * 
    * @returns {Array<String>} A list of generated words.
    * 
    * @throws {Error} Thrown, if generating a unique word takes too many tries. Possibly because 
@@ -102,7 +104,7 @@ export default class WordGenerator {
    * 
    * @async
    */
-  async generate(howMany) {
+  async generate(count) {
     // Determine which sequences exist. Contains duplicate entries. 
     const samples = await this.samplingStrategy.getSamples();
     const sequences = await this.sequencingStrategy.getSequencesOfSet(samples);
@@ -128,7 +130,7 @@ export default class WordGenerator {
     // Generate words. 
     const repetitionMaximum = 1000;
     const generatedResults = [];
-    for (let i = 0; i < howMany; i++) {
+    for (let i = 0; i < count; i++) {
       let word = undefined;
 
       let attempt = 0;
