@@ -1,3 +1,5 @@
+import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
+import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
 import AbstractPresenter from "../../abstract-presenter.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
@@ -17,18 +19,33 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
   get template() { return TEMPLATES.WORD_GENERATOR_LIST; }
 
   /**
+   * Maps the given entities to their respective presenters, which will be stored 
+   * as properties on this object. 
+   * 
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {Array<WordGeneratorFolderPresenter> | undefined} args.folders
-   * @param {Array<WordGeneratorItemPresenter> | undefined} args.generators
+   * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders
+   * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators
    */
   constructor(args = {}) {
     super(args);
 
-    this.folders = args.folders ?? [];
-    this.generators = args.generators ?? [];
+    this.folders = args.folders.map(folder => 
+      new WordGeneratorFolderPresenter({
+        application: args.application,
+        entity: folder
+      })
+    );
+
+    this.generators = args.generators.map(generator => 
+      new WordGeneratorItemPresenter({
+        application: args.application,
+        entity: generator,
+      })
+    );
   }
 
+  /** @override */
   activateListeners(html) {
     // Child event handlers
     

@@ -1,0 +1,15 @@
+{{!--
+id: {String}
+enableMoveUp: {Boolean | undefined}
+enableMoveDown: {Boolean | undefined}
+--}}
+<div class="wg-flex column center wg-padding-l-2">
+  <a class="wg-square wg-flex center wg-padding-t-3 wg-padding-b-1 wg-interactible{{#if (not enableMoveUp)}} disabled{{/if}}"
+    id="{{id}}-move-up">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <a class="wg-square wg-flex center wg-padding-t-1 wg-padding-b-3 wg-interactible{{#if (not enableMoveDown)}} disabled{{/if}}"
+    id="{{id}}-move-down">
+    <i class="fas fa-angle-down"></i>
+  </a>
+</div>

@@ -1,6 +1,6 @@
 import ObservableField from "../../../common/observables/observable-field.mjs";
 import AbstractEntityPresenter from "../../../presentation/abstract-entity-presenter.mjs";
-import DialogUtility from "../../../presentation/util/dialog-utility.mjs";
+import DialogUtility from "../../../presentation/dialog/dialog-utility.mjs";
 import AbstractStrategyDefinition from "../common/abstract-strategy-definition.mjs";
 import AbstractSamplingStrategy from "./abstract-sampling-strategy.mjs";
 

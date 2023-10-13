@@ -1,0 +1,16 @@
+{{!-- 
+TEMPLATES: TEMPLATES
+options: Array<MultiSelectOption>
+--}}
+<ol class="wg-scrollable wg-unstyled-list wg-border" style="max-height: 20rem">
+  {{#each options as |option index|}}
+  <li class="wg-flex row middle wg-light wg-padding-3 wg-height-header wg-border">
+    <span id="{{option.id}}-index" class="wg-flex center wg-square">{{index}}</span>
+    <a id="{{option.id}}" class="wg-flex row grow wg-interactible">
+      <div class="wg-square wg-flex center">{{{option.icon}}}</div>
+      <span class="wg-flex middle grow wg-margin-l-6">{{option.localizedLabel}}</span>
+    </a>
+    <span class="wg-square wg-flex center"><input id="{{option.id}}-checkbox" type="checkbox"{{#if option.isSelected}} checked="true"{{/if}}></span>
+  </li>
+  {{/each}}
+</ol>

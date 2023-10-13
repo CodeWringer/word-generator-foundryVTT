@@ -1,4 +1,5 @@
 {{!-- Params:
+TEMPLATES: TEMPLATES
 presenter: WordGeneratorFolderPresenter
 --}}
 <div class="wg-folder"
@@ -9,16 +10,14 @@ presenter: WordGeneratorFolderPresenter
     draggable="true"
     >
     {{!-- Move Controls --}}
-    <div class="wg-flex column center wg-padding-l-2">
-      <a class="wg-square wg-flex center wg-padding-t-3 wg-padding-b-1 wg-interactible{{#if presenter.disableMoveUp}} disabled{{/if}}"
-        id="{{presenter.id}}-move-up">
-        <i class="fas fa-angle-up"></i>
-      </a>
-      <a class="wg-square wg-flex center wg-padding-t-1 wg-padding-b-3 wg-interactible{{#if presenter.disableMoveDown}} disabled{{/if}}"
-        id="{{presenter.id}}-move-down">
-        <i class="fas fa-angle-down"></i>
-      </a>
-    </div>
+    {{#with TEMPLATES.MOVE_CONTROLS as |template|}}
+    {{> (template) 
+      id=../presenter.id 
+      enableMoveUp=../presenter.enableMoveUp 
+      enableMoveDown=../presenter.enableMoveDown 
+      TEMPLATES=../TEMPLATES
+    }}
+    {{/with}}
     {{!-- Identity --}}
     <h3 class="wg-flex grow">
       {{!-- Icon --}}
@@ -49,7 +48,7 @@ presenter: WordGeneratorFolderPresenter
   {{#if presenter.isExpanded}}
   <div class="wg-folder-content">
     {{#with presenter.contentListPresenter.template as |template|}}
-      {{> (template) presenter=../presenter.contentListPresenter }}
+      {{> (template) presenter=../presenter.contentListPresenter TEMPLATES=../TEMPLATES }}
     {{/with}}
   </div>
   {{/if}}

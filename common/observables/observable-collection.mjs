@@ -176,6 +176,36 @@ export default class ObservableCollection {
   }
 
   /**
+   * Returns the value of the first element in the array where predicate is true, 
+   * and undefined otherwise.
+   * 
+   * @param {Function} predicate This is called once for each element of the array, 
+   * in ascending order, until one is found where `predicate` returns true. If such an 
+   * element is found, immediately returns that element value. Otherwise, 
+   * returns undefined.
+   * 
+   * @returns {Array<Any>} 
+   */
+  find(predicate) {
+    return this._array.find(predicate);
+  }
+
+  /**
+   * Returns `true`, if any of the contained items fulfills the given `predicate`. 
+   * Else, returns `false`. 
+   * 
+   * @param {Function} predicate called once for each element of the array, 
+   * in ascending order, until one is found where `predicate` returns true. If such an 
+   * element is found, immediately returns `true`. Otherwise, returns `false`.
+   * 
+   * @returns {Boolean} `true`, if any of the items fulfills the given `predicate`. 
+   */
+  any(predicate) {
+    const r = this._array.find(predicate);
+    return r !== undefined;
+  }
+
+  /**
    * Returns all elements as an array. 
    * 
    * Modifying the returned array **does not** modify the collection!

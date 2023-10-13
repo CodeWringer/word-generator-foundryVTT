@@ -49,6 +49,7 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
     this.strategyDefinitions = args.strategyDefinitions;
 
     this.strategySettingsPresenter = this.activeStrategyField.value.settingsPresenter;
+    this.strategySettingsPresenter.application = args.application;
   }
 
   activateListeners(html) {
@@ -67,7 +68,10 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
     html.find(`select#${this.id}`).change((data) => {
       const strategyId = $(data.target).val();
       const strategy = this.strategyDefinitions.find(it => it.id === strategyId);
-      this.activeStrategyField.value = strategy.newInstance({ id: this.entity.id });
+      this.activeStrategyField.value = strategy.newInstance({
+        id: this.entity.id,
+        application: this.application,
+      });
     });
 
     this.syncDropDownValue(html, this.id, this.activeStrategyField.value.definitionId);

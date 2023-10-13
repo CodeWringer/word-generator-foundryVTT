@@ -31,17 +31,6 @@ export default class AbstractPresenter {
   }
 
   /**
-   * Returns the data object that is to be passed to the Handlebars template for rendering. 
-   * 
-   * @returns {Object} The data to pass to the Handlebars template. 
-   */
-  getData() {
-    return {
-      presenter: this,
-    };
-  }
-
-  /**
    * Registers event listeners to enable user-interactivity. 
    * 
    * @param {JQuery} html The DOM of the rendered template. 

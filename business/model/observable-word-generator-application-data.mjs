@@ -40,7 +40,7 @@ export default class ObservableWordGeneratorApplicationData {
       if (change === CollectionChangeTypes.ADD) {
         for (const folder of args.elements) {
           if (folder.parent.value !== undefined) {
-            folder.parent.value.children.remove(folder);
+            folder.parent.value.folders.remove(folder);
             folder.parent.value = undefined;
           }
         }
@@ -51,7 +51,7 @@ export default class ObservableWordGeneratorApplicationData {
       if (change === CollectionChangeTypes.ADD) {
         for (const generator of args.elements) {
           if (generator.parent.value !== undefined) {
-            generator.parent.value.children.remove(generator);
+            generator.parent.value.folders.remove(generator);
             generator.parent.value = undefined;
           }
         }

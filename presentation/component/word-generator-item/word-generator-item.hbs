@@ -1,4 +1,5 @@
 {{!-- Params:
+TEMPLATES: TEMPLATES
 presenter: WordGeneratorItemPresenter
 --}}
 <div class="wg-generator-item"
@@ -9,16 +10,14 @@ presenter: WordGeneratorItemPresenter
     draggable="true"
     >
     {{!-- Move Controls --}}
-    <div class="wg-flex column center wg-padding-l-2">
-      <a class="wg-square wg-flex center wg-padding-t-3 wg-padding-b-1 wg-interactible{{#if presenter.disableMoveUp}} disabled{{/if}}"
-        id="{{presenter.id}}-move-up">
-        <i class="fas fa-angle-up"></i>
-      </a>
-      <a class="wg-square wg-flex center wg-padding-t-1 wg-padding-b-3 wg-interactible{{#if presenter.disableMoveDown}} disabled{{/if}}"
-        id="{{presenter.id}}-move-down">
-        <i class="fas fa-angle-down"></i>
-      </a>
-    </div>
+    {{#with TEMPLATES.MOVE_CONTROLS as |template|}}
+    {{> (template) 
+      id=../presenter.id 
+      enableMoveUp=../presenter.enableMoveUp 
+      enableMoveDown=../presenter.enableMoveDown 
+      TEMPLATES=../TEMPLATES
+    }}
+    {{/with}}
     {{!-- Identity --}}
     <h3 class="wg-flex grow">
       {{!-- Icon --}}
@@ -42,7 +41,7 @@ presenter: WordGeneratorItemPresenter
   <div class="wg-flex column wg-generator-item-content wg-dark">
     {{!-- Sample Set --}}
     {{#with presenter.sampleSetStrategyPresenter.template as |template| }}
-      {{> (template) presenter=../presenter.sampleSetStrategyPresenter }}
+      {{> (template) presenter=../presenter.sampleSetStrategyPresenter TEMPLATES=../TEMPLATES }}
     {{/with}}
     <div class="wg-grid-2 gap-2 wg-padding-l-6">
       {{!-- targetLengthMin --}}
@@ -100,11 +99,11 @@ presenter: WordGeneratorItemPresenter
     </div>
     {{!-- Sequencing Strategy --}}
     {{#with presenter.sequencingStrategyPresenter.template as |template| }}
-      {{> (template) presenter=../presenter.sequencingStrategyPresenter }}
+      {{> (template) presenter=../presenter.sequencingStrategyPresenter TEMPLATES=../TEMPLATES }}
     {{/with}}
     {{!-- Spelling Strategy --}}
     {{#with presenter.spellingStrategyPresenter.template as |template| }}
-      {{> (template) presenter=../presenter.spellingStrategyPresenter }}
+      {{> (template) presenter=../presenter.spellingStrategyPresenter TEMPLATES=../TEMPLATES }}
     {{/with}}
   </div>
   {{/if}}

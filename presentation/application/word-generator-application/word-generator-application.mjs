@@ -4,13 +4,14 @@ import WordGeneratorFolderPresenter from "../../component/folder/word-generator-
 import WordGeneratorItemPresenter from "../../component/word-generator-item/word-generator-item-presenter.mjs"
 import { SORTING_ORDERS } from "../../sorting-orders.mjs"
 import { TEMPLATES } from "../../templates.mjs"
-import DialogUtility from "../../util/dialog-utility.mjs"
+import DialogUtility from "../../dialog/dialog-utility.mjs"
 import WordGeneratorListPresenter from "../../component/word-generator-list/word-generator-list-presenter.mjs"
 import ObservableWordGeneratorApplicationDataDataSource from "../../../data/datasource/observable-word-generator-application-data-datasource.mjs"
 import ObservableWordGeneratorApplicationData from "../../../business/model/observable-word-generator-application-data.mjs"
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs"
 import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs"
 import { SEARCH_MODES, Search, SearchItem } from "../../../business/search/search.mjs"
+import ClipboardHandler from "../../util/clipboard-handler.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -247,6 +248,7 @@ export default class WordGeneratorApplication extends Application {
   async getData(options) {
     this._regeneratePresenters();
     return {
+      TEMPLATES: TEMPLATES,
       data: this.data,
       generatedResults: this.data.generatedResults.getAll(),
       contentListPresenter: this._contentListPresenter,
@@ -309,6 +311,21 @@ export default class WordGeneratorApplication extends Application {
       }
     }
     return undefined;
+  }
+
+  /**
+   * Returns a flat list of **all** generators of the application. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getGenerators() {
+    let flatList = this.data.generators.getAll();
+
+    for (const folder of this.data.folders.getAll()) {
+      flatList = flatList.concat(folder.getAllGenerators());
+    }
+
+    return flatList;
   }
 
   /**
@@ -393,12 +410,14 @@ export default class WordGeneratorApplication extends Application {
       jElement.mouseleave(() => {
         jCliboardButton.addClass("hidden");
       });
-      jCliboardButton.click(() => {
-        this._textToClipboard(html, jInput.val()).then((success) => {
-          if (success === true) {
-            this._infoBubbleCopyToClipboard.show(jCliboardButton, game.i18n.localize("wg.general.copy.success"));
-          }
-        });
+      jCliboardButton.click(async () => {
+        const success = await new ClipboardHandler().textToClipboard(jInput.val());
+
+        if (success === true) {
+          this._infoBubbleCopyToClipboard.show(jCliboardButton, game.i18n.localize("wg.general.copy.success"));
+        } else {
+          throw new Error("Failed to copy to clipboard. Functionality unsupported by browser?");
+        }
       });
     });
   }
@@ -418,8 +437,8 @@ export default class WordGeneratorApplication extends Application {
    * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
    */
   _sort(sortingOrder = SORTING_ORDERS.DESC) {
-    const sortByNameAsc = (a, b) => b.name.value.localeCompare(a.name.value);
-    const sortByNameDesc = (a, b) => a.name.value.localeCompare(b.name.value);
+    const sortByNameAsc = (a, b) => a.name.value.localeCompare(b.name.value);
+    const sortByNameDesc = (a, b) => b.name.value.localeCompare(a.name.value);
 
     if (sortingOrder === SORTING_ORDERS.ASC) {
       this.data.folders.sort(sortByNameAsc);
@@ -427,58 +446,6 @@ export default class WordGeneratorApplication extends Application {
     } else {
       this.data.folders.sort(sortByNameDesc);
       this.data.generators.sort(sortByNameDesc);
-    }
-  }
-
-  /**
-   * Copies the given text to the clipboard. 
-   * @param {JQuery} html 
-   * @param {String} text 
-   * 
-   * @returns {Boolean} True, if successfully copied. 
-   * 
-   * @async
-   * @private
-   */
-  async _textToClipboard(html, text) {
-    if (!navigator.clipboard) { // This uses a deprecated API as a fallback solution. 
-      // A temporary element is created for the sole purpose of holding the text to copy to clipboard. 
-      const textArea = html.createElement("textarea");
-      textArea.value = text;
-      
-      // This avoids scrolling to the bottom.
-      textArea.style.top = "0";
-      textArea.style.left = "0";
-      textArea.style.position = "fixed";
-
-      // The element must be added and focused. 
-      html.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      // Try the copy. 
-      let success = false;
-      try {
-        html.execCommand('copy');
-        html.removeChild(textArea);
-        success = true;
-      } catch (err) {
-        console.error('Error copying to clipboard: ', err);
-      }
-
-      // Ensure the element is removed again. 
-      html.removeChild(textArea);
-      return success;
-    } else {
-      try {
-        await navigator.clipboard.writeText(text);
-
-        return true;
-      } catch (err) {
-        console.error('Error copying to clipboard: ', err);
-
-        return false;
-      }
     }
   }
 }

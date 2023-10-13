@@ -1,4 +1,5 @@
 {{!-- Params:
+TEMPLATES: TEMPLATES
 presenter: WordGeneratorListPresenter
 --}}
 {{!-- Folders --}}
@@ -6,7 +7,7 @@ presenter: WordGeneratorListPresenter
   {{#each presenter.folders as |presenter index|}}
   <li>
     {{#with presenter.template as |template|}}
-    {{> (template) presenter=presenter }}
+    {{> (template) presenter=presenter TEMPLATES=../../TEMPLATES }}
     {{/with}}
   </li>
   {{/each}}
@@ -16,7 +17,7 @@ presenter: WordGeneratorListPresenter
   {{#each presenter.generators as |presenter index|}}
   <li>
     {{#with presenter.template as |template|}}
-    {{> (template) presenter=presenter }}
+    {{> (template) presenter=presenter TEMPLATES=../../TEMPLATES }}
     {{/with}}
   </li>
   {{/each}}

@@ -104,10 +104,10 @@ export default class ObservableWordGeneratorItem {
 
     this.parent.onChange((field, oldValue, newValue) => {
       if (oldValue !== undefined) {
-        oldValue.items.remove(this);
+        oldValue.generators.remove(this);
       }
       if (newValue !== undefined) {
-        newValue.items.add(this);
+        newValue.generators.add(this);
       }
     });
 
@@ -151,6 +151,21 @@ export default class ObservableWordGeneratorItem {
       sequencingStrategy: this.sequencingStrategy.value,
       spellingStrategy: this.spellingStrategy.value,
     });
+  }
+
+  /**
+   * Returns the given number of results, randomly generated, 
+   * based on the parameters of the generator. 
+   * 
+   * @param {Number} count The number of results to generate. 
+   * 
+   * @returns {Array<String>} A list of generated results.
+   * 
+   * @async
+   */
+  async generate(count) {
+    const generator = this.toGenerator();
+    return await generator.generate(count);
   }
 
   /**
