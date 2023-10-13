@@ -11,6 +11,8 @@ import ObservableWordGeneratorApplicationData from "../../../business/model/obse
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs"
 import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs"
 import { SEARCH_MODES, Search, SearchItem } from "../../../business/search/search.mjs"
+import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs"
+import WordGeneratorChainPresenter from "../../component/chain/word-generator-chain-presenter.mjs"
 import ClipboardHandler from "../../util/clipboard-handler.mjs"
 
 /**
@@ -188,7 +190,15 @@ export default class WordGeneratorApplication extends Application {
       this.data.folders.add(newFolder);
     });
 
-    // Sorting word generators
+    // Chain creation
+    html.find("#create-chain").click(() => {
+      const newChain = new ObservableWordGeneratorChain({
+        name: game.i18n.localize("wg.chain.defaultName"),
+      });
+      this.data.chains.add(newChain);
+    });
+
+    // Sorting
     html.find("#move-sort-alpha-desc").click(() => {
       this._sort(SORTING_ORDERS.DESC);
     });
@@ -329,6 +339,45 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
+   * Returns a flat list of **all** chains of the application. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getChains() {
+    let flatList = this.data.chains.getAll();
+
+    for (const folder of this.data.folders.getAll()) {
+      flatList = flatList.concat(folder.getAllChains());
+    }
+
+    return flatList;
+  }
+
+  /**
+   * Returns the chain with the given ID, if possible. 
+   * 
+   * Automatically recurses children to find the desired instance. 
+   * 
+   * @param {String} id ID of the chain to find. 
+   * 
+   * @returns {ObservableWordGeneratorItem | undefined}
+   */
+  getChainById(id) {
+    for (const chain of this.data.chains.getAll()) {
+      if (chain.id === id) {
+        return chain;
+      }
+    }
+    for (const folder of this.data.folders.getAll()) {
+      const r = folder.getChainById(id);
+      if (r !== undefined) {
+        return r;
+      }
+    }
+    return undefined;
+  }
+
+  /**
    * Re-generates all child presenters. 
    * 
    * @private
@@ -336,53 +385,55 @@ export default class WordGeneratorApplication extends Application {
   _regeneratePresenters() {
     let foldersToShow = [];
     let generatorsToShow = [];
+    let chainsToShow = [];
 
+    // TODO extract and generalize searching
     const searchTerm = this.data.generatorSearchTerm.value.trim();
     if (searchTerm.length > 0) {
       // Show only filtered generators. 
 
-      let flatGeneratorList = this.data.generators.getAll();
-      for (const folder of this.data.folders.getAll()) {
-        flatGeneratorList = flatGeneratorList.concat(folder.getAllGenerators());
-      }
+      const flatGeneratorList = this.getGenerators();
+      const flatChainList = this.getChains();
 
-      const searchItems = flatGeneratorList.map(generator => 
+      const searchableGenerators = flatGeneratorList.map(generator => 
         new SearchItem({
           id: generator.id,
           term: generator.name.value,
         })
       );
 
-      const searchResults = new Search().search(searchItems, searchTerm, SEARCH_MODES.FUZZY);
-      const relevantSearchResults = searchResults.filter(it => it.score > 0);
-      generatorsToShow = relevantSearchResults.map(result => 
+      const searchableChains = flatChainList.map(chain => 
+        new SearchItem({
+          id: chain.id,
+          term: chain.name.value,
+        })
+      );
+
+      const foundGenerators = new Search().search(searchableGenerators, searchTerm, SEARCH_MODES.FUZZY);
+      const foundChains = new Search().search(searchableChains, searchTerm, SEARCH_MODES.FUZZY);
+
+      const relevantGenerators = foundGenerators.filter(it => it.score > 0);
+      generatorsToShow = relevantGenerators.map(result => 
         flatGeneratorList.find(generator => generator.id === result.id)
       );
+
+      const relevantChains = foundChains.filter(it => it.score > 0);
+      chainsToShow = relevantChains.map(result => 
+        flatChainList.find(chain => chain.id === result.id)
+      );
     } else {
-      // Show all folders and generators. 
+      // Show **all** content. 
 
       foldersToShow = this.data.folders.getAll();
       generatorsToShow = this.data.generators.getAll();
+      chainsToShow = this.data.chains.getAll();
     }
 
-    const folderPresenters = foldersToShow.map(folder => 
-      new WordGeneratorFolderPresenter({
-        application: this,
-        entity: folder
-      })
-    );
-
-    const generatorPresenters = generatorsToShow.map(generator => 
-      new WordGeneratorItemPresenter({
-        application: this,
-        entity: generator
-      })
-    );
-    
     this._contentListPresenter = new WordGeneratorListPresenter({
       application: this,
-      folders: folderPresenters,
-      generators: generatorPresenters,
+      folders: foldersToShow,
+      generators: generatorsToShow,
+      chains: chainsToShow,
     });
   }
 

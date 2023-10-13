@@ -22,3 +22,13 @@ presenter: WordGeneratorListPresenter
   </li>
   {{/each}}
 </ul>
+{{!-- Chains --}}
+<ul class="wg-unstyled-list">
+  {{#each presenter.chains as |presenter index|}}
+  <li>
+    {{#with presenter.template as |template|}}
+    {{> (template) presenter=presenter TEMPLATES=../../TEMPLATES }}
+    {{/with}}
+  </li>
+  {{/each}}
+</ul>

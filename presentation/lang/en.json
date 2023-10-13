@@ -4,6 +4,21 @@
       "title": "Word Generators",
       "close": "Close"
     },
+    "chain": {
+      "create": "Create Chain",
+      "edit": "Edit Chain",
+      "defaultName": "New Chain",
+      "delete": "Delete Chain",
+      "name": "Chain Name",
+      "separator": {
+        "label": "Separator",
+        "infoHint": "This character sequence is used to join chained results together. By default, this is a single space."
+      },
+      "items": {
+        "label": "Items",
+        "infoHint": "The output of a chain is determined entirely by the generators and other chains defined as its 'items'. The order in which the generators and other chains appear in the list, matters. The output of each of these is concatenated in their listing order."
+      }
+    },
     "folder": {
       "create": "Create Folder",
       "confirmDeletion": "Delete Folder?",

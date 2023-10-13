@@ -2,6 +2,7 @@ import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
+import ObservableWordGeneratorChain from "./observable-word-generator-chain.mjs";
 import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
 
 /**
@@ -14,6 +15,7 @@ import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
  * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
  * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders Nested folders. 
  * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The contained word generators. 
+ * @property {ObservableCollection<ObservableWordGeneratorItem>} chains The contained chains. 
  */
 export default class ObservableWordGeneratorFolder {
   /**
@@ -27,6 +29,7 @@ export default class ObservableWordGeneratorFolder {
    * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
    * @param {Array<ObservableWordGeneratorFolder> | undefined} folders Nested folders. 
    * @param {Array<ObservableWordGeneratorItem> | undefined} generators The contained word generators. 
+   * @param {Array<ObservableWordGeneratorChain> | undefined} chains The contained chains. 
    */
   constructor(args = {}) {
     this.id = args.id ?? foundry.utils.randomID(16);
@@ -38,6 +41,7 @@ export default class ObservableWordGeneratorFolder {
     this.parent = new ObservableField({ value: args.parent });
     this.folders = new ObservableCollection({ elements: (args.folders ?? []) });
     this.generators = new ObservableCollection({ elements: (args.generators ?? []) });
+    this.chains = new ObservableCollection({ elements: (args.chains ?? []) });
 
     this.parent.onChange((field, oldValue, newValue) => {
       if (oldValue !== undefined) {
@@ -80,12 +84,29 @@ export default class ObservableWordGeneratorFolder {
       }
     });
 
+    this.chains.onChange((collection, change, args) => {
+      if (change === CollectionChangeTypes.ADD) {
+        for (const item of args.elements) {
+          if (item.parent.value != this) {
+            item.parent.value = this;
+          }
+        }
+      } else if (change === CollectionChangeTypes.REMOVE) {
+        for (const item of args.elements) {
+          if (item.parent.value == this) {
+            item.parent.value = undefined;
+          }
+        }
+      }
+    });
+
     this.propagator = new ObservationPropagator(this, [
       this.name,
       this.isExpanded,
       this.parent,
       this.folders,
       this.generators,
+      this.chains,
     ]);
   }
   
@@ -114,8 +135,13 @@ export default class ObservableWordGeneratorFolder {
       ObservableWordGeneratorFolder.fromDto(childDto, result)
     );
 
+    const chains = (obj.chains ?? []).map(childDto => 
+      ObservableWordGeneratorChain.fromDto(childDto, result)
+    );
+
     result.generators.addAll(generators); 
     result.folders.addAll(folders); 
+    result.chains.addAll(chains); 
 
     return result;
   }
@@ -131,6 +157,7 @@ export default class ObservableWordGeneratorFolder {
       name: this.name.value,
       folders: this.folders.getAll().map(it => it.toDto()),
       generators: this.generators.getAll().map(it => it.toDto()),
+      chains: this.chains.getAll().map(it => it.toDto()),
     };
   }
   
@@ -180,9 +207,33 @@ export default class ObservableWordGeneratorFolder {
     }
     return undefined;
   }
+  
+  /**
+   * Returns the chain with the given ID, if possible. 
+   * 
+   * Automatically recurses children to find the desired instance. 
+   * 
+   * @param {String} id ID of the chain to find. 
+   * 
+   * @returns {ObservableWordGeneratorChain | undefined}
+   */
+  getChainById(id) {
+    for (const chain of this.chains.getAll()) {
+      if (chain.id === id) {
+        return chain;
+      }
+    }
+    for (const child of this.folders.getAll()) {
+      const r = child.getChainById(id);
+      if (r !== undefined) {
+        return r;
+      }
+    }
+    return undefined;
+  }
 
   /**
-   * Returns all generators contained in this folder and its chil folders. 
+   * Returns all generators contained in this folder and its child folders. 
    * 
    * @returns {Array<ObservableWordGeneratorItem>}
    */
@@ -194,6 +245,21 @@ export default class ObservableWordGeneratorFolder {
     }
 
     return generators;
+  }
+
+  /**
+   * Returns all chains contained in this folder and its child folders. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getAllChains() {
+    let chains = this.chains.getAll();
+
+    for (const child of this.folders.getAll()) {
+      chains = chains.concat(child.getAllChains());
+    }
+
+    return chains;
   }
 
   /**

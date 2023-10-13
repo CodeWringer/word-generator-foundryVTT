@@ -1,8 +1,10 @@
+import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs";
 import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
 import AbstractPresenter from "../../abstract-presenter.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
+import WordGeneratorChainPresenter from "../chain/word-generator-chain-presenter.mjs";
 import WordGeneratorFolderPresenter from "../folder/word-generator-folder-presenter.mjs";
 import WordGeneratorItemPresenter from "../word-generator-item/word-generator-item-presenter.mjs";
 
@@ -14,6 +16,7 @@ import WordGeneratorItemPresenter from "../word-generator-item/word-generator-it
  * @property {WordGeneratorApplication} application The parent application. 
  * @property {Array<WordGeneratorFolderPresenter>} folders
  * @property {Array<WordGeneratorItemPresenter>} generators
+ * @property {Array<WordGeneratorChainPresenter>} chains
  */
 export default class WordGeneratorListPresenter extends AbstractPresenter {
   get template() { return TEMPLATES.WORD_GENERATOR_LIST; }
@@ -26,6 +29,7 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
    * @param {WordGeneratorApplication} args.application The parent application. 
    * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders
    * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators
+   * @param {Array<ObservableWordGeneratorChain> | undefined} args.chains
    */
   constructor(args = {}) {
     super(args);
@@ -43,6 +47,13 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
         entity: generator,
       })
     );
+
+    this.chains = args.chains.map(chain => 
+      new WordGeneratorChainPresenter({
+        application: args.application,
+        entity: chain,
+      })
+    );
   }
 
   /** @override */
@@ -56,6 +67,11 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
 
     // Generators
     for (const presenter of this.generators) {
+      presenter.activateListeners(html);
+    }
+
+    // Chains
+    for (const presenter of this.chains) {
       presenter.activateListeners(html);
     }
   }

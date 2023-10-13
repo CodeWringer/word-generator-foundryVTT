@@ -7,6 +7,8 @@ import ObservableWordGeneratorFolder from "../../../business/model/observable-wo
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
 import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
+import WordGeneratorChainPresenter from "../chain/word-generator-chain-presenter.mjs";
+import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs";
 
 /**
  * This presenter handles a singular folder. 
@@ -52,6 +54,7 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       application: args.application,
       folders: this.entity.folders.getAll(),
       generators: this.entity.generators.getAll(),
+      chains: this.entity.chains.getAll(),
     });
 
     this._dragDropHandler = new DragDropHandler({
@@ -60,6 +63,7 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       acceptedDataTypes: [
         WordGeneratorFolderPresenter.entityDataType,
         WordGeneratorItemPresenter.entityDataType,
+        WordGeneratorChainPresenter.entityDataType,
       ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
@@ -107,6 +111,27 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
 
           // Add to the represented folder's generators. 
           this.entity.generators.add(generatorToNest);
+        } else if (droppedEntityDataType === WordGeneratorChainPresenter.entityDataType) {
+          // Assign the dragged generator to this folder, as a child. 
+
+          const toNest = this.application.getChainById(droppedEntityId);
+
+          // Avoid unnecessary operations. 
+          if (this.entity.chains.contains(toNest)) return;
+
+          this.application.suspendRendering = true;
+
+          // Remove from origin. 
+          if (toNest.parent.value === undefined) {
+            this.application.data.chains.remove(toNest);
+          } else {
+            toNest.parent.value.chains.remove(toNest);
+          }
+
+          this.application.suspendRendering = false;
+
+          // Add to the represented folder's chains. 
+          this.entity.chains.add(toNest);
         }
       }
     });
@@ -160,6 +185,13 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
           }
         },
         {
+          name: game.i18n.localize("wg.chain.create"),
+          icon: '<i class="fas fa-link stackable"><i class="fas fa-plus stacked wg-dark"></i></i>',
+          callback: async () => {
+            await this._createChain();
+          }
+        },
+        {
           name: game.i18n.localize("wg.folder.delete"),
           icon: '<i class="fas fa-trash"></i>',
           callback: async () => {
@@ -179,6 +211,12 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       event.stopPropagation();
 
       this._createFolder();
+    });
+
+    html.find(`#${id}-add-chain`).click(async (event) => {
+      event.stopPropagation();
+
+      this._createChain();
     });
 
     // Drag & drop
@@ -222,6 +260,19 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       name: game.i18n.localize("wg.generator.defaultName"),
     });
     this.entity.generators.add(newGenerator);
+  }
+
+  /**
+   * Creates a new child chain. 
+   * 
+   * @private
+   */
+  _createChain() {
+    // Create the generator. 
+    const newChain = new ObservableWordGeneratorChain({
+      name: game.i18n.localize("wg.chain.defaultName"),
+    });
+    this.entity.chains.add(newChain);
   }
 
   /**

@@ -2,6 +2,7 @@ import ObservableCollection, { CollectionChangeTypes } from "../../common/observ
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
+import ObservableWordGeneratorChain from "./observable-word-generator-chain.mjs";
 import ObservableWordGeneratorFolder from "./observable-word-generator-folder.mjs";
 import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
 
@@ -10,6 +11,7 @@ import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
  * @property {ObservableField<SORTING_ORDERS>} resultsSortMode The sorting order of generated words. 
  * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The collection of root-level generators. 
  * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders The collection of root-level folders. 
+ * @property {ObservableCollection<ObservableWordGeneratorChain>} chains The collection of root-level chains. 
  * @property {ObservableCollection<String>} generatedResults The generated results. 
  * * Not persisted
  * @property {ObservableField<String>} generatorSearchTerm The current generator filter to apply. 
@@ -25,6 +27,7 @@ export default class ObservableWordGeneratorApplicationData {
    * * Default `SORTING_ORDERS.DESC`
    * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators The collection of root-level generators. 
    * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders The collection of root-level folders. 
+   * @param {Array<ObservableWordGeneratorChain> | undefined} args.chains The collection of root-level chains. 
    * @param {String | undefined} args.generatorSearchTerm The current generator filter to apply. 
    * * If not empty, only the generators whose name partially or fully matches this string. 
    */
@@ -32,6 +35,7 @@ export default class ObservableWordGeneratorApplicationData {
     this.amountToGenerate = new ObservableField({ value: args.amountToGenerate ?? 10 });
     this.resultsSortMode = new ObservableField({ value: args.resultsSortMode ?? SORTING_ORDERS.DESC });
     this.folders = new ObservableCollection({ elements: (args.folders ?? []) });
+    this.chains = new ObservableCollection({ elements: (args.chains ?? []) });
     this.generators = new ObservableCollection({ elements: (args.generators ?? []) });
     this.generatedResults = new ObservableCollection();
     this.generatorSearchTerm = new ObservableField({ value: args.generatorSearchTerm ?? "" });
@@ -63,6 +67,7 @@ export default class ObservableWordGeneratorApplicationData {
       this.resultsSortMode,
       this.generators,
       this.folders,
+      this.chains,
       this.generatedResults,
       this.generatorSearchTerm,
     ]);
@@ -84,11 +89,37 @@ export default class ObservableWordGeneratorApplicationData {
     const folders = (obj.folders ?? []).map(folderDto => 
       ObservableWordGeneratorFolder.fromDto(folderDto)
     );
+    
+    // Chains
+    const dtoChains = (obj.chains ?? []);
+    const chains = dtoChains.map(chainDto => 
+      ObservableWordGeneratorChain.fromDto(chainDto)
+      );
+    // TODO: Extract hierarchy building to a separate step, with common API. 
+    for (const chain of chains) {
+      chain.items.clear();
+      
+      const itemIds = dtoChains.find(it => it.id === chain.id).items;
+      const items = itemIds.map(itemId => {
+        const generator = generators.find(generator => generator.id === itemId);
+        if (generator !== undefined) {
+          return generator;
+        }
+        
+        const otherChain = chains.find(chain => chain.id === itemId);
+        if (otherChain !== undefined) {
+          return otherChain;
+        }
+      });
+
+      chain.items.addAll(items);
+    }
 
     const result = new ObservableWordGeneratorApplicationData({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
       folders: folders,
+      chains: chains,
       generators: generators,
     });
 
@@ -106,6 +137,7 @@ export default class ObservableWordGeneratorApplicationData {
       resultsSortMode: this.resultsSortMode.value,
       generators: this.generators.getAll().map(it => it.toDto()),
       folders: this.folders.getAll().map(it => it.toDto()),
+      chains: this.chains.getAll().map(it => it.toDto()),
     };
   }
 }

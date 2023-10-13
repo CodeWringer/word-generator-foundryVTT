@@ -1,0 +1,62 @@
+{{!-- Params:
+TEMPLATES: TEMPLATES
+presenter: WordGeneratorChainPresenter
+--}}
+<div class="wg-generator-item"
+  id="{{presenter.id}}"
+  >
+  <header class="wg-generator-item wg-flex row wg-dark wg-padding-3 wg-height-header{{#if presenter.isExpanded}} open{{/if}}"
+    id="{{presenter.id}}-header"
+    draggable="true"
+    >
+    {{!-- Move Controls --}}
+    {{#with TEMPLATES.MOVE_CONTROLS as |template|}}
+    {{> (template) 
+      id=../presenter.id 
+      enableMoveUp=../presenter.enableMoveUp 
+      enableMoveDown=../presenter.enableMoveDown 
+      TEMPLATES=../TEMPLATES
+    }}
+    {{/with}}
+    {{!-- Identity --}}
+    <h3 class="wg-flex grow">
+      {{!-- Icon --}}
+      <div class="wg-square wg-flex center">
+        <i class="fas fa-link stackable">
+        {{#if presenter.isExpanded}}{{else}}
+          <i class="fas fa-bars stacked wg-dark"></i>
+        {{/if}}
+        </i>
+      </div>
+      {{!-- Name --}}
+      <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
+    </h3>
+    {{!-- Quick Actions --}}
+    <a class="wg-square wg-flex center wg-interactible" 
+      id="{{presenter.id}}-generate">
+      <i class="fas fa-pen-nib"></i>
+    </a>
+  </header>
+  {{#if presenter.isExpanded}}
+  <div class="wg-flex column wg-chain-item-content wg-dark">
+    <div class="wg-grid-2 gap-2 wg-padding-l-6">
+      {{!-- separator --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-separator" class="wg-flex grow">{{localize "wg.chain.separator.label"}}</label>
+        <i id="{{presenter.id}}-separator-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-separator" type="text" value="{{presenter.entity.separator.value}}" class="wg-light" />
+    </div>
+    <div class="wg-flex column">
+      <label for="{{presenter.id}}-items" class="wg-flex grow">{{localize "wg.chain.items.label"}}</label>
+      <ol class="wg-unstyled-list">
+        {{#each presenter.items as |itempresenter index|}}
+          {{#with itempresenter.template as |template| }}
+            {{> (template) presenter=itempresenter TEMPLATES=../../TEMPLATES }}
+          {{/with}}
+        {{/each}}
+      </ol>
+    </div>
+  </div>
+  {{/if}}
+</div>
