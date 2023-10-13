@@ -1,0 +1,25 @@
+{{!--
+TEMPLATES: TEMPLATES
+presenter: OrderedListPresenter
+--}}
+<ol class="wg-unstyled-list">
+  {{#each presenter.itemPresenters as |itemPresenter index|}}
+  <li class="wg-list-item wg-dark">
+    {{!-- Move Controls --}}
+    {{#with ../TEMPLATES.MOVE_CONTROLS as |template|}}
+    {{> (template) 
+      id=../itemPresenter.id 
+      enableMoveUp=../itemPresenter.enableMoveUp 
+      enableMoveDown=../itemPresenter.enableMoveDown 
+      TEMPLATES=../TEMPLATES
+    }}
+    {{/with}}
+    {{!-- Index --}}
+    <span class="wg-flex center wg-square">{{itemPresenter.index}}</span>
+    {{!-- Item content --}}
+    {{#with itemPresenter.presenter.template as |template| }}
+      {{> (template) presenter=itemPresenter.presenter TEMPLATES=../../TEMPLATES }}
+    {{/with}}
+  </li>
+  {{/each}}
+</ol>
