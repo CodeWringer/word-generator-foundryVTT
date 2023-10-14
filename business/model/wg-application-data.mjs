@@ -44,8 +44,8 @@ export default class WgApplicationData {
       name: "ROOT",
       applicationData: this,
       isExpanded: true,
-      folders: (args.generators ?? []),
-      generators: (args.folders ?? []),
+      folders: (args.folders ?? []),
+      generators: (args.generators ?? []),
     });
 
     this.propagator = new ObservationPropagator(this, [
