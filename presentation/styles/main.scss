@@ -375,6 +375,10 @@ i.stacked {
   &-dragover {
     color: $c-text-higlight;
     background-color: $c-bg-light;
+    
+    &.wg-dark {
+      background-color: $c-bg-dark;
+    }
   }
 
   // Specific element styles
@@ -421,12 +425,13 @@ i.stacked {
     
       &.open {
         background-color: $c-bg-lighter;
-  
-        &.wg-dragover {
-          color: $c-text-higlight;
-          background-color: $c-bg-lightest;
-        }
       }
+
+      &.wg-dragover {
+        color: $c-text-higlight;
+        background-color: $c-bg-dark;
+      }
+      
       h3 {
         margin: 0;
         border: 0;
