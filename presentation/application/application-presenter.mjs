@@ -373,7 +373,7 @@ export default class WgApplication extends Application {
       autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
     });
 
-    html.find(".word-generator-generated-word").each((index, element) => {
+    html.find(".wg-generated-word").each((index, element) => {
       const jElement = $(element);
       const jCliboardButton = html.find(`#generated-word-${index}-copy-to-clipboard`);
       const jInput = jElement.find(`input#generated-word-${index}-word`);
