@@ -1,19 +1,15 @@
-import TypeRegistrar from "../../../business/model/type-registrar/type-registrar.mjs"
-import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
-import WordGeneratorFolderPresenter from "../../component/folder/word-generator-folder-presenter.mjs"
-import WordGeneratorItemPresenter from "../../component/word-generator-item/word-generator-item-presenter.mjs"
-import { SORTING_ORDERS } from "../../sorting-orders.mjs"
-import { TEMPLATES } from "../../templates.mjs"
-import DialogUtility from "../../dialog/dialog-utility.mjs"
-import WordGeneratorListPresenter from "../../component/word-generator-list/word-generator-list-presenter.mjs"
-import ObservableWordGeneratorApplicationDataDataSource from "../../../data/datasource/observable-word-generator-application-data-datasource.mjs"
-import ObservableWordGeneratorApplicationData from "../../../business/model/observable-word-generator-application-data.mjs"
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs"
-import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs"
-import { SEARCH_MODES, Search, SearchItem } from "../../../business/search/search.mjs"
-import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs"
-import WordGeneratorChainPresenter from "../../component/chain/word-generator-chain-presenter.mjs"
-import ClipboardHandler from "../../util/clipboard-handler.mjs"
+import TypeRegistrar from "../../business/model/type-registrar/type-registrar.mjs"
+import InfoBubble, { InfoBubbleAutoHidingTypes } from "../component/info-bubble/info-bubble.mjs"
+import { SORTING_ORDERS } from "../sorting-orders.mjs"
+import { TEMPLATES } from "../templates.mjs"
+import DialogUtility from "../dialog/dialog-utility.mjs"
+import WgFolderContentsPresenter from "../component/folder/contents/folder-contents-presenter.mjs"
+import ApplicationDataDataSource from "../../data/datasource/application-data-datasource.mjs"
+import WgApplicationData from "../../business/model/wg-application-data.mjs"
+import WgGenerator from "../../business/model/wg-generator.mjs"
+import WgFolder from "../../business/model/wg-folder.mjs"
+import { SEARCH_MODES, Search, SearchItem } from "../../business/search/search.mjs"
+import ClipboardHandler from "../util/clipboard-handler.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -23,17 +19,17 @@ import ClipboardHandler from "../../util/clipboard-handler.mjs"
  * 
  * @example
  * ```
- * new WordGeneratorApplication().render(true);
+ * new WgApplication().render(true);
  * ```
  */
-export default class WordGeneratorApplication extends Application {
+export default class WgApplication extends Application {
   /** @override */
   static get defaultOptions() {
     const defaults = super.defaultOptions;
   
     const overrides = {
       id: 'word-generator-application',
-      template: TEMPLATES.WORD_GENERATOR_APPLICATION,
+      template: TEMPLATES.APPLICATION,
       title: game.i18n.localize("wg.application.title"),
       userId: game.userId,
       width: 700,
@@ -71,14 +67,14 @@ export default class WordGeneratorApplication extends Application {
   /**
    * The application working data. 
    * 
-   * @type {ObservableWordGeneratorApplicationData}
+   * @type {WgApplicationData}
    */
-  data = new ObservableWordGeneratorApplicationData();
+  data = undefined;
 
   /**
    * The presenter of the folders and generators.
    * 
-   * @type {WordGeneratorListPresenter}
+   * @type {WgFolderContentsPresenter}
    * @private
    */
   _contentListPresenter = undefined;
@@ -130,7 +126,7 @@ export default class WordGeneratorApplication extends Application {
   constructor() {
     super();
 
-    this.data = new ObservableWordGeneratorApplicationDataDataSource().get(game.userId);
+    this.data = new ApplicationDataDataSource().get(game.userId);
 
     this._regeneratePresenters();
 
@@ -165,14 +161,6 @@ export default class WordGeneratorApplication extends Application {
 
     // General event handling. 
 
-    // Word generator creation
-    html.find("#create-generator").click(() => {
-      const newGenerator = new ObservableWordGeneratorItem({
-        name: game.i18n.localize("wg.generator.defaultName"),
-      });
-      this.data.generators.add(newGenerator);
-    });
-
     // Folder creation
     html.find("#create-folder").click(async () => {
       const dialog = await new DialogUtility().showSingleInputDialog({
@@ -184,10 +172,29 @@ export default class WordGeneratorApplication extends Application {
       if (dialog.confirmed !== true) return;
   
       // Create the folder. 
-      const newFolder = new ObservableWordGeneratorFolder({
+      const newFolder = new WgFolder({
         name: dialog.input,
+        applicationData: this.data,
       });
-      this.data.folders.add(newFolder);
+      this.data.rootFolder.folders.add(newFolder);
+    });
+
+    // Word generator creation
+    html.find("#create-generator").click(async () => {
+      const dialog = await new DialogUtility().showSingleInputDialog({
+        localizedTitle: game.i18n.localize("wg.generator.create"),
+        localizedInputLabel: game.i18n.localize("wg.generator.name"),
+        modal: true,
+      });
+  
+      if (dialog.confirmed !== true) return;
+
+      // Create the folder. 
+      const newGenerator = new WgGenerator({
+        name: dialog.input,
+        applicationData: this.data,
+      });
+      this.data.rootFolder.generators.add(newGenerator);
     });
 
     // Chain creation
@@ -200,10 +207,10 @@ export default class WordGeneratorApplication extends Application {
 
     // Sorting
     html.find("#move-sort-alpha-desc").click(() => {
-      this._sort(SORTING_ORDERS.DESC);
+      this.data.rootFolder.sort(SORTING_ORDERS.DESC);
     });
     html.find("#move-sort-alpha-asc").click(() => {
-      this._sort(SORTING_ORDERS.ASC);
+      this.data.rootFolder.sort(SORTING_ORDERS.ASC);
     });
 
     // Generator search
@@ -213,10 +220,10 @@ export default class WordGeneratorApplication extends Application {
     // Collapse all folders
     html.find("#collapse-all-folders").click(() => {
       this.suspendRendering = true;
-      for (const folder of this.data.folders.getAll()) {
+      for (const folder of this.data.rootFolder.folders.getAll()) {
         folder.collapse(true);
       }
-      for (const generator of this.data.generators.getAll()) {
+      for (const generator of this.data.rootFolder.generators.getAll()) {
         generator.isExpanded.value = false;
       }
       this.suspendRendering = false;
@@ -281,103 +288,6 @@ export default class WordGeneratorApplication extends Application {
   }
   
   /**
-   * Returns the folder with the given ID, if possible. 
-   * 
-   * Automatically recurses children to find the desired instance. 
-   * 
-   * @param {String} id ID of the folder to find. 
-   * 
-   * @returns {ObservableWordGeneratorFolder | undefined}
-   */
-  getFolderById(id) {
-    for (const folder of this.data.folders.getAll()) {
-      const r = folder.getFolderById(id);
-      if (r !== undefined) {
-        return r;
-      }
-    }
-    return undefined;
-  }
-  
-  /**
-   * Returns the generator with the given ID, if possible. 
-   * 
-   * Automatically recurses children to find the desired instance. 
-   * 
-   * @param {String} id ID of the generator to find. 
-   * 
-   * @returns {ObservableWordGeneratorItem | undefined}
-   */
-  getGeneratorById(id) {
-    for (const generator of this.data.generators.getAll()) {
-      if (generator.id === id) {
-        return generator;
-      }
-    }
-    for (const folder of this.data.folders.getAll()) {
-      const r = folder.getGeneratorById(id);
-      if (r !== undefined) {
-        return r;
-      }
-    }
-    return undefined;
-  }
-
-  /**
-   * Returns a flat list of **all** generators of the application. 
-   * 
-   * @returns {Array<ObservableWordGeneratorItem>}
-   */
-  getGenerators() {
-    let flatList = this.data.generators.getAll();
-
-    for (const folder of this.data.folders.getAll()) {
-      flatList = flatList.concat(folder.getAllGenerators());
-    }
-
-    return flatList;
-  }
-
-  /**
-   * Returns a flat list of **all** chains of the application. 
-   * 
-   * @returns {Array<ObservableWordGeneratorItem>}
-   */
-  getChains() {
-    let flatList = this.data.chains.getAll();
-
-    for (const folder of this.data.folders.getAll()) {
-      flatList = flatList.concat(folder.getAllChains());
-    }
-
-    return flatList;
-  }
-
-  /**
-   * Returns the chain with the given ID, if possible. 
-   * 
-   * Automatically recurses children to find the desired instance. 
-   * 
-   * @param {String} id ID of the chain to find. 
-   * 
-   * @returns {ObservableWordGeneratorItem | undefined}
-   */
-  getChainById(id) {
-    for (const chain of this.data.chains.getAll()) {
-      if (chain.id === id) {
-        return chain;
-      }
-    }
-    for (const folder of this.data.folders.getAll()) {
-      const r = folder.getChainById(id);
-      if (r !== undefined) {
-        return r;
-      }
-    }
-    return undefined;
-  }
-
-  /**
    * Re-generates all child presenters. 
    * 
    * @private
@@ -392,8 +302,10 @@ export default class WordGeneratorApplication extends Application {
     if (searchTerm.length > 0) {
       // Show only filtered generators. 
 
-      const flatGeneratorList = this.getGenerators();
-      const flatChainList = this.getChains();
+      let flatGeneratorList = this.data.rootFolder.generators.getAll();
+      for (const folder of this.data.rootFolder.folders.getAll()) {
+        flatGeneratorList = flatGeneratorList.concat(folder.getGenerators());
+      }
 
       const searchableGenerators = flatGeneratorList.map(generator => 
         new SearchItem({
@@ -424,16 +336,14 @@ export default class WordGeneratorApplication extends Application {
     } else {
       // Show **all** content. 
 
-      foldersToShow = this.data.folders.getAll();
-      generatorsToShow = this.data.generators.getAll();
-      chainsToShow = this.data.chains.getAll();
+      foldersToShow = this.data.rootFolder.folders.getAll();
+      generatorsToShow = this.data.rootFolder.generators.getAll();
     }
 
-    this._contentListPresenter = new WordGeneratorListPresenter({
+    this._contentListPresenter = new WgFolderContentsPresenter({
       application: this,
       folders: foldersToShow,
       generators: generatorsToShow,
-      chains: chainsToShow,
     });
   }
 
@@ -479,24 +389,6 @@ export default class WordGeneratorApplication extends Application {
    * @private
    */
   _persistData() {
-    new ObservableWordGeneratorApplicationDataDataSource().set(game.userId, this.data);
-  }
-
-  /**
-   * Click-handler to sort generators and folders. 
-   * 
-   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
-   */
-  _sort(sortingOrder = SORTING_ORDERS.DESC) {
-    const sortByNameAsc = (a, b) => a.name.value.localeCompare(b.name.value);
-    const sortByNameDesc = (a, b) => b.name.value.localeCompare(a.name.value);
-
-    if (sortingOrder === SORTING_ORDERS.ASC) {
-      this.data.folders.sort(sortByNameAsc);
-      this.data.generators.sort(sortByNameAsc);
-    } else {
-      this.data.folders.sort(sortByNameDesc);
-      this.data.generators.sort(sortByNameDesc);
-    }
+    new ApplicationDataDataSource().set(game.userId, this.data);
   }
 }

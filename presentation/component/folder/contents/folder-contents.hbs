@@ -1,0 +1,12 @@
+{{!-- Params:
+TEMPLATES: TEMPLATES
+presenter: WgFolderContentsPresenter
+--}}
+{{!-- Folders --}}
+{{#with presenter.foldersPresenter.template as |template|}}
+  {{> (template) presenter=../presenter.foldersPresenter TEMPLATES=../TEMPLATES }}
+{{/with}}
+{{!-- Generators --}}
+{{#with presenter.generatorsPresenter.template as |template|}}
+  {{> (template) presenter=../presenter.generatorsPresenter TEMPLATES=../TEMPLATES }}
+{{/with}}

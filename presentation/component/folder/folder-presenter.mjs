@@ -1,27 +1,25 @@
 import { TEMPLATES } from "../../templates.mjs";
-import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
-import WordGeneratorItemPresenter from "../word-generator-item/word-generator-item-presenter.mjs";
-import WordGeneratorListPresenter from "../word-generator-list/word-generator-list-presenter.mjs";
+import WgApplication from "../../application/application-presenter.mjs";
+import WgGeneratorPresenter from "../generator/generator-presenter.mjs";
+import WgFolderContentsPresenter from "../folder/contents/folder-contents-presenter.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
-import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
+import WgFolder from "../../../business/model/wg-folder.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
-import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
-import WordGeneratorChainPresenter from "../chain/word-generator-chain-presenter.mjs";
-import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs";
+import WgGenerator from "../../../business/model/wg-generator.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
  * This presenter handles a singular folder. 
  * 
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
- * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorFolder} entity The represented entity.  
+ * @property {WgApplication} application The parent application. 
+ * @property {WgFolder} entity The represented entity.  
  * @property {String} id
  * * Read-only
- * @property {WordGeneratorListPresenter} contentListPresenter
+ * @property {WgFolderContentsPresenter} contentListPresenter
  */
-export default class WordGeneratorFolderPresenter extends AbstractOrderableEntityPresenter {
+export default class WgFolderPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -32,9 +30,9 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
    * @readonly
    * @static
    */
-  static entityDataType = "WordGeneratorFolder";
+  static entityDataType = "WgFolder";
 
-  get template() { return TEMPLATES.WORD_GENERATOR_FOLDER; }
+  get template() { return TEMPLATES.FOLDER; }
 
   get id() { return this.entity.id; }
 
@@ -44,13 +42,13 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
 
   /**
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorFolder} args.entity The represented entity.  
+   * @param {WgApplication} args.application The parent application. 
+   * @param {WgFolder} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
     
-    this.contentListPresenter = new WordGeneratorListPresenter({
+    this.contentListPresenter = new WgFolderContentsPresenter({
       application: args.application,
       folders: this.entity.folders.getAll(),
       generators: this.entity.generators.getAll(),
@@ -59,19 +57,19 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
 
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: WordGeneratorFolderPresenter.entityDataType,
+      entityDataType: WgFolderPresenter.entityDataType,
       acceptedDataTypes: [
-        WordGeneratorFolderPresenter.entityDataType,
-        WordGeneratorItemPresenter.entityDataType,
-        WordGeneratorChainPresenter.entityDataType,
+        WgFolderPresenter.entityDataType,
+        WgGeneratorPresenter.entityDataType,
       ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
+      dragOverClass: "wg-dragover",
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
-        if (droppedEntityDataType === WordGeneratorFolderPresenter.entityDataType) {
+        if (droppedEntityDataType === WgFolderPresenter.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
 
-          const folderToNest = this.application.getFolderById(droppedEntityId);
+          const folderToNest = this.application.data.rootFolder.getFolderById(droppedEntityId);
 
           // Avoid recursion. 
           if (folderToNest.id === this.entity.id) return; 
@@ -80,20 +78,16 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
           this.application.suspendRendering = true;
 
           // Remove from origin. 
-          if (folderToNest.parent.value === undefined) {
-            this.application.data.folders.remove(folderToNest);
-          } else {
-            folderToNest.parent.value.folders.remove(folderToNest);
-          }
+          folderToNest.parentCollection.remove(folderToNest);
 
           this.application.suspendRendering = false;
 
           // Add to the represented folder's children. 
           this.entity.folders.add(folderToNest);
-        } else if (droppedEntityDataType === WordGeneratorItemPresenter.entityDataType) {
+        } else if (droppedEntityDataType === WgGeneratorPresenter.entityDataType) {
           // Assign the dragged generator to this folder, as a child. 
 
-          const generatorToNest = this.application.getGeneratorById(droppedEntityId);
+          const generatorToNest = this.application.data.rootFolder.getGeneratorById(droppedEntityId);
 
           // Avoid unnecessary operations. 
           if (this.entity.generators.contains(generatorToNest)) return;
@@ -101,11 +95,7 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
           this.application.suspendRendering = true;
 
           // Remove from origin. 
-          if (generatorToNest.parent.value === undefined) {
-            this.application.data.generators.remove(generatorToNest);
-          } else {
-            generatorToNest.parent.value.generators.remove(generatorToNest);
-          }
+          generatorToNest.parentCollection.remove(generatorToNest);
 
           this.application.suspendRendering = false;
 
@@ -138,8 +128,6 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
   }
 
   activateListeners(html) {
-    super.activateListeners(html);
-
     const id = this.entity.id;
 
     const headerElement = html.find(`#${id}-header`);
@@ -164,10 +152,14 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.moveToRootLevel();
+            this.application.suspendRendering = true;
+            this.entity.moveToRootLevel();
+            this.application.suspendRendering = false;
+            this.application.render();
           },
           condition: () => {
-            return this.entity.parent.value !== undefined;
+            return this.entity.parent.value !== undefined
+              && this.entity.parent.value.id !== "ROOT";
           }
         },
         {
@@ -201,22 +193,16 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
       ]
     );
 
-    html.find(`#${id}-add-generator`).click(async (event) => {
-      event.stopPropagation();
-      
-      this._createGenerator();
-    });
-
     html.find(`#${id}-add-folder`).click(async (event) => {
       event.stopPropagation();
 
       this._createFolder();
     });
 
-    html.find(`#${id}-add-chain`).click(async (event) => {
+    html.find(`#${id}-add-generator`).click(async (event) => {
       event.stopPropagation();
-
-      this._createChain();
+      
+      this._createGenerator();
     });
 
     // Drag & drop
@@ -230,8 +216,8 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
   /**
    * Prompts the user for a name and then creates a new child folder. 
    * 
-   * @private
    * @async
+   * @private
    */
   async _createFolder() {
     const dialog = await new DialogUtility().showSingleInputDialog({
@@ -243,21 +229,32 @@ export default class WordGeneratorFolderPresenter extends AbstractOrderableEntit
     if (dialog.confirmed !== true) return;
 
     // Create the folder. 
-    const newFolder = new ObservableWordGeneratorFolder({
+    const newFolder = new WgFolder({
       name: dialog.input,
+      applicationData: this.entity.applicationData,
     });
     this.entity.folders.add(newFolder);
   }
 
   /**
-   * Creates a new child generator. 
+   * Prompts the user for a name and then creates a new child generator. 
    * 
+   * @async
    * @private
    */
-  _createGenerator() {
+  async _createGenerator() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.generator.create"),
+      localizedInputLabel: game.i18n.localize("wg.generator.name"),
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
     // Create the generator. 
-    const newGenerator = new ObservableWordGeneratorItem({
-      name: game.i18n.localize("wg.generator.defaultName"),
+    const newGenerator = new WgGenerator({
+      name: dialog.input,
+      applicationData: this.entity.applicationData,
     });
     this.entity.generators.add(newGenerator);
   }

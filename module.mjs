@@ -3,7 +3,7 @@ import { BeginningCapitalsSpellingStrategyDefinition } from "./business/generato
 import { CharDepthSequencingStrategyDefinition } from "./business/generator/sequencing/char-depth-sequencing-strategy.mjs"
 import { DelimiterSequencingStrategyDefinition } from "./business/generator/sequencing/delimiter-sequencing-strategy.mjs"
 import CustomUserSettings from "./data/settings/custom-user-settings.mjs";
-import WordGeneratorApplication from "./presentation/application/word-generator-application/word-generator-application.mjs";
+import WgApplication from "./presentation/application/application-presenter.mjs";
 import HandlebarsGlobals from "./presentation/handlebars-globals.mjs";
 import { TEMPLATES } from "./presentation/templates.mjs";
 import { WordListSamplingStrategyDefinition } from "./business/generator/sampling/word-list-sampling-strategy.mjs";
@@ -25,16 +25,16 @@ Hooks.once('ready', function() {
   new CustomUserSettings().ensureAllSettings();
 
   // Ensure default sampling strategy definitions are registered. 
-  WordGeneratorApplication.registeredSamplingStrategies.register(new WordListSamplingStrategyDefinition());
+  WgApplication.registeredSamplingStrategies.register(new WordListSamplingStrategyDefinition());
 
   // Ensure default sequencing strategy definitions are registered. 
-  WordGeneratorApplication.registeredSequencingStrategies.register(new CharDepthSequencingStrategyDefinition());
-  WordGeneratorApplication.registeredSequencingStrategies.register(new DelimiterSequencingStrategyDefinition());
+  WgApplication.registeredSequencingStrategies.register(new CharDepthSequencingStrategyDefinition());
+  WgApplication.registeredSequencingStrategies.register(new DelimiterSequencingStrategyDefinition());
   
   // Ensure default spelling strategy definitions are registered. 
-  WordGeneratorApplication.registeredSpellingStrategies.register(new NoneSpellingStrategyDefinition());
-  WordGeneratorApplication.registeredSpellingStrategies.register(new BeginningCapitalsSpellingStrategyDefinition());
+  WgApplication.registeredSpellingStrategies.register(new NoneSpellingStrategyDefinition());
+  WgApplication.registeredSpellingStrategies.register(new BeginningCapitalsSpellingStrategyDefinition());
   
   // Register globals. 
-  window.WordGeneratorApplication = WordGeneratorApplication;
+  window.WgApplication = WgApplication;
 });

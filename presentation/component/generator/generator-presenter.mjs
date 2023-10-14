@@ -1,22 +1,22 @@
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
-import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
+import WgApplication from "../../application/application-presenter.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
+import WgGenerator from "../../../business/model/wg-generator.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
-import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-presenter.mjs";
-import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
+import WgStrategyPresenter from "../strategy/strategy-presenter.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
  * This presenter handles a singular generator. 
  * 
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
- * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorItem} entity The represented entity.  
+ * @property {WgApplication} application The parent application. 
+ * @property {WgGenerator} entity The represented entity.  
  */
-export default class WordGeneratorItemPresenter extends AbstractOrderableEntityPresenter {
+export default class WgGeneratorPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -27,9 +27,9 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
    * @readonly
    * @static
    */
-  static entityDataType = "WordGeneratorItem";
+  static entityDataType = "WgGenerator";
 
-  get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
+  get template() { return TEMPLATES.GENERATOR; }
 
   get id() { return this.entity.id; }
 
@@ -39,20 +39,20 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
 
   /**
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorItem} args.entity The represented entity.  
+   * @param {WgApplication} args.application The parent application. 
+   * @param {WgGenerator} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
 
     // Sample set presenter preparations.
-    this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
+    this.sampleSetStrategies = WgApplication.registeredSamplingStrategies.getAll();
     this.sampleSetStrategyOptions = this.sampleSetStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.sampleSetStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-sampling-strategy`,
@@ -63,13 +63,13 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
     });
 
     // Sequencing presenter preparations.
-    this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
+    this.sequencingStrategies = WgApplication.registeredSequencingStrategies.getAll();
     this.sequencingStrategyOptions = this.sequencingStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.sequencingStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-sequencing-strategy`,
@@ -80,13 +80,13 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
     });
 
     // Spelling presenter preparations.
-    this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
+    this.spellingStrategies = WgApplication.registeredSpellingStrategies.getAll();
     this.spellingStrategyOptions = this.spellingStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.spellingStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-spelling-strategy`,
@@ -99,15 +99,15 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: WordGeneratorItemPresenter.entityDataType,
+      entityDataType: WgGeneratorPresenter.entityDataType,
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
+      dragOverClass: "wg-dragover",
     });
   }
 
+  /** @override */
   activateListeners(html) {
-    super.activateListeners(html);
-
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({
@@ -179,10 +179,14 @@ export default class WordGeneratorItemPresenter extends AbstractOrderableEntityP
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.moveToRootLevel();
+            this.application.suspendRendering = true;
+            this.entity.moveToRootLevel();
+            this.application.suspendRendering = false;
+            this.application.render();
           },
           condition: () => {
-            return this.entity.parent.value !== undefined;
+            return this.entity.parent.value !== undefined
+              && this.entity.parent.value.id !== "ROOT";
           }
         },
         {

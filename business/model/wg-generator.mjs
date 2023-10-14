@@ -1,6 +1,6 @@
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
-import WordGeneratorApplication from "../../presentation/application/word-generator-application/word-generator-application.mjs";
+import WgApplication from "../../presentation/application/application-presenter.mjs";
 import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import AbstractSpellingStrategy from "../generator/postprocessing/abstract-spelling-strategy.mjs";
@@ -9,13 +9,23 @@ import AbstractSamplingStrategy from "../generator/sampling/abstract-sampling-st
 import { WordListSamplingStrategy } from "../generator/sampling/word-list-sampling-strategy.mjs";
 import AbstractSequencingStrategy from "../generator/sequencing/abstract-sequencing-strategy.mjs";
 import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
+import AbstractContainableEntity from "./abstract-containable-entity.mjs";
+import WgApplicationData from "./wg-application-data.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
  * maximum length, etc.) for a word generator item. 
  * 
+ * This type and most of its fields are **observable**! 
+ * 
  * @property {String} id Unique ID. 
  * * Read-only
+ * * Not observable
+ * @property {WgApplicationData} applicationData The application level 
+ * root data object reference. 
+ * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
+ * collection that this entity is contained in. 
+ * * Not observable
  * @property {ObservableField<String | undefined>} name Human readable name. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
  * @property {ObservableField<Number>} targetLengthMax The target maximum length that generated texts should be. 
@@ -43,12 +53,16 @@ import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-
  * @property {ObservableField<Boolean>} isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
  * it is rendered collapsed. 
  * 
- * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
+ * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
  */
-export default class ObservableWordGeneratorItem {
+export default class WgGenerator extends AbstractContainableEntity {
   /**
    * @param {String | undefined} args.id Unique ID. 
    * * By default, generates a new id. 
+   * @param {WgApplicationData} args.applicationData The application level 
+   * root data object reference. 
+   * @param {ObservableCollection<AbstractContainableEntity> | undefined} args.parentCollection 
+   * The collection that this entity is contained in, if any. 
    * @param {String | undefined} args.name Human readable name. 
    * @param {Number | undefined} args.targetLengthMin The target minimum length that generated texts should be. 
    * * default `3`
@@ -81,11 +95,14 @@ export default class ObservableWordGeneratorItem {
    * it is rendered collapsed. 
    * * Default `false`
    * 
-   * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
+   * @param {WgFolder | undefined} parent Parent folder, if there is one. 
    */
   constructor(args = {}) {
-    this.id = args.id ?? foundry.utils.randomID(16);
-    this.name = new ObservableField({ value: args.name });
+    super(args);
+
+    this.name = new ObservableField({
+      value: args.name ?? game.i18n.localize("wg.generator.defaultName")
+    });
     this.targetLengthMin = new ObservableField({ value: args.targetLengthMin ?? 3 });
     this.targetLengthMax = new ObservableField({ value: args.targetLengthMax ?? 10 });
     this.seed = new ObservableField({ value: args.seed });
@@ -172,16 +189,18 @@ export default class ObservableWordGeneratorItem {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {ObservableWordGeneratorFolder | undefined} parent 
+   * @param {WgApplicationData} applicationData The application level 
+   * root data object reference. 
+   * @param {WgFolder} parent 
    * 
-   * @returns {ObservableWordGeneratorItem}
+   * @returns {WgGenerator}
    * 
    * @static
    */
-  static fromDto(obj, parent) {
+  static fromDto(obj, applicationData, parent) {
     let samplingStrategy;
     if (obj.samplingStrategy !== undefined && obj.samplingStrategy.definitionId !== undefined) {
-      samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
+      samplingStrategy = WgApplication.registeredSamplingStrategies.newInstanceOf(
         obj.samplingStrategy.definitionId,
         {
           ...obj.samplingStrategy.settings,
@@ -192,7 +211,7 @@ export default class ObservableWordGeneratorItem {
     
     let sequencingStrategy;
     if (obj.sequencingStrategy !== undefined && obj.sequencingStrategy.definitionId !== undefined) {
-      sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
+      sequencingStrategy = WgApplication.registeredSequencingStrategies.newInstanceOf(
         obj.sequencingStrategy.definitionId,
         {
           ...obj.sequencingStrategy.settings,
@@ -203,7 +222,7 @@ export default class ObservableWordGeneratorItem {
 
     let spellingStrategy;
     if (obj.spellingStrategy !== undefined && obj.spellingStrategy.definitionId !== undefined) {
-      spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
+      spellingStrategy = WgApplication.registeredSpellingStrategies.newInstanceOf(
         obj.spellingStrategy.definitionId,
         {
           ...obj.spellingStrategy.settings,
@@ -212,8 +231,10 @@ export default class ObservableWordGeneratorItem {
       );
     }
 
-    return new ObservableWordGeneratorItem({
+    return new WgGenerator({
       id: obj.id,
+      applicationData: applicationData,
+      parentCollection: parent.generators,
       name: obj.name,
       targetLengthMin: obj.targetLengthMin,
       targetLengthMax: obj.targetLengthMax,
@@ -251,5 +272,14 @@ export default class ObservableWordGeneratorItem {
       sequencingStrategy: this.sequencingStrategy.value.toDto(),
       spellingStrategy: this.spellingStrategy.value.toDto(),
     };
+  }
+  
+  /**
+   * Moves the represented entity to the root level, if possible. 
+   * 
+   * @override
+   */
+  moveToRootLevel() {
+    super.moveToRootLevel("generator");
   }
 }

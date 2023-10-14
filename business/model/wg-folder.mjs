@@ -2,37 +2,49 @@ import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
-import ObservableWordGeneratorChain from "./observable-word-generator-chain.mjs";
-import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
+import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
+import AbstractContainableEntity from "./abstract-containable-entity.mjs";
+import WgApplicationData from "./wg-application-data.mjs";
+import WgGenerator from "./wg-generator.mjs";
 
 /**
  * Represents a folder within which word generators and other folders may be grouped. 
  * 
+ * This type and most of its fields are **observable**! 
+ * 
  * @property {String} id Unique ID of the folder. 
  * * Read-only
+ * * Not observable
+ * @property {WgApplicationData} applicationData The application level 
+ * root data object reference. 
+ * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
+ * collection that this entity is contained in. 
+ * * Not observable
  * @property {ObservableField<String>} name Human readable name of the folder. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the folder is to be presented in expanded state. 
- * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
- * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders Nested folders. 
- * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The contained word generators. 
- * @property {ObservableCollection<ObservableWordGeneratorItem>} chains The contained chains. 
+ * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
+ * @property {ObservableCollection<WgFolder>} folders Nested folders. 
+ * @property {ObservableCollection<WgGenerator>} generators The contained word generators. 
  */
-export default class ObservableWordGeneratorFolder {
+export default class WgFolder extends AbstractContainableEntity {
   /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * * By default, generates a new id. 
+   * @param {WgApplicationData} args.applicationData The application level 
+   * root data object reference. 
+   * @param {ObservableCollection<AbstractContainableEntity> | undefined} args.parentCollection 
+   * The collection that this entity is contained in, if any. 
    * @param {String | undefined} args.name Human readable name of the folder. 
    * * Default localized `New Folder`
    * @param {Boolean | undefined} args.isExpanded If `true`, the folder is to be presented in expanded state. 
    * * Default `false`
-   * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
-   * @param {Array<ObservableWordGeneratorFolder> | undefined} folders Nested folders. 
-   * @param {Array<ObservableWordGeneratorItem> | undefined} generators The contained word generators. 
-   * @param {Array<ObservableWordGeneratorChain> | undefined} chains The contained chains. 
+   * @param {WgFolder | undefined} args.parent Parent folder, if there is one. 
+   * @param {Array<WgFolder> | undefined} args.folders Nested folders. 
+   * @param {Array<WgGenerator> | undefined} args.generators The contained word generators. 
    */
   constructor(args = {}) {
-    this.id = args.id ?? foundry.utils.randomID(16);
+    super(args);
 
     this.name = new ObservableField({ 
       value: args.name ?? game.i18n.localize("wg.folder.defaultName")
@@ -57,12 +69,14 @@ export default class ObservableWordGeneratorFolder {
         for (const childFolder of args.elements) {
           if (childFolder.parent.value != this) {
             childFolder.parent.value = this;
+            childFolder.parentCollection = this.folders;
           }
         }
       } else if (change === CollectionChangeTypes.REMOVE) {
         for (const childFolder of args.elements) {
           if (childFolder.parent.value == this) {
             childFolder.parent.value = undefined;
+            childFolder.parentCollection = undefined;
           }
         }
       }
@@ -70,15 +84,17 @@ export default class ObservableWordGeneratorFolder {
 
     this.generators.onChange((collection, change, args) => {
       if (change === CollectionChangeTypes.ADD) {
-        for (const item of args.elements) {
-          if (item.parent.value != this) {
-            item.parent.value = this;
+        for (const generator of args.elements) {
+          if (generator.parent.value != this) {
+            generator.parent.value = this;
+            generator.parentCollection = this.generators;
           }
         }
       } else if (change === CollectionChangeTypes.REMOVE) {
-        for (const item of args.elements) {
-          if (item.parent.value == this) {
-            item.parent.value = undefined;
+        for (const generator of args.elements) {
+          if (generator.parent.value == this) {
+            generator.parent.value = undefined;
+            generator.parentCollection = undefined;
           }
         }
       }
@@ -114,25 +130,31 @@ export default class ObservableWordGeneratorFolder {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {ObservableWordGeneratorFolder | undefined} parent 
+   * @param {WgApplicationData} applicationData The application level 
+   * root data object reference. This argument can only ever 
+   * be undefined when used in the context of a `WgApplicationData.fromDto()` call!
+   * @param {WgFolder | undefined} parent A parent folder. This argument can only ever 
+   * be undefined when used in the context of a `WgApplicationData.fromDto()` call!
    * 
-   * @returns {ObservableWordGeneratorFolder}
+   * @returns {WgFolder}
    * 
    * @static
    */
-  static fromDto(obj, parent) {
-    const result = new ObservableWordGeneratorFolder({
+  static fromDto(obj, applicationData, parent) {
+    const result = new WgFolder({
       id: obj.id,
+      applicationData: applicationData,
+      parentCollection: (parent ?? {}).folders,
       name: obj.name,
       parent: parent,
     });
 
     const generators = (obj.generators ?? []).map(itemDto => 
-      ObservableWordGeneratorItem.fromDto(itemDto, result)
+      WgGenerator.fromDto(itemDto, applicationData, result)
     );
 
     const folders = (obj.folders ?? []).map(childDto => 
-      ObservableWordGeneratorFolder.fromDto(childDto, result)
+      WgFolder.fromDto(childDto, applicationData, result)
     );
 
     const chains = (obj.chains ?? []).map(childDto => 
@@ -168,7 +190,7 @@ export default class ObservableWordGeneratorFolder {
    * 
    * @param {String} id ID of the folder to find. 
    * 
-   * @returns {ObservableWordGeneratorFolder | undefined}
+   * @returns {WgFolder | undefined}
    */
   getFolderById(id) {
     if (id === this.id) {
@@ -185,13 +207,28 @@ export default class ObservableWordGeneratorFolder {
   }
   
   /**
+   * Returns all folders contained in this folder and its child folders. 
+   * 
+   * @returns {Array<WgGenerator>}
+   */
+  getFolders() {
+    let folders = this.folders.getAll();
+
+    for (const child of folders) {
+      folders = folders.concat(child.getFolders());
+    }
+
+    return folders;
+  }
+
+  /**
    * Returns the generator with the given ID, if possible. 
    * 
    * Automatically recurses children to find the desired instance. 
    * 
    * @param {String} id ID of the generator to find. 
    * 
-   * @returns {ObservableWordGeneratorItem | undefined}
+   * @returns {WgGenerator | undefined}
    */
   getGeneratorById(id) {
     for (const generator of this.generators.getAll()) {
@@ -235,13 +272,13 @@ export default class ObservableWordGeneratorFolder {
   /**
    * Returns all generators contained in this folder and its child folders. 
    * 
-   * @returns {Array<ObservableWordGeneratorItem>}
+   * @returns {Array<WgGenerator>}
    */
-  getAllGenerators() {
+  getGenerators() {
     let generators = this.generators.getAll();
 
     for (const child of this.folders.getAll()) {
-      generators = generators.concat(child.getAllGenerators());
+      generators = generators.concat(child.getGenerators());
     }
 
     return generators;
@@ -266,7 +303,7 @@ export default class ObservableWordGeneratorFolder {
    * Returns true, if this folder is a direct or indirect child of the 
    * given other folder. 
    * 
-   * @param {ObservableWordGeneratorFolder} otherFolder 
+   * @param {WgFolder} otherFolder 
    * 
    * @returns {Boolean}
    */
@@ -297,6 +334,33 @@ export default class ObservableWordGeneratorFolder {
       for (const generator of this.generators.getAll()) {
         generator.isExpanded.value = false;
       }
+    }
+  }
+
+  /**
+   * Moves the represented entity to the root level, if possible. 
+   * 
+   * @override
+   */
+  moveToRootLevel() {
+    super.moveToRootLevel("folder");
+  }
+  
+  /**
+   * Sorts this folder's contents in the given sorting order. 
+   * 
+   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
+   */
+  sort(sortingOrder = SORTING_ORDERS.DESC) {
+    const sortByNameAsc = (a, b) => a.name.value.localeCompare(b.name.value);
+    const sortByNameDesc = (a, b) => b.name.value.localeCompare(a.name.value);
+
+    if (sortingOrder === SORTING_ORDERS.ASC) {
+      this.folders.sort(sortByNameAsc);
+      this.generators.sort(sortByNameAsc);
+    } else {
+      this.folders.sort(sortByNameDesc);
+      this.generators.sort(sortByNameDesc);
     }
   }
 }

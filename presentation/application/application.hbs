@@ -1,8 +1,8 @@
 {{!-- Parameters:
 TEMPLATES: TEMPLATES
-data: WordGeneratorApplicationData
+data: WgApplicationData
 generatedResults: Array<String>
-contentListPresenter: WordGeneratorListPresenter
+contentListPresenter: WgFolderContentsPresenter
 generatorSearchTerm: String
 --}}
 <form class="wg-application-form">
@@ -44,14 +44,14 @@ generatorSearchTerm: String
         <a
           class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
           title="{{localize "wg.generator.sortAlphaDesc"}}"
-          id="move-sort-alpha-desc"
+          id="move-sort-alpha-asc"
           >
           <i class="fas fa-sort-alpha-down"></i>
         </a>
         <a
           class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
           title="{{localize "wg.generator.sortAlphaAsc"}}"
-          id="move-sort-alpha-asc"
+          id="move-sort-alpha-desc"
           >
           <i class="fas fa-sort-alpha-up"></i>
         </a>
@@ -100,14 +100,14 @@ generatorSearchTerm: String
           <a
             class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
             title="{{localize "wg.generator.sortAlphaDesc"}}"
-            id="results-move-sort-alpha-desc"
+            id="results-move-sort-alpha-asc"
             >
             <i class="fas fa-sort-alpha-down"></i>
           </a>
           <a
             class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
             title="{{localize "wg.generator.sortAlphaAsc"}}"
-            id="results-move-sort-alpha-asc"
+            id="results-move-sort-alpha-desc"
             >
             <i class="fas fa-sort-alpha-up"></i>
           </a>
@@ -117,7 +117,7 @@ generatorSearchTerm: String
     <ul class="wg-unstyled-list wg-scrollable"
       id="content-area-2">
       {{#each generatedResults as |generatedResult index|}}
-      <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light word-generator-generated-word">
+      <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light wg-generated-word">
         <a 
           id="generated-word-{{index}}-copy-to-clipboard" 
           class="wg-square wg-flex center wg-interactible hidden" 
