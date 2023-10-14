@@ -92,7 +92,9 @@ export default class ObservableWordGeneratorItem extends AbstractContainableEnti
   constructor(args = {}) {
     super(args);
 
-    this.name = new ObservableField({ value: args.name });
+    this.name = new ObservableField({
+      value: args.name ?? game.i18n.localize("wg.generator.defaultName")
+    });
     this.targetLengthMin = new ObservableField({ value: args.targetLengthMin ?? 3 });
     this.targetLengthMax = new ObservableField({ value: args.targetLengthMax ?? 10 });
     this.seed = new ObservableField({ value: args.seed });
