@@ -310,34 +310,28 @@ export default class WgApplication extends Application {
     // TODO extract and generalize searching
     const searchTerm = this.data.generatorSearchTerm.value.trim();
     if (searchTerm.length > 0) {
-      // Show only filtered generators. 
-
-      let flatGeneratorList = this.data.rootFolder.generators.getAll();
-      for (const folder of this.data.rootFolder.folders.getAll()) {
-        flatGeneratorList = flatGeneratorList.concat(folder.getGenerators());
-      }
-
+      const flatGeneratorList = this.data.rootFolder.getGenerators();
       const searchableGenerators = flatGeneratorList.map(generator => 
         new SearchItem({
           id: generator.id,
           term: generator.name.value,
         })
       );
+      const foundGenerators = new Search().search(searchableGenerators, searchTerm, SEARCH_MODES.FUZZY);
 
+      const relevantGenerators = foundGenerators.filter(it => it.score > 0);
+      generatorsToShow = relevantGenerators.map(result => 
+        flatGeneratorList.find(generator => generator.id === result.id)
+      );
+
+      const flatChainList = this.data.rootFolder.getChains();
       const searchableChains = flatChainList.map(chain => 
         new SearchItem({
           id: chain.id,
           term: chain.name.value,
         })
       );
-
-      const foundGenerators = new Search().search(searchableGenerators, searchTerm, SEARCH_MODES.FUZZY);
       const foundChains = new Search().search(searchableChains, searchTerm, SEARCH_MODES.FUZZY);
-
-      const relevantGenerators = foundGenerators.filter(it => it.score > 0);
-      generatorsToShow = relevantGenerators.map(result => 
-        flatGeneratorList.find(generator => generator.id === result.id)
-      );
 
       const relevantChains = foundChains.filter(it => it.score > 0);
       chainsToShow = relevantChains.map(result => 
