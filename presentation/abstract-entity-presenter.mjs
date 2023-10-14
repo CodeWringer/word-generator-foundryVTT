@@ -43,7 +43,6 @@ export default class AbstractEntityPresenter extends AbstractPresenter {
 
     if (dialog.confirmed !== true) return;
 
-    const collection = this.getContainingCollection().collection;
-    collection.remove(this.entity);
+    this.entity.delete();
   }
 }

@@ -93,4 +93,14 @@ export default class AbstractContainableEntity extends AbstractEntity {
       this.applicationData.chains.add(this);
     }
   }
+  
+  /**
+   * Removes the represented entity. 
+   * 
+   * @virtual
+   */
+  delete() {
+    const collection = this.getContainingCollection().collection;
+    collection.remove(this);
+  }
 }
