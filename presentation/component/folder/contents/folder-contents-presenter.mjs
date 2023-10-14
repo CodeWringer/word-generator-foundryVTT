@@ -94,10 +94,10 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
    * 
    * @param {Boolean | undefined} toStart If `true`, moves up all the way to the first index. 
    * * default `false`
-   * @param {Object} entity 
+   * @param {WgFolder | WgGenerator} entity 
    */
   moveUp(entity, toStart = false) {
-    const collection = entity.getContainingCollection().collection;
+    const collection = entity.parentCollection;
     const index = collection.getAll().findIndex(it => it.id === entity.id);
 
     let newIndex;
@@ -115,10 +115,10 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
    * 
    * @param {Boolean | undefined} toEnd If `true`, moves down all the way to the last index. 
    * * default `false`
-   * @param {Object} entity 
+   * @param {WgFolder | WgGenerator} entity 
    */
   moveDown(entity, toEnd = false) {
-    const collection = entity.getContainingCollection().collection;
+    const collection = entity.parentCollection;
     const index = collection.getAll().findIndex(it => it.id === entity.id);
     const maxIndex = collection.length - 1;
     
