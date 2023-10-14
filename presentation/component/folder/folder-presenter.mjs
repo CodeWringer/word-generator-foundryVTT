@@ -68,7 +68,7 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
         if (droppedEntityDataType === WgFolderPresenter.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
 
-          const folderToNest = this.application.getFolderById(droppedEntityId);
+          const folderToNest = this.application.data.rootFolder.getFolderById(droppedEntityId);
 
           // Avoid recursion. 
           if (folderToNest.id === this.entity.id) return; 
@@ -77,11 +77,7 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
           this.application.suspendRendering = true;
 
           // Remove from origin. 
-          if (folderToNest.parent.value === undefined) {
-            this.application.data.folders.remove(folderToNest);
-          } else {
-            folderToNest.parent.value.folders.remove(folderToNest);
-          }
+          folderToNest.parentCollection.remove(folderToNest);
 
           this.application.suspendRendering = false;
 
@@ -90,7 +86,7 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
         } else if (droppedEntityDataType === WgGeneratorPresenter.entityDataType) {
           // Assign the dragged generator to this folder, as a child. 
 
-          const generatorToNest = this.application.getGeneratorById(droppedEntityId);
+          const generatorToNest = this.application.data.rootFolder.getGeneratorById(droppedEntityId);
 
           // Avoid unnecessary operations. 
           if (this.entity.generators.contains(generatorToNest)) return;
@@ -98,11 +94,7 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
           this.application.suspendRendering = true;
 
           // Remove from origin. 
-          if (generatorToNest.parent.value === undefined) {
-            this.application.data.generators.remove(generatorToNest);
-          } else {
-            generatorToNest.parent.value.generators.remove(generatorToNest);
-          }
+          generatorToNest.parentCollection.remove(generatorToNest);
 
           this.application.suspendRendering = false;
 
@@ -138,10 +130,11 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.moveToRootLevel();
+            this.entity.moveToRootLevel();
           },
           condition: () => {
-            return this.entity.parent.value !== undefined;
+            return this.entity.parent.value !== undefined
+              && this.entity.parent.value.id !== "ROOT";
           }
         },
         {
@@ -168,16 +161,16 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
       ]
     );
 
-    html.find(`#${id}-add-generator`).click(async (event) => {
-      event.stopPropagation();
-      
-      this._createGenerator();
-    });
-
     html.find(`#${id}-add-folder`).click(async (event) => {
       event.stopPropagation();
 
       this._createFolder();
+    });
+
+    html.find(`#${id}-add-generator`).click(async (event) => {
+      event.stopPropagation();
+      
+      this._createGenerator();
     });
 
     // Drag & drop
@@ -191,8 +184,8 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
   /**
    * Prompts the user for a name and then creates a new child folder. 
    * 
-   * @private
    * @async
+   * @private
    */
   async _createFolder() {
     const dialog = await new DialogUtility().showSingleInputDialog({
@@ -206,19 +199,30 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
     // Create the folder. 
     const newFolder = new WgFolder({
       name: dialog.input,
+      applicationData: this.entity.applicationData,
     });
     this.entity.folders.add(newFolder);
   }
 
   /**
-   * Creates a new child generator. 
+   * Prompts the user for a name and then creates a new child generator. 
    * 
+   * @async
    * @private
    */
-  _createGenerator() {
+  async _createGenerator() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.generator.create"),
+      localizedInputLabel: game.i18n.localize("wg.generator.name"),
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
     // Create the generator. 
     const newGenerator = new WgGenerator({
-      name: game.i18n.localize("wg.generator.defaultName"),
+      name: dialog.input,
+      applicationData: this.entity.applicationData,
     });
     this.entity.generators.add(newGenerator);
   }

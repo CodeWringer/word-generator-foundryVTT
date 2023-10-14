@@ -161,14 +161,6 @@ export default class WgApplication extends Application {
 
     // General event handling. 
 
-    // Word generator creation
-    html.find("#create-generator").click(() => {
-      const newGenerator = new WgGenerator({
-        name: game.i18n.localize("wg.generator.defaultName"),
-      });
-      this.data.rootFolder.generators.add(newGenerator);
-    });
-
     // Folder creation
     html.find("#create-folder").click(async () => {
       const dialog = await new DialogUtility().showSingleInputDialog({
@@ -182,16 +174,35 @@ export default class WgApplication extends Application {
       // Create the folder. 
       const newFolder = new WgFolder({
         name: dialog.input,
+        applicationData: this.data,
       });
       this.data.rootFolder.folders.add(newFolder);
     });
 
+    // Word generator creation
+    html.find("#create-generator").click(async () => {
+      const dialog = await new DialogUtility().showSingleInputDialog({
+        localizedTitle: game.i18n.localize("wg.generator.create"),
+        localizedInputLabel: game.i18n.localize("wg.generator.name"),
+        modal: true,
+      });
+  
+      if (dialog.confirmed !== true) return;
+
+      // Create the folder. 
+      const newGenerator = new WgGenerator({
+        name: dialog.input,
+        applicationData: this.data,
+      });
+      this.data.rootFolder.generators.add(newGenerator);
+    });
+
     // Sorting word generators
     html.find("#move-sort-alpha-desc").click(() => {
-      this._sort(SORTING_ORDERS.DESC);
+      this.data.rootFolder.sort(SORTING_ORDERS.DESC);
     });
     html.find("#move-sort-alpha-asc").click(() => {
-      this._sort(SORTING_ORDERS.ASC);
+      this.data.rootFolder.sort(SORTING_ORDERS.ASC);
     });
 
     // Generator search
@@ -355,14 +366,5 @@ export default class WgApplication extends Application {
    */
   _persistData() {
     new ApplicationDataDataSource().set(game.userId, this.data);
-  }
-
-  /**
-   * Click-handler to sort folders and their contents. 
-   * 
-   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
-   */
-  _sort(sortingOrder = SORTING_ORDERS.DESC) {
-    this.data.rootFolder.sort(sortingOrder);
   }
 }

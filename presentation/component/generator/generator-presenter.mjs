@@ -179,10 +179,11 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.moveToRootLevel();
+            this.entity.moveToRootLevel();
           },
           condition: () => {
-            return this.entity.parent.value !== undefined;
+            return this.entity.parent.value !== undefined
+              && this.entity.parent.value.id !== "ROOT";
           }
         },
         {
