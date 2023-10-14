@@ -1,5 +1,6 @@
-import ObservableWordGeneratorChain from "../../../business/model/observable-word-generator-chain.mjs";
-import AbstractOrderableEntityPresenter from "../../abstract-orderable-entity-presenter.mjs";
+import WgApplicationData from "../../../business/model/wg-application-data.mjs";
+import WgChain from "../../../business/model/wg-chain.mjs";
+import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
@@ -11,9 +12,11 @@ import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } fro
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorChain} entity The represented entity.  
+ * @property {WgChain} entity The represented entity.  
+ * @property {String} id
+ * * Read-only
  */
-export default class WordGeneratorChainPresenter extends AbstractOrderableEntityPresenter {
+export default class WgChainPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -24,9 +27,9 @@ export default class WordGeneratorChainPresenter extends AbstractOrderableEntity
    * @readonly
    * @static
    */
-  static entityDataType = "WordGeneratorChain";
+  static entityDataType = "WgChain";
 
-  get template() { return TEMPLATES.WORD_GENERATOR_CHAIN; }
+  get template() { return TEMPLATES.CHAIN; }
 
   get id() { return this.entity.id; }
 
@@ -37,7 +40,7 @@ export default class WordGeneratorChainPresenter extends AbstractOrderableEntity
   /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorChain} args.entity The represented entity.  
+   * @param {WgChain} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
@@ -45,7 +48,7 @@ export default class WordGeneratorChainPresenter extends AbstractOrderableEntity
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: WordGeneratorChainPresenter.entityDataType,
+      entityDataType: WgChainPresenter.entityDataType,
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
     });
@@ -53,8 +56,6 @@ export default class WordGeneratorChainPresenter extends AbstractOrderableEntity
 
   /** @override */
   activateListeners(html) {
-    super.activateListeners(html);
-
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({
@@ -91,10 +92,14 @@ export default class WordGeneratorChainPresenter extends AbstractOrderableEntity
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
-            this.moveToRootLevel();
+            this.application.suspendRendering = true;
+            this.entity.moveToRootLevel();
+            this.application.suspendRendering = false;
+            this.application.render();
           },
           condition: () => {
-            return this.entity.parent.value !== undefined;
+            return this.entity.parent.value !== undefined
+              && this.entity.parent.value.id !== WgApplicationData.ROOT_FOLDER_ID;
           }
         },
         {

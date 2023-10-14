@@ -1,21 +1,32 @@
 import ObservableCollection from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
+import AbstractContainableEntity from "./abstract-containable-entity.mjs";
+import WgFolder from "./wg-folder.mjs";
+import WgGenerator from "./wg-generator.mjs";
 
 /**
  * Represents an ordered chain of generators and other chains, whose results 
  * will be concatenated (i. e. "chained" together). 
  * 
- * @property {String} id Unique ID of the chain. 
+ * This type and most of its fields are **observable**! 
+ * 
+ * @property {String} id Unique ID of the folder. 
  * * Read-only
+ * * Not observable
+ * @property {WgApplicationData} applicationData The application level 
+ * root data object reference. 
+ * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
+ * collection that this entity is contained in. 
+ * * Not observable
  * @property {ObservableField<String>} name Human readable name of the chain. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the chain is to be presented in expanded state. 
- * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
- * @property {ObservableCollection<ObservableWordGeneratorItem | ObservableWordGeneratorChain>} items The contained word generators. 
+ * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
+ * @property {ObservableCollection<WgGenerator | WgChain>} items The contained word generators. 
  * * These types must support a `generate()` method!
  * @property {ObservableField<String>} separator This separator is used to concatenate results. 
  */
-export default class ObservableWordGeneratorChain {
+export default class WgChain extends AbstractContainableEntity {
   /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the chain. 
@@ -24,16 +35,16 @@ export default class ObservableWordGeneratorChain {
    * * default is a localized default name
    * @param {Boolean | undefined} args.isExpanded If `true`, the chain is to be presented in expanded state. 
    * * default `false`
-   * @param {ObservableWordGeneratorFolder | undefined} args.parent Parent folder, if there is one. 
-   * @param {Array<ObservableWordGeneratorItem | ObservableWordGeneratorChain> | undefined} args.items The contained word generators. 
+   * @param {WgFolder | undefined} args.parent Parent folder, if there is one. 
+   * @param {Array<WgGenerator | WgChain> | undefined} args.items The contained word generators. 
    * * These types must support a `generate()` method!
    * @param {String | undefined} args.separator This separator is used to concatenate results. 
    * * default `" "`
    */
   constructor(args = {}) {
-    this.id = args.id ?? foundry.utils.randomID(16);
+    super(args);
 
-    this.name = new ObservableField({ 
+    this.name = new ObservableField({
       value: args.name ?? game.i18n.localize("wg.chain.defaultName")
     });
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
@@ -54,22 +65,24 @@ export default class ObservableWordGeneratorChain {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj DTO to create an instance from. 
-   * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
-   * @param {ObservableCollection<ObservableWordGeneratorItem | ObservableWordGeneratorChain>} items A flat list 
+   * @param {WgFolder | undefined} parent Parent folder, if there is one. 
+   * @param {ObservableCollection<WgGenerator | WgChain>} items A flat list 
    * of **all** available generators or other chains, from which the corresponding entries will 
    * be picked. 
    * 
-   * @returns {ObservableWordGeneratorChain}
+   * @returns {WgChain}
    * 
    * @static
    */
-  static fromDto(obj, parent, items) {
+  static fromDto(obj, applicationData, parent, items) {
     const itemDtos = (obj.items ?? []).map(itemId => 
       items.find(it => it.id === itemId)
     );
 
-    return new ObservableWordGeneratorChain({
+    return new WgChain({
       id: obj.id,
+      applicationData: applicationData,
+      parentCollection: (parent ?? {}).chains,
       name: obj.name,
       parent: parent,
       items: itemDtos,
@@ -122,5 +135,14 @@ export default class ObservableWordGeneratorChain {
     }
 
     return results;
+  }
+  
+  /**
+   * Moves the represented entity to the root level, if possible. 
+   * 
+   * @override
+   */
+  moveToRootLevel() {
+    super.moveToRootLevel("chain");
   }
 }

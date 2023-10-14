@@ -7,6 +7,9 @@ import WgFolder from "../../../business/model/wg-folder.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import WgGenerator from "../../../business/model/wg-generator.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
+import WgChainPresenter from "../chain/chain-presenter.mjs";
+import WgChain from "../../../business/model/wg-chain.mjs";
+import WgApplicationData from "../../../business/model/wg-application-data.mjs";
 
 /**
  * This presenter handles a singular folder. 
@@ -61,68 +64,44 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
       acceptedDataTypes: [
         WgFolderPresenter.entityDataType,
         WgGeneratorPresenter.entityDataType,
+        WgChainPresenter.entityDataType,
       ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
       dragOverClass: "wg-dragover",
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
-        if (droppedEntityDataType === WgFolderPresenter.entityDataType) {
-          // Assign the dragged folder to this folder, as a child. 
+        let toNest;
+        let destinationCollection;
 
-          const folderToNest = this.application.data.rootFolder.getFolderById(droppedEntityId);
+        if (droppedEntityDataType === WgFolderPresenter.entityDataType) {
+          toNest = this.application.data.rootFolder.getFolderById(droppedEntityId);
 
           // Avoid recursion. 
-          if (folderToNest.id === this.entity.id) return; 
-          if (this.entity.isChildOf(folderToNest)) return;
+          if (toNest.id === this.entity.id) return; 
+          if (this.entity.isChildOf(toNest)) return;
 
-          this.application.suspendRendering = true;
-
-          // Remove from origin. 
-          folderToNest.parentCollection.remove(folderToNest);
-
-          this.application.suspendRendering = false;
-
-          // Add to the represented folder's children. 
-          this.entity.folders.add(folderToNest);
+          destinationCollection = this.entity.folders;
         } else if (droppedEntityDataType === WgGeneratorPresenter.entityDataType) {
-          // Assign the dragged generator to this folder, as a child. 
-
-          const generatorToNest = this.application.data.rootFolder.getGeneratorById(droppedEntityId);
-
-          // Avoid unnecessary operations. 
-          if (this.entity.generators.contains(generatorToNest)) return;
-
-          this.application.suspendRendering = true;
-
-          // Remove from origin. 
-          generatorToNest.parentCollection.remove(generatorToNest);
-
-          this.application.suspendRendering = false;
-
-          // Add to the represented folder's generators. 
-          this.entity.generators.add(generatorToNest);
-        } else if (droppedEntityDataType === WordGeneratorChainPresenter.entityDataType) {
-          // Assign the dragged generator to this folder, as a child. 
-
-          const toNest = this.application.getChainById(droppedEntityId);
-
-          // Avoid unnecessary operations. 
-          if (this.entity.chains.contains(toNest)) return;
-
-          this.application.suspendRendering = true;
-
-          // Remove from origin. 
-          if (toNest.parent.value === undefined) {
-            this.application.data.chains.remove(toNest);
-          } else {
-            toNest.parent.value.chains.remove(toNest);
-          }
-
-          this.application.suspendRendering = false;
-
-          // Add to the represented folder's chains. 
-          this.entity.chains.add(toNest);
+          toNest = this.application.data.rootFolder.getGeneratorById(droppedEntityId);
+          destinationCollection = this.entity.generators;
+        } else if (droppedEntityDataType === WgChainPresenter.entityDataType) {
+          toNest = this.application.data.rootFolder.getChainById(droppedEntityId);
+          destinationCollection = this.entity.chains;
         }
+
+        // Avoid unnecessary operations. 
+        if (destinationCollection === undefined 
+          || toNest === undefined 
+          || destinationCollection.contains(toNest)) return;
+
+        this.application.suspendRendering = true;
+
+        // Remove from origin. 
+        toNest.parentCollection.remove(toNest);
+
+        this.application.suspendRendering = false;
+
+        destinationCollection.add(toNest);
       }
     });
   }
@@ -159,14 +138,14 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
           },
           condition: () => {
             return this.entity.parent.value !== undefined
-              && this.entity.parent.value.id !== "ROOT";
+              && this.entity.parent.value.id !== WgApplicationData.ROOT_FOLDER_ID;
           }
         },
         {
           name: game.i18n.localize("wg.generator.create"),
           icon: '<i class="fas fa-scroll stackable"><i class="fas fa-plus stacked wg-dark"></i></i>',
           callback: async () => {
-            this._createGenerator();
+            await this._createGenerator();
           }
         },
         {
@@ -196,13 +175,19 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
     html.find(`#${id}-add-folder`).click(async (event) => {
       event.stopPropagation();
 
-      this._createFolder();
+      await this._createFolder();
     });
 
     html.find(`#${id}-add-generator`).click(async (event) => {
       event.stopPropagation();
       
-      this._createGenerator();
+      await this._createGenerator();
+    });
+
+    html.find(`#${id}-add-chain`).click(async (event) => {
+      event.stopPropagation();
+      
+      await this._createChain();
     });
 
     // Drag & drop
@@ -260,14 +245,24 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
   }
 
   /**
-   * Creates a new child chain. 
+   * Prompts the user for a name and then creates a new child chain. 
    * 
+   * @async
    * @private
    */
-  _createChain() {
+  async _createChain() {
+    const dialog = await new DialogUtility().showSingleInputDialog({
+      localizedTitle: game.i18n.localize("wg.chain.create"),
+      localizedInputLabel: game.i18n.localize("wg.chain.name"),
+      modal: true,
+    });
+
+    if (dialog.confirmed !== true) return;
+
     // Create the generator. 
-    const newChain = new ObservableWordGeneratorChain({
-      name: game.i18n.localize("wg.chain.defaultName"),
+    const newChain = new WgChain({
+      name: dialog.input,
+      applicationData: this.entity.applicationData,
     });
     this.entity.chains.add(newChain);
   }

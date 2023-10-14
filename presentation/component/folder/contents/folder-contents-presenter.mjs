@@ -6,6 +6,8 @@ import { TEMPLATES } from "../../../templates.mjs";
 import WgFolderPresenter from "../folder-presenter.mjs";
 import OrderedListPresenter from "../../ordered-list/ordered-list-presenter.mjs";
 import WgGeneratorPresenter from "../../generator/generator-presenter.mjs";
+import WgChain from "../../../../business/model/wg-chain.mjs";
+import WgChainPresenter from "../../chain/chain-presenter.mjs";
 
 /**
  * This presenter handles a list of folders and generators. 
@@ -21,6 +23,8 @@ import WgGeneratorPresenter from "../../generator/generator-presenter.mjs";
  * ordered folders list. 
  * @property {OrderedListPresenter} generatorsPresenter Presenter of the 
  * ordered generators list. 
+ * @property {OrderedListPresenter} chainsPresenter Presenter of the 
+ * ordered chains list. 
  */
 export default class WgFolderContentsPresenter extends AbstractPresenter {
   get template() { return TEMPLATES.FOLDER_CONTENTS; }
@@ -33,6 +37,7 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
    * @param {WgApplication} args.application The parent application. 
    * @param {Array<WgFolder> | undefined} args.folders
    * @param {Array<WgGenerator> | undefined} args.generators
+   * @param {Array<WgChain> | undefined} args.chains
    */
   constructor(args = {}) {
     super(args);
@@ -80,6 +85,28 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
         this.moveUp(entity, maximum);
       },
     });
+    
+    this.chains = args.chains ?? [];
+    this.chainPresenters = this.chains.map(chain => 
+      new WgChainPresenter({
+        application: args.application,
+        entity: chain,
+      })
+    );
+
+    this.chainsPresenter = new OrderedListPresenter({
+      application: args.application,
+      itemPresenters: this.chainPresenters,
+      showIndices: false,
+      onMoveDownClicked: (maximum, itemId) => {
+        const entity = this.chains.find(it => it.id === itemId);
+        this.moveDown(entity, maximum);
+      },
+      onMoveUpClicked: (maximum, itemId) => {
+        const entity = this.chains.find(it => it.id === itemId);
+        this.moveUp(entity, maximum);
+      },
+    });
   }
 
   /** @override */
@@ -87,6 +114,7 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
     // Child event handlers
     this.foldersPresenter.activateListeners(html);
     this.generatorsPresenter.activateListeners(html);
+    this.chainsPresenter.activateListeners(html);
   }
   
   /**
@@ -94,7 +122,7 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
    * 
    * @param {Boolean | undefined} toStart If `true`, moves up all the way to the first index. 
    * * default `false`
-   * @param {WgFolder | WgGenerator} entity 
+   * @param {WgFolder | WgGenerator | WgChain} entity 
    */
   moveUp(entity, toStart = false) {
     const collection = entity.parentCollection;
@@ -115,7 +143,7 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
    * 
    * @param {Boolean | undefined} toEnd If `true`, moves down all the way to the last index. 
    * * default `false`
-   * @param {WgFolder | WgGenerator} entity 
+   * @param {WgFolder | WgGenerator | WgChain} entity 
    */
   moveDown(entity, toEnd = false) {
     const collection = entity.parentCollection;

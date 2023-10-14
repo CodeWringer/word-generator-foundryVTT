@@ -1,23 +1,14 @@
 {{!-- Params:
 TEMPLATES: TEMPLATES
-presenter: WordGeneratorChainPresenter
+presenter: WgChainPresenter
 --}}
-<div class="wg-generator-item"
+<div class="wg-generator-item wg-flex column grow"
   id="{{presenter.id}}"
   >
   <header class="wg-generator-item wg-flex row wg-dark wg-padding-3 wg-height-header{{#if presenter.isExpanded}} open{{/if}}"
     id="{{presenter.id}}-header"
     draggable="true"
     >
-    {{!-- Move Controls --}}
-    {{#with TEMPLATES.MOVE_CONTROLS as |template|}}
-    {{> (template) 
-      id=../presenter.id 
-      enableMoveUp=../presenter.enableMoveUp 
-      enableMoveDown=../presenter.enableMoveDown 
-      TEMPLATES=../TEMPLATES
-    }}
-    {{/with}}
     {{!-- Identity --}}
     <h3 class="wg-flex grow">
       {{!-- Icon --}}
@@ -32,10 +23,12 @@ presenter: WordGeneratorChainPresenter
       <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
     </h3>
     {{!-- Quick Actions --}}
-    <a class="wg-square wg-flex center wg-interactible" 
-      id="{{presenter.id}}-generate">
-      <i class="fas fa-pen-nib"></i>
-    </a>
+    <div class="wg-flex row wg-height-header">
+      <a class="wg-square wg-flex center wg-interactible" 
+        id="{{presenter.id}}-generate">
+        <i class="fas fa-pen-nib"></i>
+      </a>
+    </div>
   </header>
   {{#if presenter.isExpanded}}
   <div class="wg-flex column wg-chain-item-content wg-dark">

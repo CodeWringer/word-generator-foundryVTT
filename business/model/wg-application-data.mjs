@@ -2,6 +2,7 @@ import ObservableCollection, { CollectionChangeTypes } from "../../common/observ
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
+import WgChain from "./wg-chain.mjs";
 import WgFolder from "./wg-folder.mjs";
 import WgGenerator from "./wg-generator.mjs";
 
@@ -39,6 +40,7 @@ export default class WgApplicationData {
    * * Default `SORTING_ORDERS.DESC`
    * @param {Array<WgGenerator> | undefined} args.generators The collection of root-level generators. 
    * @param {Array<WgFolder> | undefined} args.folders The collection of root-level folders. 
+   * @param {Array<WgChain> | undefined} args.chains The collection of root-level chains. 
    * @param {String | undefined} args.generatorSearchTerm The current generator filter to apply. 
    * * If not empty, only the generators whose name partially or fully matches this string. 
    */
@@ -55,6 +57,7 @@ export default class WgApplicationData {
       isExpanded: true,
       folders: (args.folders ?? []),
       generators: (args.generators ?? []),
+      chains: (args.chains ?? []),
     });
 
     this.propagator = new ObservationPropagator(this, [
@@ -88,6 +91,7 @@ export default class WgApplicationData {
       
       result.rootFolder.folders.addAll(deserializedRootFolder.folders.getAll());
       result.rootFolder.generators.addAll(deserializedRootFolder.generators.getAll());
+      result.rootFolder.chains.addAll(deserializedRootFolder.chains.getAll());
     }
 
     return result;

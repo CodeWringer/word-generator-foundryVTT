@@ -10,3 +10,7 @@ presenter: WgFolderContentsPresenter
 {{#with presenter.generatorsPresenter.template as |template|}}
   {{> (template) presenter=../presenter.generatorsPresenter TEMPLATES=../TEMPLATES }}
 {{/with}}
+{{!-- Chains --}}
+{{#with presenter.chainsPresenter.template as |template|}}
+  {{> (template) presenter=../presenter.chainsPresenter TEMPLATES=../TEMPLATES }}
+{{/with}}

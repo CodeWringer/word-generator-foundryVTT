@@ -1,10 +1,10 @@
-import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 import AbstractContainableEntity from "./abstract-containable-entity.mjs";
 import WgApplicationData from "./wg-application-data.mjs";
+import WgChain from "./wg-chain.mjs";
 import WgGenerator from "./wg-generator.mjs";
 
 /**
@@ -25,6 +25,7 @@ import WgGenerator from "./wg-generator.mjs";
  * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
  * @property {ObservableCollection<WgFolder>} folders Nested folders. 
  * @property {ObservableCollection<WgGenerator>} generators The contained word generators. 
+ * @property {ObservableCollection<WgChain>} chains The contained chains. 
  */
 export default class WgFolder extends AbstractContainableEntity {
   /**
@@ -42,11 +43,12 @@ export default class WgFolder extends AbstractContainableEntity {
    * @param {WgFolder | undefined} args.parent Parent folder, if there is one. 
    * @param {Array<WgFolder> | undefined} args.folders Nested folders. 
    * @param {Array<WgGenerator> | undefined} args.generators The contained word generators. 
+   * @param {Array<WgChain> | undefined} args.chains The contained chains. 
    */
   constructor(args = {}) {
     super(args);
 
-    this.name = new ObservableField({ 
+    this.name = new ObservableField({
       value: args.name ?? game.i18n.localize("wg.folder.defaultName")
     });
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
@@ -102,15 +104,17 @@ export default class WgFolder extends AbstractContainableEntity {
 
     this.chains.onChange((collection, change, args) => {
       if (change === CollectionChangeTypes.ADD) {
-        for (const item of args.elements) {
-          if (item.parent.value != this) {
-            item.parent.value = this;
+        for (const chain of args.elements) {
+          if (chain.parent.value != this) {
+            chain.parent.value = this;
+            chain.parentCollection = this.chains;
           }
         }
       } else if (change === CollectionChangeTypes.REMOVE) {
-        for (const item of args.elements) {
-          if (item.parent.value == this) {
-            item.parent.value = undefined;
+        for (const chain of args.elements) {
+          if (chain.parent.value == this) {
+            chain.parent.value = undefined;
+            chain.parentCollection = undefined;
           }
         }
       }
@@ -158,7 +162,7 @@ export default class WgFolder extends AbstractContainableEntity {
     );
 
     const chains = (obj.chains ?? []).map(childDto => 
-      ObservableWordGeneratorChain.fromDto(childDto, result)
+      WgChain.fromDto(childDto, applicationData, result)
     );
 
     result.generators.addAll(generators); 
@@ -246,13 +250,28 @@ export default class WgFolder extends AbstractContainableEntity {
   }
   
   /**
+   * Returns all generators contained in this folder and its child folders. 
+   * 
+   * @returns {Array<WgGenerator>}
+   */
+  getGenerators() {
+    let generators = this.generators.getAll();
+
+    for (const child of this.folders.getAll()) {
+      generators = generators.concat(child.getGenerators());
+    }
+
+    return generators;
+  }
+
+  /**
    * Returns the chain with the given ID, if possible. 
    * 
    * Automatically recurses children to find the desired instance. 
    * 
    * @param {String} id ID of the chain to find. 
    * 
-   * @returns {ObservableWordGeneratorChain | undefined}
+   * @returns {WgChain | undefined}
    */
   getChainById(id) {
     for (const chain of this.chains.getAll()) {
@@ -270,30 +289,15 @@ export default class WgFolder extends AbstractContainableEntity {
   }
 
   /**
-   * Returns all generators contained in this folder and its child folders. 
-   * 
-   * @returns {Array<WgGenerator>}
-   */
-  getGenerators() {
-    let generators = this.generators.getAll();
-
-    for (const child of this.folders.getAll()) {
-      generators = generators.concat(child.getGenerators());
-    }
-
-    return generators;
-  }
-
-  /**
    * Returns all chains contained in this folder and its child folders. 
    * 
    * @returns {Array<ObservableWordGeneratorItem>}
    */
-  getAllChains() {
+  getChains() {
     let chains = this.chains.getAll();
 
     for (const child of this.folders.getAll()) {
-      chains = chains.concat(child.getAllChains());
+      chains = chains.concat(child.getChains());
     }
 
     return chains;
@@ -358,9 +362,11 @@ export default class WgFolder extends AbstractContainableEntity {
     if (sortingOrder === SORTING_ORDERS.ASC) {
       this.folders.sort(sortByNameAsc);
       this.generators.sort(sortByNameAsc);
+      this.chains.sort(sortByNameAsc);
     } else {
       this.folders.sort(sortByNameDesc);
       this.generators.sort(sortByNameDesc);
+      this.chains.sort(sortByNameDesc);
     }
   }
 }

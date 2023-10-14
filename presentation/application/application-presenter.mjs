@@ -10,6 +10,7 @@ import WgGenerator from "../../business/model/wg-generator.mjs"
 import WgFolder from "../../business/model/wg-folder.mjs"
 import { SEARCH_MODES, Search, SearchItem } from "../../business/search/search.mjs"
 import ClipboardHandler from "../util/clipboard-handler.mjs"
+import WgChain from "../../business/model/wg-chain.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -198,11 +199,20 @@ export default class WgApplication extends Application {
     });
 
     // Chain creation
-    html.find("#create-chain").click(() => {
-      const newChain = new ObservableWordGeneratorChain({
-        name: game.i18n.localize("wg.chain.defaultName"),
+    html.find("#create-chain").click(async () => {
+      const dialog = await new DialogUtility().showSingleInputDialog({
+        localizedTitle: game.i18n.localize("wg.chain.create"),
+        localizedInputLabel: game.i18n.localize("wg.chain.name"),
+        modal: true,
       });
-      this.data.chains.add(newChain);
+  
+      if (dialog.confirmed !== true) return;
+
+      const newChain = new WgChain({
+        name: dialog.input,
+        applicationData: this.data,
+      });
+      this.data.rootFolder.chains.add(newChain);
     });
 
     // Sorting
@@ -338,12 +348,14 @@ export default class WgApplication extends Application {
 
       foldersToShow = this.data.rootFolder.folders.getAll();
       generatorsToShow = this.data.rootFolder.generators.getAll();
+      chainsToShow = this.data.rootFolder.chains.getAll();
     }
 
     this._contentListPresenter = new WgFolderContentsPresenter({
       application: this,
       folders: foldersToShow,
       generators: generatorsToShow,
+      chains: chainsToShow,
     });
   }
 

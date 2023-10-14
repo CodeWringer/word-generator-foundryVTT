@@ -7,6 +7,7 @@ import WgGenerator from "../../../business/model/wg-generator.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import WgStrategyPresenter from "../strategy/strategy-presenter.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
+import WgApplicationData from "../../../business/model/wg-application-data.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -186,7 +187,7 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
           },
           condition: () => {
             return this.entity.parent.value !== undefined
-              && this.entity.parent.value.id !== "ROOT";
+              && this.entity.parent.value.id !== WgApplicationData.ROOT_FOLDER_ID;
           }
         },
         {
