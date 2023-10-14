@@ -23,6 +23,15 @@ import WgGenerator from "./wg-generator.mjs";
  */
 export default class WgApplicationData {
   /**
+   * ID of the unique root folder instance. 
+   * 
+   * @type {String}
+   * @static
+   * @readonly
+   */
+  static ROOT_FOLDER_ID = "ROOT";
+
+  /**
    * @param {Object} args 
    * @param {Number | undefined} args.amountToGenerate The number of words to generate. 
    * * Default `10`
@@ -40,8 +49,8 @@ export default class WgApplicationData {
     this.generatorSearchTerm = new ObservableField({ value: args.generatorSearchTerm ?? "" });
 
     this.rootFolder = new WgFolder({
-      id: "ROOT",
-      name: "ROOT",
+      id: WgApplicationData.ROOT_FOLDER_ID,
+      name: WgApplicationData.ROOT_FOLDER_ID,
       applicationData: this,
       isExpanded: true,
       folders: (args.folders ?? []),
@@ -67,19 +76,19 @@ export default class WgApplicationData {
    * @static
    */
   static fromDto(obj) {
-    let rootFolder;
-    if (obj.rootFolder === undefined) {
-      rootFolder = new WgFolder();
-    } else {
-      rootFolder = WgFolder.fromDto(obj.rootFolder);
-    }
-
     const result = new WgApplicationData({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
-      folders: rootFolder.folders.getAll(),
-      generators: rootFolder.generators.getAll(),
     });
+
+    // Only the deserialized folder contents are kept. All other data is hard-coded 
+    // to avoid persisted data from overriding any expected field values. 
+    if (obj.rootFolder !== undefined) {
+      const deserializedRootFolder = WgFolder.fromDto(obj.rootFolder, result);
+      
+      result.rootFolder.folders.addAll(deserializedRootFolder.folders.getAll());
+      result.rootFolder.generators.addAll(deserializedRootFolder.generators.getAll());
+    }
 
     return result;
   }

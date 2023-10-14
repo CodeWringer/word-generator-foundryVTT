@@ -16,14 +16,16 @@ import WgApplicationData from "./wg-application-data.mjs";
  * Represents the settings (sample set, sequencing strategy, minimum length, 
  * maximum length, etc.) for a word generator item. 
  * 
- * This type and all its fields are **observable**! 
+ * This type and most of its fields are **observable**! 
  * 
  * @property {String} id Unique ID. 
  * * Read-only
+ * * Not observable
  * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
  * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
  * collection that this entity is contained in. 
+ * * Not observable
  * @property {ObservableField<String | undefined>} name Human readable name. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
  * @property {ObservableField<Number>} targetLengthMax The target maximum length that generated texts should be. 

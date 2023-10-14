@@ -10,14 +10,16 @@ import WgGenerator from "./wg-generator.mjs";
 /**
  * Represents a folder within which word generators and other folders may be grouped. 
  * 
- * This type and all its fields are **observable**! 
+ * This type and most of its fields are **observable**! 
  * 
  * @property {String} id Unique ID of the folder. 
  * * Read-only
+ * * Not observable
  * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
  * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
  * collection that this entity is contained in. 
+ * * Not observable
  * @property {ObservableField<String>} name Human readable name of the folder. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the folder is to be presented in expanded state. 
  * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
@@ -66,12 +68,14 @@ export default class WgFolder extends AbstractContainableEntity {
         for (const childFolder of args.elements) {
           if (childFolder.parent.value != this) {
             childFolder.parent.value = this;
+            childFolder.parentCollection = this.folders;
           }
         }
       } else if (change === CollectionChangeTypes.REMOVE) {
         for (const childFolder of args.elements) {
           if (childFolder.parent.value == this) {
             childFolder.parent.value = undefined;
+            childFolder.parentCollection = undefined;
           }
         }
       }
@@ -79,15 +83,17 @@ export default class WgFolder extends AbstractContainableEntity {
 
     this.generators.onChange((collection, change, args) => {
       if (change === CollectionChangeTypes.ADD) {
-        for (const item of args.elements) {
-          if (item.parent.value != this) {
-            item.parent.value = this;
+        for (const generator of args.elements) {
+          if (generator.parent.value != this) {
+            generator.parent.value = this;
+            generator.parentCollection = this.generators;
           }
         }
       } else if (change === CollectionChangeTypes.REMOVE) {
-        for (const item of args.elements) {
-          if (item.parent.value == this) {
-            item.parent.value = undefined;
+        for (const generator of args.elements) {
+          if (generator.parent.value == this) {
+            generator.parent.value = undefined;
+            generator.parentCollection = undefined;
           }
         }
       }
@@ -106,7 +112,7 @@ export default class WgFolder extends AbstractContainableEntity {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {WgApplicationData | undefined} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. This argument can only ever 
    * be undefined when used in the context of a `WgApplicationData.fromDto()` call!
    * @param {WgFolder | undefined} parent A parent folder. This argument can only ever 
