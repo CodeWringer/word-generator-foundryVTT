@@ -1,5 +1,5 @@
-import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
+import WgFolder from "../../../business/model/wg-folder.mjs";
+import WgGenerator from "../../../business/model/wg-generator.mjs";
 import AbstractPresenter from "../../abstract-presenter.mjs";
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
@@ -31,8 +31,8 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
    * 
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders
-   * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators
+   * @param {Array<WgFolder> | undefined} args.folders
+   * @param {Array<WgGenerator> | undefined} args.generators
    */
   constructor(args = {}) {
     super(args);

@@ -10,15 +10,17 @@ import { WordListSamplingStrategy } from "../generator/sampling/word-list-sampli
 import AbstractSequencingStrategy from "../generator/sequencing/abstract-sequencing-strategy.mjs";
 import { CharDepthSequencingStrategy } from "../generator/sequencing/char-depth-sequencing-strategy.mjs";
 import AbstractContainableEntity from "./abstract-containable-entity.mjs";
-import ObservableWordGeneratorApplicationData from "./observable-word-generator-application-data.mjs";
+import WgApplicationData from "./wg-application-data.mjs";
 
 /**
  * Represents the settings (sample set, sequencing strategy, minimum length, 
  * maximum length, etc.) for a word generator item. 
  * 
+ * This type and all its fields are **observable**! 
+ * 
  * @property {String} id Unique ID. 
  * * Read-only
- * @property {ObservableWordGeneratorApplicationData} applicationData The application level 
+ * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
  * @property {ObservableField<String | undefined>} name Human readable name. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
@@ -47,13 +49,13 @@ import ObservableWordGeneratorApplicationData from "./observable-word-generator-
  * @property {ObservableField<Boolean>} isExpanded If `true`, the entry is to be rendered fully. Otherwise, 
  * it is rendered collapsed. 
  * 
- * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
+ * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
  */
-export default class ObservableWordGeneratorItem extends AbstractContainableEntity {
+export default class WgGenerator extends AbstractContainableEntity {
   /**
    * @param {String | undefined} args.id Unique ID. 
    * * By default, generates a new id. 
-   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
    * @param {String | undefined} args.name Human readable name. 
    * @param {Number | undefined} args.targetLengthMin The target minimum length that generated texts should be. 
@@ -87,7 +89,7 @@ export default class ObservableWordGeneratorItem extends AbstractContainableEnti
    * it is rendered collapsed. 
    * * Default `false`
    * 
-   * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
+   * @param {WgFolder | undefined} parent Parent folder, if there is one. 
    */
   constructor(args = {}) {
     super(args);
@@ -181,11 +183,11 @@ export default class ObservableWordGeneratorItem extends AbstractContainableEnti
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
-   * @param {ObservableWordGeneratorFolder | undefined} parent 
+   * @param {WgFolder | undefined} parent 
    * 
-   * @returns {ObservableWordGeneratorItem}
+   * @returns {WgGenerator}
    * 
    * @static
    */
@@ -223,7 +225,7 @@ export default class ObservableWordGeneratorItem extends AbstractContainableEnti
       );
     }
 
-    return new ObservableWordGeneratorItem({
+    return new WgGenerator({
       id: obj.id,
       applicationData: applicationData,
       name: obj.name,

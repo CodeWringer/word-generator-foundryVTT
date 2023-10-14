@@ -2,29 +2,33 @@ import ObservableCollection, { CollectionChangeTypes } from "../../common/observ
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
-import ObservableWordGeneratorFolder from "./observable-word-generator-folder.mjs";
-import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
+import WgFolder from "./wg-folder.mjs";
+import WgGenerator from "./wg-generator.mjs";
 
 /**
+ * Represents the application level data object. This is effectively the root data object 
+ * that groups all other business data within it. 
+ * 
+ * This type and all its fields are **observable**! 
+ * 
  * @property {ObservableField<Number>} amountToGenerate The number of words to generate. 
  * @property {ObservableField<SORTING_ORDERS>} resultsSortMode The sorting order of generated words. 
- * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The collection of root-level generators. 
- * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders The collection of root-level folders. 
+ * @property {WgFolder} rootFolder 
  * @property {ObservableCollection<String>} generatedResults The generated results. 
  * * Not persisted
  * @property {ObservableField<String>} generatorSearchTerm The current generator filter to apply. 
  * * If not empty, only the generators whose name partially or fully matches this string. 
  * * Not persisted
  */
-export default class ObservableWordGeneratorApplicationData {
+export default class WgApplicationData {
   /**
    * @param {Object} args 
    * @param {Number | undefined} args.amountToGenerate The number of words to generate. 
    * * Default `10`
    * @param {SORTING_ORDERS | undefined} args.resultsSortMode The sorting order of generated words. 
    * * Default `SORTING_ORDERS.DESC`
-   * @param {Array<ObservableWordGeneratorItem> | undefined} args.generators The collection of root-level generators. 
-   * @param {Array<ObservableWordGeneratorFolder> | undefined} args.folders The collection of root-level folders. 
+   * @param {Array<WgGenerator> | undefined} args.generators The collection of root-level generators. 
+   * @param {Array<WgFolder> | undefined} args.folders The collection of root-level folders. 
    * @param {String | undefined} args.generatorSearchTerm The current generator filter to apply. 
    * * If not empty, only the generators whose name partially or fully matches this string. 
    */
@@ -73,21 +77,21 @@ export default class ObservableWordGeneratorApplicationData {
    * 
    * @param {Object} obj 
    * 
-   * @returns {ObservableWordGeneratorApplicationData}
+   * @returns {WgApplicationData}
    * 
    * @static
    */
   static fromDto(obj) {
-    const result = new ObservableWordGeneratorApplicationData({
+    const result = new WgApplicationData({
       amountToGenerate: obj.amountToGenerate,
       resultsSortMode: obj.resultsSortMode,
     });
 
     const generators = (obj.generators ?? []).map(generatorDto => 
-      ObservableWordGeneratorItem.fromDto(generatorDto, result)
+      WgGenerator.fromDto(generatorDto, result)
     );
     const folders = (obj.folders ?? []).map(folderDto => 
-      ObservableWordGeneratorFolder.fromDto(folderDto, result)
+      WgFolder.fromDto(folderDto, result)
     );
 
     result.generators.addAll(generators);

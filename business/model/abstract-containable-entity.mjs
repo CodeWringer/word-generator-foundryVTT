@@ -5,7 +5,7 @@ import AbstractEntity from "./abstract-entity.mjs";
  * 
  * @property {String} id Unique ID of the entity. 
  * * Read-only
- * @property {ObservableWordGeneratorApplicationData} applicationData The application level 
+ * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
  * 
  * @abstract
@@ -15,7 +15,7 @@ export default class AbstractContainableEntity extends AbstractEntity {
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * * By default, generates a new id. 
-   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
    */
   constructor(args = {}) {

@@ -3,7 +3,7 @@ import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } fro
 import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
+import WgGenerator from "../../../business/model/wg-generator.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-presenter.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
@@ -14,7 +14,7 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorItem} entity The represented entity.  
+ * @property {WgGenerator} entity The represented entity.  
  */
 export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
   /**
@@ -40,7 +40,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
   /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorItem} args.entity The represented entity.  
+   * @param {WgGenerator} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);

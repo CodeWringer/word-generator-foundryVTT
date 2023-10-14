@@ -3,36 +3,38 @@ import ObservableCollection, { CollectionChangeTypes } from "../../common/observ
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import AbstractContainableEntity from "./abstract-containable-entity.mjs";
-import ObservableWordGeneratorApplicationData from "./observable-word-generator-application-data.mjs";
-import ObservableWordGeneratorItem from "./observable-word-generator-item.mjs";
+import WgApplicationData from "./wg-application-data.mjs";
+import WgGenerator from "./wg-generator.mjs";
 
 /**
  * Represents a folder within which word generators and other folders may be grouped. 
  * 
+ * This type and all its fields are **observable**! 
+ * 
  * @property {String} id Unique ID of the folder. 
  * * Read-only
- * @property {ObservableWordGeneratorApplicationData} applicationData The application level 
+ * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
  * @property {ObservableField<String>} name Human readable name of the folder. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the folder is to be presented in expanded state. 
- * @property {ObservableField<ObservableWordGeneratorFolder | undefined>} parent Parent folder, if there is one. 
- * @property {ObservableCollection<ObservableWordGeneratorFolder>} folders Nested folders. 
- * @property {ObservableCollection<ObservableWordGeneratorItem>} generators The contained word generators. 
+ * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
+ * @property {ObservableCollection<WgFolder>} folders Nested folders. 
+ * @property {ObservableCollection<WgGenerator>} generators The contained word generators. 
  */
-export default class ObservableWordGeneratorFolder extends AbstractContainableEntity {
+export default class WgFolder extends AbstractContainableEntity {
   /**
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * * By default, generates a new id. 
-   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
    * @param {String | undefined} args.name Human readable name of the folder. 
    * * Default localized `New Folder`
    * @param {Boolean | undefined} args.isExpanded If `true`, the folder is to be presented in expanded state. 
    * * Default `false`
-   * @param {ObservableWordGeneratorFolder | undefined} parent Parent folder, if there is one. 
-   * @param {Array<ObservableWordGeneratorFolder> | undefined} folders Nested folders. 
-   * @param {Array<ObservableWordGeneratorItem> | undefined} generators The contained word generators. 
+   * @param {WgFolder | undefined} parent Parent folder, if there is one. 
+   * @param {Array<WgFolder> | undefined} folders Nested folders. 
+   * @param {Array<WgGenerator> | undefined} generators The contained word generators. 
    */
   constructor(args = {}) {
     super(args);
@@ -99,16 +101,16 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {ObservableWordGeneratorApplicationData} applicationData The application level 
+   * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
-   * @param {ObservableWordGeneratorFolder | undefined} parent 
+   * @param {WgFolder | undefined} parent 
    * 
-   * @returns {ObservableWordGeneratorFolder}
+   * @returns {WgFolder}
    * 
    * @static
    */
   static fromDto(obj, applicationData, parent) {
-    const result = new ObservableWordGeneratorFolder({
+    const result = new WgFolder({
       id: obj.id,
       applicationData: applicationData,
       name: obj.name,
@@ -116,11 +118,11 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
     });
 
     const generators = (obj.generators ?? []).map(itemDto => 
-      ObservableWordGeneratorItem.fromDto(itemDto, applicationData, result)
+      WgGenerator.fromDto(itemDto, applicationData, result)
     );
 
     const folders = (obj.folders ?? []).map(childDto => 
-      ObservableWordGeneratorFolder.fromDto(childDto, applicationData, result)
+      WgFolder.fromDto(childDto, applicationData, result)
     );
 
     result.generators.addAll(generators); 
@@ -150,7 +152,7 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
    * 
    * @param {String} id ID of the folder to find. 
    * 
-   * @returns {ObservableWordGeneratorFolder | undefined}
+   * @returns {WgFolder | undefined}
    */
   getFolderById(id) {
     if (id === this.id) {
@@ -167,13 +169,28 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
   }
   
   /**
+   * Returns all folders contained in this folder and its child folders. 
+   * 
+   * @returns {Array<WgGenerator>}
+   */
+  getFolders() {
+    let folders = this.folders.getAll();
+
+    for (const child of folders) {
+      folders = folders.concat(child.getFolders());
+    }
+
+    return folders;
+  }
+
+  /**
    * Returns the generator with the given ID, if possible. 
    * 
    * Automatically recurses children to find the desired instance. 
    * 
    * @param {String} id ID of the generator to find. 
    * 
-   * @returns {ObservableWordGeneratorItem | undefined}
+   * @returns {WgGenerator | undefined}
    */
   getGeneratorById(id) {
     for (const generator of this.generators.getAll()) {
@@ -191,15 +208,15 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
   }
 
   /**
-   * Returns all generators contained in this folder and its chil folders. 
+   * Returns all generators contained in this folder and its child folders. 
    * 
-   * @returns {Array<ObservableWordGeneratorItem>}
+   * @returns {Array<WgGenerator>}
    */
-  getAllGenerators() {
+  getGenerators() {
     let generators = this.generators.getAll();
 
     for (const child of this.folders.getAll()) {
-      generators = generators.concat(child.getAllGenerators());
+      generators = generators.concat(child.getGenerators());
     }
 
     return generators;
@@ -209,7 +226,7 @@ export default class ObservableWordGeneratorFolder extends AbstractContainableEn
    * Returns true, if this folder is a direct or indirect child of the 
    * given other folder. 
    * 
-   * @param {ObservableWordGeneratorFolder} otherFolder 
+   * @param {WgFolder} otherFolder 
    * 
    * @returns {Boolean}
    */

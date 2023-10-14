@@ -10,7 +10,7 @@ import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } fro
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorItem} entity The represented entity.  
+ * @property {WgGenerator} entity The represented entity.  
  * @property {String} localizedLabel A localized text for the strategy section. 
  * @property {Array<DropDownOption>} strategyOptions A list of strategy options. 
  * @property {ObservableField} activeStrategyField The currently selected and active strategy. 
@@ -30,7 +30,7 @@ export default class WordGeneratorStrategyPresenter extends AbstractEntityPresen
    * @param {Object} args
    * @param {String} args.id ID of the presenter. 
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorItem} args.entity The represented entity.  
+   * @param {WgGenerator} args.entity The represented entity.  
    * @param {String | undefined} args.localizedLabel A localized text for the strategy section. 
    * @param {Array<DropDownOption>} args.strategyOptions A list of strategy options. 
    * @param {ObservableField<AbstractStrategy>} args.activeStrategyField The currently selected and active strategy. 

@@ -3,9 +3,9 @@ import WordGeneratorApplication from "../../application/word-generator-applicati
 import WordGeneratorItemPresenter from "../word-generator-item/word-generator-item-presenter.mjs";
 import WordGeneratorListPresenter from "../word-generator-list/word-generator-list-presenter.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
-import ObservableWordGeneratorFolder from "../../../business/model/observable-word-generator-folder.mjs";
+import WgFolder from "../../../business/model/wg-folder.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
-import ObservableWordGeneratorItem from "../../../business/model/observable-word-generator-item.mjs";
+import WgGenerator from "../../../business/model/wg-generator.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
@@ -14,7 +14,7 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
  * @property {WordGeneratorApplication} application The parent application. 
- * @property {ObservableWordGeneratorFolder} entity The represented entity.  
+ * @property {WgFolder} entity The represented entity.  
  * @property {String} id
  * * Read-only
  * @property {WordGeneratorListPresenter} contentListPresenter
@@ -43,7 +43,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
   /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
-   * @param {ObservableWordGeneratorFolder} args.entity The represented entity.  
+   * @param {WgFolder} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
@@ -204,7 +204,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
     if (dialog.confirmed !== true) return;
 
     // Create the folder. 
-    const newFolder = new ObservableWordGeneratorFolder({
+    const newFolder = new WgFolder({
       name: dialog.input,
     });
     this.entity.folders.add(newFolder);
@@ -217,7 +217,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
    */
   _createGenerator() {
     // Create the generator. 
-    const newGenerator = new ObservableWordGeneratorItem({
+    const newGenerator = new WgGenerator({
       name: game.i18n.localize("wg.generator.defaultName"),
     });
     this.entity.generators.add(newGenerator);

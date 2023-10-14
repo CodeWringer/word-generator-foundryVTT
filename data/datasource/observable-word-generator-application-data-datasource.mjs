@@ -1,9 +1,9 @@
-import ObservableWordGeneratorApplicationData from "../../business/model/observable-word-generator-application-data.mjs";
+import WgApplicationData from "../../business/model/wg-application-data.mjs";
 
 /**
- * Provides means of reading and writing the `ObservableWordGeneratorApplicationData` to user flags. 
+ * Provides means of reading and writing the `WgApplicationData` to user flags. 
  */
-export default class ObservableWordGeneratorApplicationDataDataSource {
+export default class ApplicationDataDataSource {
   /**
    * Scope of the user flag. 
    * 
@@ -27,25 +27,25 @@ export default class ObservableWordGeneratorApplicationDataDataSource {
    * 
    * @param {String} userId User-ID. 
    * 
-   * @returns {ObservableWordGeneratorApplicationData}
+   * @returns {WgApplicationData}
    */
   get(userId) {
     const user = game.users.get(userId);
     if (user === undefined) return undefined;
 
     const dto = user.getFlag(
-      ObservableWordGeneratorApplicationDataDataSource.FLAG_SCOPE,
-      ObservableWordGeneratorApplicationDataDataSource.KEY_FLAG
-    ) ?? new ObservableWordGeneratorApplicationData();
+      ApplicationDataDataSource.FLAG_SCOPE,
+      ApplicationDataDataSource.KEY_FLAG
+    ) ?? new WgApplicationData();
 
-    return ObservableWordGeneratorApplicationData.fromDto(dto);
+    return WgApplicationData.fromDto(dto);
   }
 
   /**
    * Sets (= overwrites) the given user's word generator data with the given data. 
    * 
    * @param {String} userId User-ID. 
-   * @param {ObservableWordGeneratorApplicationData} data The data to set. 
+   * @param {WgApplicationData} data The data to set. 
    */
   set(userId, data) {
     const user = game.users.get(userId);
@@ -56,8 +56,8 @@ export default class ObservableWordGeneratorApplicationDataDataSource {
     }
 
     user.setFlag(
-      ObservableWordGeneratorApplicationDataDataSource.FLAG_SCOPE,
-      ObservableWordGeneratorApplicationDataDataSource.KEY_FLAG,
+      ApplicationDataDataSource.FLAG_SCOPE,
+      ApplicationDataDataSource.KEY_FLAG,
       data.toDto()
     );
   }
@@ -71,8 +71,8 @@ export default class ObservableWordGeneratorApplicationDataDataSource {
     if (user === undefined) return undefined;
 
     user.setFlag(
-      ObservableWordGeneratorApplicationDataDataSource.FLAG_SCOPE,
-      ObservableWordGeneratorApplicationDataDataSource.KEY_FLAG,
+      ApplicationDataDataSource.FLAG_SCOPE,
+      ApplicationDataDataSource.KEY_FLAG,
       null
     );
   }
