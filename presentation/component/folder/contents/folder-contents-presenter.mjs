@@ -1,36 +1,36 @@
-import WgFolder from "../../../business/model/wg-folder.mjs";
-import WgGenerator from "../../../business/model/wg-generator.mjs";
-import AbstractPresenter from "../../abstract-presenter.mjs";
-import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
-import { TEMPLATES } from "../../templates.mjs";
-import WordGeneratorFolderPresenter from "../folder/word-generator-folder-presenter.mjs";
-import OrderedListPresenter from "../ordered-list/ordered-list-presenter.mjs";
-import WordGeneratorItemPresenter from "../word-generator-item/word-generator-item-presenter.mjs";
+import WgFolder from "../../../../business/model/wg-folder.mjs";
+import WgGenerator from "../../../../business/model/wg-generator.mjs";
+import AbstractPresenter from "../../../abstract-presenter.mjs";
+import WgApplication from "../../../application/application-presenter.mjs";
+import { TEMPLATES } from "../../../templates.mjs";
+import WgFolderPresenter from "../folder-presenter.mjs";
+import OrderedListPresenter from "../../ordered-list/ordered-list-presenter.mjs";
+import WgGeneratorPresenter from "../../generator/generator-presenter.mjs";
 
 /**
  * This presenter handles a list of folders and generators. 
  * 
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
- * @property {WordGeneratorApplication} application The parent application. 
- * @property {Array<WordGeneratorFolderPresenter>} folderPresenters Presenters of the 
+ * @property {WgApplication} application The parent application. 
+ * @property {Array<WgFolderPresenter>} folderPresenters Presenters of the 
  * folders. 
- * @property {Array<WordGeneratorItemPresenter>} generatorPresenters Presenters of the 
+ * @property {Array<WgGeneratorPresenter>} generatorPresenters Presenters of the 
  * generators. 
  * @property {OrderedListPresenter} foldersPresenter Presenter of the 
  * ordered folders list. 
  * @property {OrderedListPresenter} generatorsPresenter Presenter of the 
  * ordered generators list. 
  */
-export default class WordGeneratorListPresenter extends AbstractPresenter {
-  get template() { return TEMPLATES.WORD_GENERATOR_LIST; }
+export default class WgFolderContentsPresenter extends AbstractPresenter {
+  get template() { return TEMPLATES.FOLDER_CONTENTS; }
 
   /**
    * Maps the given entities to their respective presenters, which will be stored 
    * as properties on this object. 
    * 
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WgApplication} args.application The parent application. 
    * @param {Array<WgFolder> | undefined} args.folders
    * @param {Array<WgGenerator> | undefined} args.generators
    */
@@ -39,7 +39,7 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
 
     this.folders = args.folders ?? [];
     this.folderPresenters = this.folders.map(folder => 
-      new WordGeneratorFolderPresenter({
+      new WgFolderPresenter({
         application: args.application,
         entity: folder
       })
@@ -61,7 +61,7 @@ export default class WordGeneratorListPresenter extends AbstractPresenter {
     
     this.generators = args.generators ?? [];
     this.generatorPresenters = this.generators.map(generator => 
-      new WordGeneratorItemPresenter({
+      new WgGeneratorPresenter({
         application: args.application,
         entity: generator,
       })

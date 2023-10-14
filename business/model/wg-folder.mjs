@@ -2,6 +2,7 @@ import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
+import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 import AbstractContainableEntity from "./abstract-containable-entity.mjs";
 import WgApplicationData from "./wg-application-data.mjs";
 import WgGenerator from "./wg-generator.mjs";
@@ -15,6 +16,8 @@ import WgGenerator from "./wg-generator.mjs";
  * * Read-only
  * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
+ * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
+ * collection that this entity is contained in. 
  * @property {ObservableField<String>} name Human readable name of the folder. 
  * @property {ObservableField<Boolean>} isExpanded If `true`, the folder is to be presented in expanded state. 
  * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
@@ -26,15 +29,17 @@ export default class WgFolder extends AbstractContainableEntity {
    * @param {Object} args 
    * @param {String | undefined} args.id Unique ID of the folder. 
    * * By default, generates a new id. 
-   * @param {WgApplicationData} applicationData The application level 
+   * @param {WgApplicationData} args.applicationData The application level 
    * root data object reference. 
+   * @param {ObservableCollection<AbstractContainableEntity> | undefined} args.parentCollection 
+   * The collection that this entity is contained in, if any. 
    * @param {String | undefined} args.name Human readable name of the folder. 
    * * Default localized `New Folder`
    * @param {Boolean | undefined} args.isExpanded If `true`, the folder is to be presented in expanded state. 
    * * Default `false`
-   * @param {WgFolder | undefined} parent Parent folder, if there is one. 
-   * @param {Array<WgFolder> | undefined} folders Nested folders. 
-   * @param {Array<WgGenerator> | undefined} generators The contained word generators. 
+   * @param {WgFolder | undefined} args.parent Parent folder, if there is one. 
+   * @param {Array<WgFolder> | undefined} args.folders Nested folders. 
+   * @param {Array<WgGenerator> | undefined} args.generators The contained word generators. 
    */
   constructor(args = {}) {
     super(args);
@@ -101,9 +106,11 @@ export default class WgFolder extends AbstractContainableEntity {
    * Returns an instance of this type parsed from the given data transfer object. 
    * 
    * @param {Object} obj 
-   * @param {WgApplicationData} applicationData The application level 
-   * root data object reference. 
-   * @param {WgFolder | undefined} parent 
+   * @param {WgApplicationData | undefined} applicationData The application level 
+   * root data object reference. This argument can only ever 
+   * be undefined when used in the context of a `WgApplicationData.fromDto()` call!
+   * @param {WgFolder | undefined} parent A parent folder. This argument can only ever 
+   * be undefined when used in the context of a `WgApplicationData.fromDto()` call!
    * 
    * @returns {WgFolder}
    * 
@@ -113,6 +120,7 @@ export default class WgFolder extends AbstractContainableEntity {
     const result = new WgFolder({
       id: obj.id,
       applicationData: applicationData,
+      parentCollection: (parent ?? {}).folders,
       name: obj.name,
       parent: parent,
     });
@@ -257,6 +265,33 @@ export default class WgFolder extends AbstractContainableEntity {
       for (const generator of this.generators.getAll()) {
         generator.isExpanded.value = false;
       }
+    }
+  }
+
+  /**
+   * Moves the represented entity to the root level, if possible. 
+   * 
+   * @override
+   */
+  moveToRootLevel() {
+    super.moveToRootLevel("folder");
+  }
+  
+  /**
+   * Sorts this folder's contents in the given sorting order. 
+   * 
+   * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
+   */
+  sort(sortingOrder = SORTING_ORDERS.DESC) {
+    const sortByNameAsc = (a, b) => a.name.value.localeCompare(b.name.value);
+    const sortByNameDesc = (a, b) => b.name.value.localeCompare(a.name.value);
+
+    if (sortingOrder === SORTING_ORDERS.ASC) {
+      this.folders.sort(sortByNameAsc);
+      this.generators.sort(sortByNameAsc);
+    } else {
+      this.folders.sort(sortByNameDesc);
+      this.generators.sort(sortByNameDesc);
     }
   }
 }

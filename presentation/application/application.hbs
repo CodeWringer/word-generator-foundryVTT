@@ -1,8 +1,8 @@
 {{!-- Parameters:
 TEMPLATES: TEMPLATES
-data: WordGeneratorApplicationData
+data: WgApplicationData
 generatedResults: Array<String>
-contentListPresenter: WordGeneratorListPresenter
+contentListPresenter: WgFolderContentsPresenter
 generatorSearchTerm: String
 --}}
 <form class="wg-application-form">
@@ -108,7 +108,7 @@ generatorSearchTerm: String
     <ul class="wg-unstyled-list wg-scrollable"
       id="content-area-2">
       {{#each generatedResults as |generatedResult index|}}
-      <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light word-generator-generated-word">
+      <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light wg-generated-word">
         <a 
           id="generated-word-{{index}}-copy-to-clipboard" 
           class="wg-square wg-flex center wg-interactible hidden" 

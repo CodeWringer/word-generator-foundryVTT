@@ -7,7 +7,7 @@ This module for FoundryVTT adds a means of randomly generating words, names or e
 This section explains how to make use of the module as it comes out of the box. 
 
 1. Add a new Macro of type `script`. 
-2. Paste the following code snippet and save: `new WordGeneratorApplication().render(true);`
+2. Paste the following code snippet and save: `new WgApplication().render(true);`
 3. That's it! When executing the macro, the word generator dialog should now pop up!
 
 ## Usage (Code)
@@ -110,14 +110,14 @@ Once you've defined your custom sequencing strategy, you must register it with t
 The following code must be run **once** for every custom sequencing strategy you've defined. 
 
 ```JS
-WordGeneratorApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
+WgApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
 ```
 
 An exception is thrown, if you attempt to register the same type of sequencing strategy more than once. When registering your custom type from a macro script, you can simply 'catch' and disregard the exception: 
 
 ```JS
 try {
-WordGeneratorApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
+WgApplication.registeredSequencingStrategies.register(new myCustomSequencingStrategy());
 } catch (e) { /* ignore */ }
 
 ```
@@ -135,14 +135,14 @@ Once you've defined your custom spelling strategy, you must register it with the
 The following code must be run **once** for every custom spelling strategy you've defined. 
 
 ```JS
-WordGeneratorApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
+WgApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
 ```
 
 An exception is thrown, if you attempt to register the same type of spelling strategy more than once. When registering your custom type from a macro script, you can simply 'catch' and disregard the exception: 
 
 ```JS
 try {
-WordGeneratorApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
+WgApplication.registeredSpellingStrategies.register(new myCustomSpellingStrategy());
 } catch (e) { /* ignore */ }
 
 ```

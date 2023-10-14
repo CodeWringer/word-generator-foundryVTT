@@ -28,7 +28,7 @@ export default class OrderedListPresenter extends AbstractPresenter {
   
   /**
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WgApplication} args.application The parent application. 
    * @param {Array<AbstractPresenter> | undefined} args.itemPresenters Presenters 
    * of the actual content. 
    * @param {Boolean | undefined} args.showIndices If `true`, will render every 

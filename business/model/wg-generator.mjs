@@ -1,6 +1,6 @@
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
-import WordGeneratorApplication from "../../presentation/application/word-generator-application/word-generator-application.mjs";
+import WgApplication from "../../presentation/application/application-presenter.mjs";
 import { ENDING_PICK_MODES } from "../generator/concatenation/sequence-concatenator.mjs";
 import WordGenerator from "../generator/generator.mjs";
 import AbstractSpellingStrategy from "../generator/postprocessing/abstract-spelling-strategy.mjs";
@@ -22,6 +22,8 @@ import WgApplicationData from "./wg-application-data.mjs";
  * * Read-only
  * @property {WgApplicationData} applicationData The application level 
  * root data object reference. 
+ * @property {ObservableCollection<AbstractContainableEntity>} parentCollection The 
+ * collection that this entity is contained in. 
  * @property {ObservableField<String | undefined>} name Human readable name. 
  * @property {ObservableField<Number>} targetLengthMin The target minimum length that generated texts should be. 
  * @property {ObservableField<Number>} targetLengthMax The target maximum length that generated texts should be. 
@@ -55,8 +57,10 @@ export default class WgGenerator extends AbstractContainableEntity {
   /**
    * @param {String | undefined} args.id Unique ID. 
    * * By default, generates a new id. 
-   * @param {WgApplicationData} applicationData The application level 
+   * @param {WgApplicationData} args.applicationData The application level 
    * root data object reference. 
+   * @param {ObservableCollection<AbstractContainableEntity> | undefined} args.parentCollection 
+   * The collection that this entity is contained in, if any. 
    * @param {String | undefined} args.name Human readable name. 
    * @param {Number | undefined} args.targetLengthMin The target minimum length that generated texts should be. 
    * * default `3`
@@ -185,7 +189,7 @@ export default class WgGenerator extends AbstractContainableEntity {
    * @param {Object} obj 
    * @param {WgApplicationData} applicationData The application level 
    * root data object reference. 
-   * @param {WgFolder | undefined} parent 
+   * @param {WgFolder} parent 
    * 
    * @returns {WgGenerator}
    * 
@@ -194,7 +198,7 @@ export default class WgGenerator extends AbstractContainableEntity {
   static fromDto(obj, applicationData, parent) {
     let samplingStrategy;
     if (obj.samplingStrategy !== undefined && obj.samplingStrategy.definitionId !== undefined) {
-      samplingStrategy = WordGeneratorApplication.registeredSamplingStrategies.newInstanceOf(
+      samplingStrategy = WgApplication.registeredSamplingStrategies.newInstanceOf(
         obj.samplingStrategy.definitionId,
         {
           ...obj.samplingStrategy.settings,
@@ -205,7 +209,7 @@ export default class WgGenerator extends AbstractContainableEntity {
     
     let sequencingStrategy;
     if (obj.sequencingStrategy !== undefined && obj.sequencingStrategy.definitionId !== undefined) {
-      sequencingStrategy = WordGeneratorApplication.registeredSequencingStrategies.newInstanceOf(
+      sequencingStrategy = WgApplication.registeredSequencingStrategies.newInstanceOf(
         obj.sequencingStrategy.definitionId,
         {
           ...obj.sequencingStrategy.settings,
@@ -216,7 +220,7 @@ export default class WgGenerator extends AbstractContainableEntity {
 
     let spellingStrategy;
     if (obj.spellingStrategy !== undefined && obj.spellingStrategy.definitionId !== undefined) {
-      spellingStrategy = WordGeneratorApplication.registeredSpellingStrategies.newInstanceOf(
+      spellingStrategy = WgApplication.registeredSpellingStrategies.newInstanceOf(
         obj.spellingStrategy.definitionId,
         {
           ...obj.spellingStrategy.settings,
@@ -228,6 +232,7 @@ export default class WgGenerator extends AbstractContainableEntity {
     return new WgGenerator({
       id: obj.id,
       applicationData: applicationData,
+      parentCollection: parent.generators,
       name: obj.name,
       targetLengthMin: obj.targetLengthMin,
       targetLengthMax: obj.targetLengthMax,
@@ -265,5 +270,14 @@ export default class WgGenerator extends AbstractContainableEntity {
       sequencingStrategy: this.sequencingStrategy.value.toDto(),
       spellingStrategy: this.spellingStrategy.value.toDto(),
     };
+  }
+  
+  /**
+   * Moves the represented entity to the root level, if possible. 
+   * 
+   * @override
+   */
+  moveToRootLevel() {
+    super.moveToRootLevel("generator");
   }
 }

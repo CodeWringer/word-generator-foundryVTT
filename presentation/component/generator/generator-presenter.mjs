@@ -1,11 +1,11 @@
 import DialogUtility from "../../dialog/dialog-utility.mjs";
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
-import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
+import WgApplication from "../../application/application-presenter.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import DropDownOption from "../../drop-down-option.mjs";
 import WgGenerator from "../../../business/model/wg-generator.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
-import WordGeneratorStrategyPresenter from "../strategy/word-generator-strategy-presenter.mjs";
+import WgStrategyPresenter from "../strategy/strategy-presenter.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
 
 /**
@@ -13,10 +13,10 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * 
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
- * @property {WordGeneratorApplication} application The parent application. 
+ * @property {WgApplication} application The parent application. 
  * @property {WgGenerator} entity The represented entity.  
  */
-export default class WordGeneratorItemPresenter extends AbstractEntityPresenter {
+export default class WgGeneratorPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -27,9 +27,9 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
    * @readonly
    * @static
    */
-  static entityDataType = "WordGeneratorItem";
+  static entityDataType = "WgGenerator";
 
-  get template() { return TEMPLATES.WORD_GENERATOR_LIST_ITEM; }
+  get template() { return TEMPLATES.GENERATOR; }
 
   get id() { return this.entity.id; }
 
@@ -39,20 +39,20 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
 
   /**
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WgApplication} args.application The parent application. 
    * @param {WgGenerator} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
 
     // Sample set presenter preparations.
-    this.sampleSetStrategies = WordGeneratorApplication.registeredSamplingStrategies.getAll();
+    this.sampleSetStrategies = WgApplication.registeredSamplingStrategies.getAll();
     this.sampleSetStrategyOptions = this.sampleSetStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.sampleSetStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.sampleSetStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-sampling-strategy`,
@@ -63,13 +63,13 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     });
 
     // Sequencing presenter preparations.
-    this.sequencingStrategies = WordGeneratorApplication.registeredSequencingStrategies.getAll();
+    this.sequencingStrategies = WgApplication.registeredSequencingStrategies.getAll();
     this.sequencingStrategyOptions = this.sequencingStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.sequencingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.sequencingStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-sequencing-strategy`,
@@ -80,13 +80,13 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     });
 
     // Spelling presenter preparations.
-    this.spellingStrategies = WordGeneratorApplication.registeredSpellingStrategies.getAll();
+    this.spellingStrategies = WgApplication.registeredSpellingStrategies.getAll();
     this.spellingStrategyOptions = this.spellingStrategies
       .map(it => new DropDownOption({
         value: it.id,
         localizedLabel: it.localizedName,
       }));
-    this.spellingStrategyPresenter = new WordGeneratorStrategyPresenter({
+    this.spellingStrategyPresenter = new WgStrategyPresenter({
       application: this.application,
       entity: this.entity,
       id: `${this.entity.id}-spelling-strategy`,
@@ -99,7 +99,7 @@ export default class WordGeneratorItemPresenter extends AbstractEntityPresenter 
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: WordGeneratorItemPresenter.entityDataType,
+      entityDataType: WgGeneratorPresenter.entityDataType,
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
       dragOverClass: "wg-dragover",

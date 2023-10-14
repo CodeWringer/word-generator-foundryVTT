@@ -1,17 +1,15 @@
-import TypeRegistrar from "../../../business/model/type-registrar/type-registrar.mjs"
-import InfoBubble, { InfoBubbleAutoHidingTypes } from "../../component/info-bubble/info-bubble.mjs"
-import WordGeneratorFolderPresenter from "../../component/folder/word-generator-folder-presenter.mjs"
-import WordGeneratorItemPresenter from "../../component/word-generator-item/word-generator-item-presenter.mjs"
-import { SORTING_ORDERS } from "../../sorting-orders.mjs"
-import { TEMPLATES } from "../../templates.mjs"
-import DialogUtility from "../../dialog/dialog-utility.mjs"
-import WordGeneratorListPresenter from "../../component/word-generator-list/word-generator-list-presenter.mjs"
-import ApplicationDataDataSource from "../../../data/datasource/observable-word-generator-application-data-datasource.mjs"
-import WgApplicationData from "../../../business/model/wg-application-data.mjs"
-import WgGenerator from "../../../business/model/wg-generator.mjs"
-import WgFolder from "../../../business/model/wg-folder.mjs"
-import { SEARCH_MODES, Search, SearchItem } from "../../../business/search/search.mjs"
-import ClipboardHandler from "../../util/clipboard-handler.mjs"
+import TypeRegistrar from "../../business/model/type-registrar/type-registrar.mjs"
+import InfoBubble, { InfoBubbleAutoHidingTypes } from "../component/info-bubble/info-bubble.mjs"
+import { SORTING_ORDERS } from "../sorting-orders.mjs"
+import { TEMPLATES } from "../templates.mjs"
+import DialogUtility from "../dialog/dialog-utility.mjs"
+import WgFolderContentsPresenter from "../component/folder/contents/folder-contents-presenter.mjs"
+import ApplicationDataDataSource from "../../data/datasource/application-data-datasource.mjs"
+import WgApplicationData from "../../business/model/wg-application-data.mjs"
+import WgGenerator from "../../business/model/wg-generator.mjs"
+import WgFolder from "../../business/model/wg-folder.mjs"
+import { SEARCH_MODES, Search, SearchItem } from "../../business/search/search.mjs"
+import ClipboardHandler from "../util/clipboard-handler.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -21,17 +19,17 @@ import ClipboardHandler from "../../util/clipboard-handler.mjs"
  * 
  * @example
  * ```
- * new WordGeneratorApplication().render(true);
+ * new WgApplication().render(true);
  * ```
  */
-export default class WordGeneratorApplication extends Application {
+export default class WgApplication extends Application {
   /** @override */
   static get defaultOptions() {
     const defaults = super.defaultOptions;
   
     const overrides = {
       id: 'word-generator-application',
-      template: TEMPLATES.WORD_GENERATOR_APPLICATION,
+      template: TEMPLATES.APPLICATION,
       title: game.i18n.localize("wg.application.title"),
       userId: game.userId,
       width: 700,
@@ -71,12 +69,12 @@ export default class WordGeneratorApplication extends Application {
    * 
    * @type {WgApplicationData}
    */
-  data = new WgApplicationData();
+  data = undefined;
 
   /**
    * The presenter of the folders and generators.
    * 
-   * @type {WordGeneratorListPresenter}
+   * @type {WgFolderContentsPresenter}
    * @private
    */
   _contentListPresenter = undefined;
@@ -168,7 +166,7 @@ export default class WordGeneratorApplication extends Application {
       const newGenerator = new WgGenerator({
         name: game.i18n.localize("wg.generator.defaultName"),
       });
-      this.data.generators.add(newGenerator);
+      this.data.rootFolder.generators.add(newGenerator);
     });
 
     // Folder creation
@@ -185,7 +183,7 @@ export default class WordGeneratorApplication extends Application {
       const newFolder = new WgFolder({
         name: dialog.input,
       });
-      this.data.folders.add(newFolder);
+      this.data.rootFolder.folders.add(newFolder);
     });
 
     // Sorting word generators
@@ -203,10 +201,10 @@ export default class WordGeneratorApplication extends Application {
     // Collapse all folders
     html.find("#collapse-all-folders").click(() => {
       this.suspendRendering = true;
-      for (const folder of this.data.folders.getAll()) {
+      for (const folder of this.data.rootFolder.folders.getAll()) {
         folder.collapse(true);
       }
-      for (const generator of this.data.generators.getAll()) {
+      for (const generator of this.data.rootFolder.generators.getAll()) {
         generator.isExpanded.value = false;
       }
       this.suspendRendering = false;
@@ -283,8 +281,8 @@ export default class WordGeneratorApplication extends Application {
     if (searchTerm.length > 0) {
       // Show only filtered generators. 
 
-      let flatGeneratorList = this.data.generators.getAll();
-      for (const folder of this.data.folders.getAll()) {
+      let flatGeneratorList = this.data.rootFolder.generators.getAll();
+      for (const folder of this.data.rootFolder.folders.getAll()) {
         flatGeneratorList = flatGeneratorList.concat(folder.getGenerators());
       }
 
@@ -303,11 +301,11 @@ export default class WordGeneratorApplication extends Application {
     } else {
       // Show all folders and generators. 
 
-      foldersToShow = this.data.folders.getAll();
-      generatorsToShow = this.data.generators.getAll();
+      foldersToShow = this.data.rootFolder.folders.getAll();
+      generatorsToShow = this.data.rootFolder.generators.getAll();
     }
 
-    this._contentListPresenter = new WordGeneratorListPresenter({
+    this._contentListPresenter = new WgFolderContentsPresenter({
       application: this,
       folders: foldersToShow,
       generators: generatorsToShow,
@@ -360,20 +358,11 @@ export default class WordGeneratorApplication extends Application {
   }
 
   /**
-   * Click-handler to sort generators and folders. 
+   * Click-handler to sort folders and their contents. 
    * 
    * @param {SORTING_ORDERS} sortingOrder Determines the sorting order. 
    */
   _sort(sortingOrder = SORTING_ORDERS.DESC) {
-    const sortByNameAsc = (a, b) => a.name.value.localeCompare(b.name.value);
-    const sortByNameDesc = (a, b) => b.name.value.localeCompare(a.name.value);
-
-    if (sortingOrder === SORTING_ORDERS.ASC) {
-      this.data.folders.sort(sortByNameAsc);
-      this.data.generators.sort(sortByNameAsc);
-    } else {
-      this.data.folders.sort(sortByNameDesc);
-      this.data.generators.sort(sortByNameDesc);
-    }
+    this.data.rootFolder.sort(sortingOrder);
   }
 }

@@ -1,7 +1,7 @@
 import { TEMPLATES } from "../../templates.mjs";
-import WordGeneratorApplication from "../../application/word-generator-application/word-generator-application.mjs";
-import WordGeneratorItemPresenter from "../word-generator-item/word-generator-item-presenter.mjs";
-import WordGeneratorListPresenter from "../word-generator-list/word-generator-list-presenter.mjs";
+import WgApplication from "../../application/application-presenter.mjs";
+import WgGeneratorPresenter from "../generator/generator-presenter.mjs";
+import WgFolderContentsPresenter from "../folder/contents/folder-contents-presenter.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import WgFolder from "../../../business/model/wg-folder.mjs";
 import DialogUtility from "../../dialog/dialog-utility.mjs";
@@ -13,13 +13,13 @@ import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
  * 
  * @property {String} template Path to the Handlebars template that represents the entity. 
  * * Read-only
- * @property {WordGeneratorApplication} application The parent application. 
+ * @property {WgApplication} application The parent application. 
  * @property {WgFolder} entity The represented entity.  
  * @property {String} id
  * * Read-only
- * @property {WordGeneratorListPresenter} contentListPresenter
+ * @property {WgFolderContentsPresenter} contentListPresenter
  */
-export default class WordGeneratorFolderPresenter extends AbstractEntityPresenter {
+export default class WgFolderPresenter extends AbstractEntityPresenter {
   /**
    * Returns the data type of the represented entity. 
    * 
@@ -30,9 +30,9 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
    * @readonly
    * @static
    */
-  static entityDataType = "WordGeneratorFolder";
+  static entityDataType = "WgFolder";
 
-  get template() { return TEMPLATES.WORD_GENERATOR_FOLDER; }
+  get template() { return TEMPLATES.FOLDER; }
 
   get id() { return this.entity.id; }
 
@@ -42,13 +42,13 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
   /**
    * @param {Object} args
-   * @param {WordGeneratorApplication} args.application The parent application. 
+   * @param {WgApplication} args.application The parent application. 
    * @param {WgFolder} args.entity The represented entity.  
    */
   constructor(args = {}) {
     super(args);
     
-    this.contentListPresenter = new WordGeneratorListPresenter({
+    this.contentListPresenter = new WgFolderContentsPresenter({
       application: args.application,
       folders: this.entity.folders.getAll(),
       generators: this.entity.generators.getAll(),
@@ -56,16 +56,16 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
-      entityDataType: WordGeneratorFolderPresenter.entityDataType,
+      entityDataType: WgFolderPresenter.entityDataType,
       acceptedDataTypes: [
-        WordGeneratorFolderPresenter.entityDataType,
-        WordGeneratorItemPresenter.entityDataType,
+        WgFolderPresenter.entityDataType,
+        WgGeneratorPresenter.entityDataType,
       ],
       receiverElementId: `${this.entity.id}-header`,
       draggableElementId: `${this.entity.id}-header`,
       dragOverClass: "wg-dragover",
       dropHandler: (droppedEntityId, droppedEntityDataType) => {
-        if (droppedEntityDataType === WordGeneratorFolderPresenter.entityDataType) {
+        if (droppedEntityDataType === WgFolderPresenter.entityDataType) {
           // Assign the dragged folder to this folder, as a child. 
 
           const folderToNest = this.application.getFolderById(droppedEntityId);
@@ -87,7 +87,7 @@ export default class WordGeneratorFolderPresenter extends AbstractEntityPresente
 
           // Add to the represented folder's children. 
           this.entity.folders.add(folderToNest);
-        } else if (droppedEntityDataType === WordGeneratorItemPresenter.entityDataType) {
+        } else if (droppedEntityDataType === WgGeneratorPresenter.entityDataType) {
           // Assign the dragged generator to this folder, as a child. 
 
           const generatorToNest = this.application.getGeneratorById(droppedEntityId);

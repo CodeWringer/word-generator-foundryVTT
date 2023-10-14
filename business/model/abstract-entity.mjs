@@ -7,7 +7,7 @@
 export default class AbstractEntity {
   /**
    * @param {Object} args 
-   * @param {String | undefined} args.id Unique ID of the folder. 
+   * @param {String | undefined} args.id Unique ID of the entity. 
    * * By default, generates a new id. 
    */
   constructor(args = {}) {

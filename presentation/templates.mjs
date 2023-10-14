@@ -12,11 +12,11 @@ const basePath = "modules/word-generator/presentation";
  * @constant
  */
 export const TEMPLATES = {
-  WORD_GENERATOR_APPLICATION: `${basePath}/application/word-generator-application/word-generator-application.hbs`,
-  WORD_GENERATOR_LIST_ITEM: `${basePath}/component/word-generator-item/word-generator-item.hbs`,
-  WORD_GENERATOR_STRATEGY: `${basePath}/component/strategy/word-generator-strategy.hbs`,
-  WORD_GENERATOR_FOLDER: `${basePath}/component/folder/word-generator-folder.hbs`,
-  WORD_GENERATOR_LIST: `${basePath}/component/word-generator-list/word-generator-list.hbs`,
+  APPLICATION: `${basePath}/application/application.hbs`,
+  GENERATOR: `${basePath}/component/generator/generator.hbs`,
+  STRATEGY: `${basePath}/component/strategy/strategy.hbs`,
+  FOLDER: `${basePath}/component/folder/folder.hbs`,
+  FOLDER_CONTENTS: `${basePath}/component/folder/contents/folder-contents.hbs`,
   MOVE_CONTROLS: `${basePath}/component/move-controls/move-controls.hbs`,
   ORDERED_LIST: `${basePath}/component/ordered-list/ordered-list.hbs`,
   MULTI_SELECT_LIST: `${basePath}/dialog/multi-select-list.hbs`,
