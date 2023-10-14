@@ -89,6 +89,13 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
           }
         },
         {
+          name: game.i18n.localize("wg.generator.generate"),
+          icon: '<i class="fas fa-pen-nib"></i>',
+          callback: async () => {
+            this.generate(this.application.data.amountToGenerate.value);
+          }
+        },
+        {
           name: game.i18n.localize("wg.general.moveToRootLevel"),
           icon: '<i class="fas fa-angle-double-up"></i>',
           callback: async () => {
@@ -112,6 +119,10 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
       ]
     );
 
+    html.find(`#${id}-generate`).click(async (event) => {
+      event.stopPropagation();
+      this.generate(this.application.data.amountToGenerate.value);
+    });
     html.find(`input#${id}-separator`).change((data) => {
       this.entity.separator.value = this.getValueOrDefault(data, " ");
     });
@@ -120,6 +131,22 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
     this._dragDropHandler.activateListeners(html);
   }
   
+  /**
+   * Generates results using the represented generator. 
+   * 
+   * @param {Number} count The number of results to generate. 
+   * 
+   * @async
+   */
+  async generate(count) {
+    const results = await this.entity.generate(count);
+
+    this.application.suspendRendering = true;
+    this.application.data.generatedResults.clear();
+    this.application.suspendRendering = false;
+    this.application.data.generatedResults.addAll(results);
+  }
+
   /**
    * Prompts the user to enter a new name and if confirmed, applies it. 
    * 

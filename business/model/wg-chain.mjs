@@ -120,7 +120,7 @@ export default class WgChain extends AbstractContainableEntity {
     const sets = [];
 
     // Generate results. 
-    for (const generator of this.items) {
+    for (const generator of this.items.getAll()) {
       sets.push(generator.generate(count));
     }
 
