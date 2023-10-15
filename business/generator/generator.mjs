@@ -54,7 +54,7 @@ export default class WordGenerator {
    * will be picked for generated words. 
    * * default `ENDING_PICK_MODES.RANDOM`.
    * 
-   * @throws {Error} Thrown, if the samplingStrategy is undefined. 
+   * @throws {Error} Thrown, if the any of the strategies is undefined. 
    * @throws {Error} Thrown, if any of the target lengths are less than 1, undefined or no integer value. 
    */
   constructor(args = {}) {
