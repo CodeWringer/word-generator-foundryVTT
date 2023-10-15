@@ -7,6 +7,7 @@ import WgApplication from "./presentation/application/application-presenter.mjs"
 import HandlebarsGlobals from "./presentation/handlebars-globals.mjs";
 import { TEMPLATES } from "./presentation/templates.mjs";
 import { WordListSamplingStrategyDefinition } from "./business/generator/sampling/word-list-sampling-strategy.mjs";
+import DialogUtility from "./presentation/dialog/dialog-utility.mjs";
 
 /* -------------------------------------------- */
 /*  Initialization                              */
@@ -37,4 +38,5 @@ Hooks.once('ready', function() {
   
   // Register globals. 
   window.WgApplication = WgApplication;
+  window.WgDialogUtility = DialogUtility;
 });

@@ -1,6 +1,6 @@
 {
   "name": "word-generator",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Adds a means of generating names semi-randomly, based on a provided sample set, via a dedicated menu.",
   "main": "word-generator.js",
   "scripts": {

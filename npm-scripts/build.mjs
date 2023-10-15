@@ -47,7 +47,7 @@ async function transpileSass() {
   await fs.ensureDir(cssDir);
 
   const scssFileName = "main";
-  const css = compile(`styles/${scssFileName}.scss`).css;
+  const css = compile(`presentation/styles/${scssFileName}.scss`).css;
   const cssDestPath = pathUtil.join(cssDir, `${scssFileName}.css`)
   await writeFile(cssDestPath, css);
 }
