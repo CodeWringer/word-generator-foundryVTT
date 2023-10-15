@@ -106,7 +106,10 @@ export default class WgFolderPresenter extends AbstractEntityPresenter {
     });
   }
 
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     const id = this.entity.id;
 
     const headerElement = html.find(`#${id}-header`);

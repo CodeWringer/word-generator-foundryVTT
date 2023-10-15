@@ -9,6 +9,10 @@
  * * Read-only
  * * Abstract
  * @property {Application} application The parent application. 
+ * @property {Jquery | undefined} _html The DOM the presenter gets to work with. 
+ * For internal use only! Only becomes available after the first call to `activateListeners`! 
+ * * Read-only
+ * * Private
  * 
  * @abstract
  */
@@ -35,10 +39,10 @@ export default class AbstractPresenter {
    * 
    * @param {JQuery} html The DOM of the rendered template. 
    * 
-   * @abstract
+   * @virtual
    */
   activateListeners(html) {
-    throw new Error("Not implemented");
+    this._html = html;
   }
   
   /**

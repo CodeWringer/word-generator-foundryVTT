@@ -111,6 +111,8 @@ export default class WgFolderContentsPresenter extends AbstractPresenter {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     // Child event handlers
     this.foldersPresenter.activateListeners(html);
     this.generatorsPresenter.activateListeners(html);

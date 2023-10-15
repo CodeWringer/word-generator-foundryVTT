@@ -71,6 +71,8 @@ export default class OrderedListPresenter extends AbstractPresenter {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+    
     for (const presenter of this.itemPresenters) {
       presenter.activateListeners(html);
     }

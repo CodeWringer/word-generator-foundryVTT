@@ -52,7 +52,10 @@ export default class WgStrategyPresenter extends AbstractEntityPresenter {
     this.strategySettingsPresenter.application = args.application;
   }
 
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     this._infoBubble = new InfoBubble({
       html: html,
       autoHideType: InfoBubbleAutoHidingTypes.MOUSE_LEAVE,

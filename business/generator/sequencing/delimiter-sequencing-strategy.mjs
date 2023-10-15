@@ -134,8 +134,11 @@ export class DelimiterSequencingStrategySettingsPresenter extends AbstractEntity
 <label for="${this.entity.id}-preserveCase">${game.i18n.localize("wg.generator.preserveCase")}</label>
 <input id="${this.entity.id}-preserveCase" type="checkbox"${this.entity.preserveCase.value === true ? ' checked="true"' : ''} class="wg-light" />`;
   }
-  
+
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     html.find(`input#${this.entity.id}-delimiter`).change((data) => {
       this.entity.delimiter.value = data.currentTarget.value;
     });

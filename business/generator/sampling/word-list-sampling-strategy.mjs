@@ -114,7 +114,10 @@ export class WordListSamplingStrategySettingsPresenter extends AbstractEntityPre
 </a>`;
   }
   
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     html.find(`input#${this.entity.id}-separator`).change((data) => {
       this.entity.separator.value = data.currentTarget.value;
     });

@@ -109,6 +109,8 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+    
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({

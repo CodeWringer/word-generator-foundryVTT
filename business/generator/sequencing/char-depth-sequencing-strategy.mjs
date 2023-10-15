@@ -148,7 +148,10 @@ export class CharDepthSequencingStrategySettingsPresenter extends AbstractEntity
 <input id="${this.entity.id}-preserveCase" type="checkbox"${this.entity.preserveCase.value === true ? ' checked="true"' : ''} class="wg-light" />`;
   }
   
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     html.find(`input#${this.entity.id}-depth`).change((data) => {
       this.entity.depth.value = parseInt(data.currentTarget.value);
     });
