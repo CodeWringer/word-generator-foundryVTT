@@ -39,6 +39,17 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
   get isExpanded() { return this.entity.isExpanded.value; }
 
   /**
+   * Returns `true`, if generation of results is possible. `false` otherwise. 
+   * 
+   * @type {Boolean}
+   * @readonly
+   */
+  get isGenerationEnabled() {
+    return this.entity.samplingStrategy.value.isFullyConfigured()
+      && this.entity.sequencingStrategy.value.isFullyConfigured();
+  }
+
+  /**
    * @param {Object} args
    * @param {WgApplication} args.application The parent application. 
    * @param {WgGenerator} args.entity The represented entity.  
@@ -262,6 +273,16 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
    * @async
    */
   async generate(count) {
+    if (this.isGenerationEnabled !== true) {
+      const generateButtonElement = this._html.find(`#${this.id}-generate`);
+      this._infoBubble.show(
+        generateButtonElement, 
+        game.i18n.localize("wg.generator.generationImpossible"),
+      );
+
+      return;
+    }
+
     const generator = this.entity.toGenerator();
     const results = await generator.generate(count);
 

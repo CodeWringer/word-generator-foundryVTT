@@ -18,4 +18,17 @@ export default class AbstractSamplingStrategy extends AbstractStrategy {
   async getSamples() {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Returns `true`, if this sample strategy is fully configured and can be used 
+   * in result generation. Returns `false` otherwise. 
+   * 
+   * @returns {Boolean} `true`, if this sample strategy is fully configured. 
+   * `false` otherwise. 
+   * 
+   * @abstract
+   */
+  isFullyConfigured() {
+    throw new Error("Not implemented");
+  }
 }

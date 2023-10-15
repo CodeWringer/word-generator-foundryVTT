@@ -38,6 +38,14 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
   get isExpanded() { return this.entity.isExpanded.value; }
 
   /**
+   * Returns `true`, if generation of results is possible. `false` otherwise. 
+   * 
+   * @type {Boolean}
+   * @readonly
+   */
+  get isGenerationEnabled() { return this.entity.items.getAll().length > 0; }
+
+  /**
    * @param {Object} args
    * @param {WordGeneratorApplication} args.application The parent application. 
    * @param {WgChain} args.entity The represented entity.  
@@ -56,6 +64,8 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({
@@ -139,6 +149,16 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
    * @async
    */
   async generate(count) {
+    if (this.isGenerationEnabled !== true) {
+      const generateButtonElement = this._html.find(`#${this.id}-generate`);
+      this._infoBubble.show(
+        generateButtonElement, 
+        game.i18n.localize("wg.chain.generationImpossible"),
+      );
+
+      return;
+    }
+
     const results = await this.entity.generate(count);
 
     this.application.suspendRendering = true;

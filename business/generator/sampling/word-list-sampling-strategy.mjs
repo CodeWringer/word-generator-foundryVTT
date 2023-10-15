@@ -90,6 +90,11 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   async getSamples() {
     return this.sampleSet.value.split(this.separator.value);
   }
+
+  /** @override */
+  isFullyConfigured() {
+    return this.sampleSet.value.trim().length > 0;
+  }
 }
 
 /**

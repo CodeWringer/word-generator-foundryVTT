@@ -114,6 +114,11 @@ export class DelimiterSequencingStrategy extends AbstractSequencingStrategy {
     }
     return sequences;
   }
+
+  /** @override */
+  isFullyConfigured() {
+    return this.delimiter.value.length > 0;
+  }
 }
 
 /**

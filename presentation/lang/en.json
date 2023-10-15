@@ -9,6 +9,7 @@
       "edit": "Edit Chain",
       "defaultName": "New Chain",
       "delete": "Delete Chain",
+      "generationImpossible": "Generation is impossible, because the chain doesn't yet have any 'items' defined!",
       "name": "Chain Name",
       "separator": {
         "label": "Separator",
@@ -46,6 +47,7 @@
       "defaultName": "New Generator",
       "edit": "Edit Generator",
       "generate": "Generate",
+      "generationImpossible": "Generation is impossible, because the generator doesn't yet have a fully configured sample set strategy!",
       "name": "Generator Name",
       "search": "Search Generators",
       "targetLength": {

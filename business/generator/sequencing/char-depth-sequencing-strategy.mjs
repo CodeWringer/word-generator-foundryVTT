@@ -127,6 +127,11 @@ export class CharDepthSequencingStrategy extends AbstractSequencingStrategy {
 
     return sequences;
   }
+
+  /** @override */
+  isFullyConfigured() {
+    return this.depth.value > 0;
+  }
 }
 
 /**
