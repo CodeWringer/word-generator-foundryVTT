@@ -95,9 +95,10 @@ export default class WgApplicationData {
     }
 
     // Give chains their dependency references. 
-    for (const chain of result.rootFolder.chains.getAll()) {
+    const allChains = result.rootFolder.getChains();
+    for (const chain of allChains) {
       const allChoices = result.rootFolder.getGenerators()
-        .concat(result.rootFolder.getChains());
+        .concat(allChains);
 
       const items = chain.itemIds.getAll().map(itemId => 
         allChoices.find(it => it.id === itemId)
