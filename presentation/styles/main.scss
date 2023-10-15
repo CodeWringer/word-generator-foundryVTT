@@ -401,6 +401,26 @@ i.stacked {
     }
   }
 
+  &-auto-margins {
+    > * {
+      margin-right: 6px;
+    }
+    :last-child {
+      margin-right: 0;
+    }
+  }
+
+  &-button-square {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  &-icon-square {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 1.2rem;
+  }
+
   &-content-area {
     background-color: $c-bg-dark;
 
@@ -484,12 +504,10 @@ i.stacked {
   &-height {
     &-regular {
       min-height: 1.8rem;
-      line-height: 1.8rem;
     }
 
     &-header {
       min-height: 2.3rem;
-      line-height: 2.3rem;
     }
   }
 }

@@ -9,10 +9,10 @@ generatorSearchTerm: String
   {{!-- List of generators --}}
   <div class="wg-flex column wg-content-area">
     <div class="wg-dark wg-border-shadow-b">
-      <div class="wg-flex row wg-height-header">
+      <div class="wg-flex row middle wg-auto-margins wg-height-header">
         {{!-- Creation controls --}}
         {{!-- Create generator --}}
-        <a class="wg-flex center row wg-square wg-border-box wg-light wg-margin-3" 
+        <a class="wg-flex center row wg-button-square wg-border-box wg-light" 
           id="create-generator"
           title="{{localize wg.generator.create}}"
         >
@@ -21,7 +21,7 @@ generatorSearchTerm: String
           </i>
         </a>
         {{!-- Create folder --}}
-        <a class="wg-flex center row wg-square wg-border-box wg-light wg-margin-3" 
+        <a class="wg-flex center row wg-button-square wg-border-box wg-light" 
           id="create-folder"
           title="{{localize wg.folder.create}}"
         >
@@ -30,7 +30,7 @@ generatorSearchTerm: String
           </i>
         </a>
         {{!-- Create chain --}}
-        <a class="wg-flex center row wg-square wg-border-box wg-light wg-margin-3" 
+        <a class="wg-flex center row wg-button-square wg-border-box wg-light" 
           id="create-chain"
           title="{{localize wg.chain.create}}"
         >
@@ -42,14 +42,14 @@ generatorSearchTerm: String
         <div class="wg-flex grow"></div>
         {{!-- Sorting controls --}}
         <a
-          class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+          class="wg-flex center wg-button-square wg-interactible wg-border-box wg-light"
           title="{{localize "wg.generator.sortAlphaDesc"}}"
           id="move-sort-alpha-asc"
           >
           <i class="fas fa-sort-alpha-down"></i>
         </a>
         <a
-          class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+          class="wg-flex center wg-button-square wg-interactible wg-border-box wg-light"
           title="{{localize "wg.generator.sortAlphaAsc"}}"
           id="move-sort-alpha-desc"
           >
@@ -58,11 +58,11 @@ generatorSearchTerm: String
       </div>
       <div class="wg-flex row middle wg-height-header">
         {{!-- Filter --}}
-        <div class="wg-square wg-height-header wg-flex center">
+        <label for="search-generators" class="wg-flex center wg-button-square">
           <i class="fas fa-search"></i>
-        </div>
+        </label>
         <input id="search-generators" class="wg-light wg-border-box wg-text-align-center" type="search" name="search" value="{{generatorSearchTerm}}" placeholder="{{localize "wg.generator.search"}}" autocomplete="off">
-        <a id="collapse-all-folders" class="wg-square wg-height-header wg-flex center wg-interactible" title="{{localize "wg.general.collapseAll"}}"><i class="fas fa-sort-amount-up fa-fw"></i></a>
+        <a id="collapse-all-folders" class="wg-flex center wg-button-square" title="{{localize "wg.general.collapseAll"}}"><i class="fas fa-sort-amount-up fa-fw"></i></a>
       </div>
     </div>
     {{!-- Generators and folders area --}}
@@ -96,16 +96,16 @@ generatorSearchTerm: String
       </div>
       {{!-- Sorting controls --}}
       <div class="wg-flex row align-end">
-        <div class="wg-flex row wg-height-header">
+        <div class="wg-flex row wg-auto-margins wg-height-header">
           <a
-            class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+            class="wg-flex center wg-button-square wg-interactible wg-border-box wg-light"
             title="{{localize "wg.generator.sortAlphaDesc"}}"
             id="results-move-sort-alpha-asc"
             >
             <i class="fas fa-sort-alpha-down"></i>
           </a>
           <a
-            class="wg-square wg-flex center wg-interactible wg-border-box wg-margin-3 wg-light"
+            class="wg-flex center wg-button-square wg-interactible wg-border-box wg-light"
             title="{{localize "wg.generator.sortAlphaAsc"}}"
             id="results-move-sort-alpha-desc"
             >
@@ -120,7 +120,7 @@ generatorSearchTerm: String
       <div id="generated-word-{{index}}" class="wg-flex row wg-height-regular wg-light wg-generated-word">
         <a 
           id="generated-word-{{index}}-copy-to-clipboard" 
-          class="wg-square wg-flex center wg-interactible hidden" 
+          class="wg-flex center wg-interactible wg-padding-6 hidden" 
           title="{{localize "wg.general.copy.toClipboard"}}"
         >
           <i class="far fa-clipboard"></i>
