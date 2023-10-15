@@ -413,12 +413,12 @@ i.stacked {
     }
   }
 
-  &-folder, &-generator-item {
+  &-folder, &-generator-item, &-chain {
     &-content {
       border-left: 6px solid $c-bg-light;
     }
 
-    header.wg-folder, header.wg-generator-item {
+    header.wg-folder, header.wg-generator-item, header.wg-chain {
       color: $c-text-light;
       background-color: $c-bg-darkest;
       height: 2.5rem;

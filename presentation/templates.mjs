@@ -15,6 +15,7 @@ export const TEMPLATES = {
   APPLICATION: `${basePath}/application/application.hbs`,
   GENERATOR: `${basePath}/component/generator/generator.hbs`,
   CHAIN: `${basePath}/component/chain/chain.hbs`,
+  CHAIN_ITEM: `${basePath}/component/chain/item/chain-item.hbs`,
   STRATEGY: `${basePath}/component/strategy/strategy.hbs`,
   FOLDER: `${basePath}/component/folder/folder.hbs`,
   FOLDER_CONTENTS: `${basePath}/component/folder/contents/folder-contents.hbs`,

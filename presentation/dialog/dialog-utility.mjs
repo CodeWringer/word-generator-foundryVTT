@@ -206,14 +206,19 @@ export default class DialogUtility {
         },
       });
 
+      const selected = [];
       if (dialog.confirmed === true) {
-        // dialog.input = dialog.html.find("#inputField").val();
         for (const option of args.options) {
           const checkbox = dialog.html.find(`input#${option.id}-checkbox`)[0];
           option.isSelected = checkbox.checked;
+          
+          if (option.isSelected === true) {
+            selected.push(option);
+          }
         }
       }
       dialog.options = args.options;
+      dialog.selected = selected;
       
       resolve(dialog);
     });

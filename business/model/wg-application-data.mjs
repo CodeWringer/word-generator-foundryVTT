@@ -94,6 +94,18 @@ export default class WgApplicationData {
       result.rootFolder.chains.addAll(deserializedRootFolder.chains.getAll());
     }
 
+    // Give chains their dependency references. 
+    for (const chain of result.rootFolder.chains.getAll()) {
+      const allChoices = result.rootFolder.getGenerators()
+        .concat(result.rootFolder.getChains());
+
+      const items = chain.itemIds.getAll().map(itemId => 
+        allChoices.find(it => it.id === itemId)
+      );
+
+      chain.items.addAll(items);
+    }
+
     return result;
   }
 

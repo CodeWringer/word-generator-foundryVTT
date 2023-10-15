@@ -31,7 +31,7 @@ presenter: WgChainPresenter
     </div>
   </header>
   {{#if presenter.isExpanded}}
-  <div class="wg-flex column wg-chain-item-content wg-dark">
+  <div class="wg-flex column wg-chain-content wg-dark">
     <div class="wg-grid-2 gap-2 wg-padding-l-6">
       {{!-- separator --}}
       <div class="wg-flex middle">
@@ -40,15 +40,23 @@ presenter: WgChainPresenter
       </div>
       <input id="{{presenter.id}}-separator" type="text" value="{{presenter.entity.separator.value}}" class="wg-light" />
     </div>
-    <div class="wg-flex column">
-      <label for="{{presenter.id}}-items" class="wg-flex grow">{{localize "wg.chain.items.label"}}</label>
-      <ol class="wg-unstyled-list">
-        {{#each presenter.items as |itempresenter index|}}
-          {{#with itempresenter.template as |template| }}
-            {{> (template) presenter=itempresenter TEMPLATES=../../TEMPLATES }}
-          {{/with}}
-        {{/each}}
-      </ol>
+    {{!-- Items --}}
+    <div class="wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3 wg-padding-l-6">
+      <div class="wg-grid-2 gap-2">
+        <div class="wg-flex middle">
+          <label for="{{presenter.id}}-edit-items" class="wg-flex grow">{{localize "wg.chain.items.label"}}</label>
+          <i id="{{presenter.id}}-items-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+        </div>
+        <a id="{{presenter.id}}-edit-items" class="wg-flex center row grow wg-border-box wg-light wg-margin-3" style="height: 1.8rem">
+          <div class="wg-flex wg-margin-r-3 center"><i class="fas fa-edit"></i></div>
+          <div class="wg-flex middle"><span>{{localize "wg.chain.items.edit"}}</span></div>
+        </a>
+      </div>
+      <div class="wg-flex column">
+        {{#with presenter.itemsPresenter.template as |template|}}
+          {{> (template) presenter=../presenter.itemsPresenter TEMPLATES=../TEMPLATES }}
+        {{/with}}
+      </div>
     </div>
   </div>
   {{/if}}

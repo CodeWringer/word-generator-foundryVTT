@@ -1,10 +1,13 @@
 import WgApplicationData from "../../../business/model/wg-application-data.mjs";
 import WgChain from "../../../business/model/wg-chain.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
-import DialogUtility from "../../dialog/dialog-utility.mjs";
+import AbstractPresenter from "../../abstract-presenter.mjs";
+import DialogUtility, { MultiSelectOption } from "../../dialog/dialog-utility.mjs";
 import { TEMPLATES } from "../../templates.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import InfoBubble, { InfoBubbleAutoHidingTypes, InfoBubbleAutoShowingTypes } from "../info-bubble/info-bubble.mjs";
+import OrderedListPresenter from "../ordered-list/ordered-list-presenter.mjs";
+import { WgChainItemPresenter } from "./item/chain-item-presenter.mjs";
 
 /**
  * This presenter handles a singular chain. 
@@ -53,6 +56,52 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
   constructor(args = {}) {
     super(args);
 
+    const generators = this.application.data.rootFolder.getGenerators();
+    const chains = this.application.data.rootFolder.getChains();
+
+    this.itemsPresenter = new OrderedListPresenter({
+      application: args.application,
+      itemPresenters: args.entity.items.getAll().map(item => {
+        let iconHtml = "";
+        if (generators.find(generator => generator.id === item.id) !== undefined) {
+          iconHtml = '<i class="fas fa-scroll"></i>';
+        } else if (chains.find(chain => chain.id === item.id) !== undefined) {
+          iconHtml = '<i class="fas fa-link"></i>';
+        }
+
+        return new WgChainItemPresenter({
+          id: `${this.entity.id}-${item.id}`,
+          itemId: item.id,
+          icon: iconHtml,
+          name: item.name.value,
+          onRemoveClicked: (itemId) => {
+            const toRemove = this.entity.items.find(it => it.id === itemId);
+            this.entity.items.remove(toRemove);
+          },
+        });
+      }),
+      showIndices: true,
+      onMoveUpClicked: (maximum, compoundId) => {
+        const itemId = compoundId.split("-")[1];
+        const toMove = this.entity.items.find(it => it.id === itemId);
+        
+        const originIndex = this.entity.items.indexOf(toMove);
+        const destinationIndex = maximum === true ? 0 : Math.max(0, originIndex - 1);
+
+        this.entity.items.move(originIndex, destinationIndex);
+      },
+      onMoveDownClicked: (maximum, compoundId) => {
+        const itemId = compoundId.split("-")[1];
+        const toMove = this.entity.items.find(it => it.id === itemId);
+        
+        const originIndex = this.entity.items.indexOf(toMove);
+        const maxIndex = this.entity.items.length - 1;
+        let destinationIndex = maximum === true ? maxIndex : Math.min(maxIndex, originIndex + 1);
+
+        this.entity.items.move(originIndex, destinationIndex);
+      },
+    });
+
     // Drag and drop handler.
     this._dragDropHandler = new DragDropHandler({
       entityId: this.entity.id,
@@ -76,6 +125,10 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
         {
           element: html.find(`#${this.id}-separator-info`),
           text: game.i18n.localize("wg.chain.separator.infoHint"),
+        },
+        {
+          element: html.find(`#${this.id}-items-info`),
+          text: game.i18n.localize("wg.chain.items.infoHint"),
         },
       ]
     });
@@ -136,6 +189,44 @@ export default class WgChainPresenter extends AbstractEntityPresenter {
     html.find(`input#${id}-separator`).change((data) => {
       this.entity.separator.value = this.getValueOrDefault(data, " ");
     });
+    html.find(`#${id}-edit-items`).click(async () => {
+      const generators = this.application.data.rootFolder.getGenerators();
+      const chains = this.application.data.rootFolder.getChains();
+      const allChoices = generators.concat(chains.filter(it => 
+        it.id !== this.entity.id
+      ));
+
+      const options = allChoices.map(toMap => 
+        new MultiSelectOption({
+          id: toMap.id,
+          localizedLabel: toMap.name.value,
+          isSelected: this.entity.items.any(item => item.id === toMap.id),
+        })
+      );
+
+      const dialog = await new DialogUtility().showMultiSelectDialog({
+        localizedTitle: game.i18n.localize("wg.chain.items.edit"),
+        localizedInputLabel: game.i18n.localize("wg.chain.items.label"),
+        modal: true,
+        options: options,
+      });
+
+      if (dialog.confirmed !== true) return;
+
+      const selected = dialog.selected.map(option => 
+        allChoices.find(it => it.id === option.id)
+      );
+      
+      this.application.suspendRendering = true;
+
+      this.entity.items.clear();
+
+      this.application.suspendRendering = false;
+
+      this.entity.items.addAll(selected);
+    });
+
+    this.itemsPresenter.activateListeners(html);
 
     // Drag & drop
     this._dragDropHandler.activateListeners(html);
