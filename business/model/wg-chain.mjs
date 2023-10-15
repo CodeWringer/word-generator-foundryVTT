@@ -154,7 +154,7 @@ export default class WgChain extends AbstractContainableEntity {
 
     // Generate results. 
     for (const generator of this.items.getAll()) {
-      sets.push(generator.generate(count));
+      sets.push(await generator.generate(count));
     }
 
     // Concatenate.
