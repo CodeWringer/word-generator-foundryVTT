@@ -132,8 +132,8 @@ export default class InfoBubble {
       });
     }
     if (this.autoHideType === InfoBubbleAutoHidingTypes.ANY_INPUT || this.autoHideType === InfoBubbleAutoHidingTypes.MOUSE_LEAVE) {
-      element.on(`mousemove.${this._eventNameSpace}.${this._id}`, () => {
-        element.off(`mousemove.${this._eventNameSpace}.${this._id}`);
+      element.on(`mouseleave.${this._eventNameSpace}.${this._id}`, () => {
+        element.off(`mouseleave.${this._eventNameSpace}.${this._id}`);
         this.hide();
       });
     }
@@ -184,8 +184,6 @@ export default class InfoBubble {
       this.html.on(`keydown.${this._eventNameSpace}.${this._id}`, () => {
         this.hide();
       });
-    }
-    if (this.autoHideType === InfoBubbleAutoHidingTypes.ANY_INPUT || this.autoHideType === InfoBubbleAutoHidingTypes.MOUSE_LEAVE) {
       this.html.on(`mousemove.${this._eventNameSpace}.${this._id}`, () => {
         this.hide();
       });
