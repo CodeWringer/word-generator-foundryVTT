@@ -368,5 +368,9 @@ export default class WgFolder extends AbstractContainableEntity {
       this.generators.sort(sortByNameDesc);
       this.chains.sort(sortByNameDesc);
     }
+
+    for (const child of this.folders.getAll()) {
+      child.sort(sortingOrder);
+    }
   }
 }

@@ -46,7 +46,7 @@ export default class WgApplicationData {
    */
   constructor(args = {}) {
     this.amountToGenerate = new ObservableField({ value: args.amountToGenerate ?? 10 });
-    this.resultsSortMode = new ObservableField({ value: args.resultsSortMode ?? SORTING_ORDERS.DESC });
+    this.resultsSortMode = new ObservableField({ value: args.resultsSortMode ?? SORTING_ORDERS.ASC });
     this.generatedResults = new ObservableCollection();
     this.generatorSearchTerm = new ObservableField({ value: args.generatorSearchTerm ?? "" });
 

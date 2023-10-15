@@ -131,18 +131,6 @@ export default class WgApplication extends Application {
 
     this._regeneratePresenters();
 
-    // Observe data changes. 
-    this.data.resultsSortMode.onChange((_, oldValue, newValue) => {
-      if (newValue === SORTING_ORDERS.DESC) {
-        this.data.generatedResults.sort((a, b) => a.localeCompare(b));
-      } else {
-        this.data.generatedResults.sort((a, b) => b.localeCompare(a));
-      }
-
-      this._persistData();
-      this.render();
-    });
-
     // On **any** data change, persist data and re-render. 
     this.data.onChange(() => {
       this._persistData();
@@ -217,10 +205,16 @@ export default class WgApplication extends Application {
 
     // Sorting
     html.find("#move-sort-alpha-desc").click(() => {
+      this.suspendRendering = true;
       this.data.rootFolder.sort(SORTING_ORDERS.DESC);
+      this.suspendRendering = false;
+      this.render();
     });
     html.find("#move-sort-alpha-asc").click(() => {
+      this.suspendRendering = true;
       this.data.rootFolder.sort(SORTING_ORDERS.ASC);
+      this.suspendRendering = false;
+      this.render();
     });
 
     // Generator search
