@@ -47,7 +47,7 @@
       "defaultName": "New Generator",
       "edit": "Edit Generator",
       "generate": "Generate",
-      "generationImpossible": "Generation is impossible, because the generator doesn't yet have a fully configured sample set strategy!",
+      "generationImpossible": "Generation is impossible, because the generator isn't fully configured yet! Please ensure the chosen sampling and sequencing strategies are fully configured.",
       "name": "Generator Name",
       "search": "Search Generators",
       "targetLength": {
