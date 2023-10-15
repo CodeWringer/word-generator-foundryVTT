@@ -1,10 +1,10 @@
-import { EventEmitter } from "../../common/event-emitter.mjs";
 import ObservableCollection, { CollectionChangeTypes } from "../../common/observables/observable-collection.mjs";
 import ObservableField from "../../common/observables/observable-field.mjs";
 import ObservationPropagator from "../../common/observables/observation-propagator.mjs";
 import { SORTING_ORDERS } from "../../presentation/sorting-orders.mjs";
 import AbstractContainableEntity from "./abstract-containable-entity.mjs";
 import WgApplicationData from "./wg-application-data.mjs";
+import WgChain from "./wg-chain.mjs";
 import WgGenerator from "./wg-generator.mjs";
 
 /**
@@ -25,6 +25,7 @@ import WgGenerator from "./wg-generator.mjs";
  * @property {ObservableField<WgFolder | undefined>} parent Parent folder, if there is one. 
  * @property {ObservableCollection<WgFolder>} folders Nested folders. 
  * @property {ObservableCollection<WgGenerator>} generators The contained word generators. 
+ * @property {ObservableCollection<WgChain>} chains The contained chains. 
  */
 export default class WgFolder extends AbstractContainableEntity {
   /**
@@ -42,17 +43,19 @@ export default class WgFolder extends AbstractContainableEntity {
    * @param {WgFolder | undefined} args.parent Parent folder, if there is one. 
    * @param {Array<WgFolder> | undefined} args.folders Nested folders. 
    * @param {Array<WgGenerator> | undefined} args.generators The contained word generators. 
+   * @param {Array<WgChain> | undefined} args.chains The contained chains. 
    */
   constructor(args = {}) {
     super(args);
 
-    this.name = new ObservableField({ 
+    this.name = new ObservableField({
       value: args.name ?? game.i18n.localize("wg.folder.defaultName")
     });
     this.isExpanded = new ObservableField({ value: args.isExpanded ?? false });
     this.parent = new ObservableField({ value: args.parent });
     this.folders = new ObservableCollection({ elements: (args.folders ?? []) });
     this.generators = new ObservableCollection({ elements: (args.generators ?? []) });
+    this.chains = new ObservableCollection({ elements: (args.chains ?? []) });
 
     this.parent.onChange((field, oldValue, newValue) => {
       if (oldValue !== undefined) {
@@ -99,12 +102,31 @@ export default class WgFolder extends AbstractContainableEntity {
       }
     });
 
+    this.chains.onChange((collection, change, args) => {
+      if (change === CollectionChangeTypes.ADD) {
+        for (const chain of args.elements) {
+          if (chain.parent.value != this) {
+            chain.parent.value = this;
+            chain.parentCollection = this.chains;
+          }
+        }
+      } else if (change === CollectionChangeTypes.REMOVE) {
+        for (const chain of args.elements) {
+          if (chain.parent.value == this) {
+            chain.parent.value = undefined;
+            chain.parentCollection = undefined;
+          }
+        }
+      }
+    });
+
     this.propagator = new ObservationPropagator(this, [
       this.name,
       this.isExpanded,
       this.parent,
       this.folders,
       this.generators,
+      this.chains,
     ]);
   }
   
@@ -139,8 +161,13 @@ export default class WgFolder extends AbstractContainableEntity {
       WgFolder.fromDto(childDto, applicationData, result)
     );
 
+    const chains = (obj.chains ?? []).map(childDto => 
+      WgChain.fromDto(childDto, applicationData, result)
+    );
+
     result.generators.addAll(generators); 
     result.folders.addAll(folders); 
+    result.chains.addAll(chains); 
 
     return result;
   }
@@ -156,6 +183,7 @@ export default class WgFolder extends AbstractContainableEntity {
       name: this.name.value,
       folders: this.folders.getAll().map(it => it.toDto()),
       generators: this.generators.getAll().map(it => it.toDto()),
+      chains: this.chains.getAll().map(it => it.toDto()),
     };
   }
   
@@ -220,7 +248,7 @@ export default class WgFolder extends AbstractContainableEntity {
     }
     return undefined;
   }
-
+  
   /**
    * Returns all generators contained in this folder and its child folders. 
    * 
@@ -234,6 +262,45 @@ export default class WgFolder extends AbstractContainableEntity {
     }
 
     return generators;
+  }
+
+  /**
+   * Returns the chain with the given ID, if possible. 
+   * 
+   * Automatically recurses children to find the desired instance. 
+   * 
+   * @param {String} id ID of the chain to find. 
+   * 
+   * @returns {WgChain | undefined}
+   */
+  getChainById(id) {
+    for (const chain of this.chains.getAll()) {
+      if (chain.id === id) {
+        return chain;
+      }
+    }
+    for (const child of this.folders.getAll()) {
+      const r = child.getChainById(id);
+      if (r !== undefined) {
+        return r;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns all chains contained in this folder and its child folders. 
+   * 
+   * @returns {Array<ObservableWordGeneratorItem>}
+   */
+  getChains() {
+    let chains = this.chains.getAll();
+
+    for (const child of this.folders.getAll()) {
+      chains = chains.concat(child.getChains());
+    }
+
+    return chains;
   }
 
   /**
@@ -295,9 +362,11 @@ export default class WgFolder extends AbstractContainableEntity {
     if (sortingOrder === SORTING_ORDERS.ASC) {
       this.folders.sort(sortByNameAsc);
       this.generators.sort(sortByNameAsc);
+      this.chains.sort(sortByNameAsc);
     } else {
       this.folders.sort(sortByNameDesc);
       this.generators.sort(sortByNameDesc);
+      this.chains.sort(sortByNameDesc);
     }
   }
 }

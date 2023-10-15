@@ -4,6 +4,23 @@
       "title": "Word Generators",
       "close": "Close"
     },
+    "chain": {
+      "create": "Create Chain",
+      "edit": "Edit Chain",
+      "defaultName": "New Chain",
+      "delete": "Delete Chain",
+      "generationImpossible": "Generation is impossible, because the chain doesn't yet have any 'items' defined!",
+      "name": "Chain Name",
+      "separator": {
+        "label": "Separator",
+        "infoHint": "This character sequence is used to join chained results together. By default, this is a single space."
+      },
+      "items": {
+        "edit": "Add/Remove Items",
+        "label": "Items",
+        "infoHint": "The output of a chain is determined entirely by the generators and other chains defined as its 'items'. The order in which the generators and other chains appear in the list, matters. The output of each of these is concatenated in their listing order."
+      }
+    },
     "folder": {
       "create": "Create Folder",
       "confirmDeletion": "Delete Folder?",
@@ -31,6 +48,7 @@
       "defaultName": "New Generator",
       "edit": "Edit Generator",
       "generate": "Generate",
+      "generationImpossible": "Generation is impossible, because the generator isn't fully configured yet! Please ensure the chosen sampling and sequencing strategies are fully configured.",
       "name": "Generator Name",
       "search": "Search Generators",
       "targetLength": {

@@ -33,24 +33,6 @@ export class DragDropHandler {
   static _draggedEntityType;
 
   /**
-   * Returns the key to get/set the entity id with on the event. 
-   * 
-   * @type {String}
-   * @readonly
-   * @private
-   */
-  get keyEntityId() { return "entityid"; }
-
-  /**
-   * Returns the key to get/set the entity data type with on the event. 
-   * 
-   * @type {String}
-   * @readonly
-   * @private
-   */
-  get keyEntityDataType() { return "entitydatatype"; }
-
-  /**
    * Returns the default css class that is added on drag over. 
    * 
    * @type {String}

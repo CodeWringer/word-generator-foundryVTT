@@ -5,7 +5,7 @@ presenter: OrderedListPresenter
 <ol class="wg-unstyled-list">
   {{#each presenter.itemPresenters as |itemPresenter index|}}
   <li class="wg-flex row wg-dark wg-border">
-    <div class="wg-flex row wg-height-header">
+    <div class="wg-flex row" style="height: 2.3rem;">
       {{!-- Move Controls --}}
       {{#with ../TEMPLATES.MOVE_CONTROLS as |template|}}
       {{> (template) 
@@ -15,11 +15,13 @@ presenter: OrderedListPresenter
         TEMPLATES=TEMPLATES
       }}
       {{/with}}
-      {{#if ../presenter.showIndices}}
-      {{!-- Index --}}
-      <span class="wg-flex center wg-square">{{itemPresenter.index}}</span>
-      {{/if}}
     </div>
+    {{#if ../presenter.showIndices}}
+    <div class="wg-flex middle">
+      {{!-- Index --}}
+      <span class="wg-flex center wg-button-square">{{itemPresenter.index}}</span>
+    </div>
+    {{/if}}
     {{!-- Item content --}}
     {{#with itemPresenter.presenter.template as |template| }}
       {{> (template) presenter=itemPresenter.presenter TEMPLATES=../../TEMPLATES }}

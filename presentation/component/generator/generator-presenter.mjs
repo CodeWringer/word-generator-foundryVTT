@@ -7,6 +7,7 @@ import WgGenerator from "../../../business/model/wg-generator.mjs";
 import { DragDropHandler } from "../../util/drag-drop-handler.mjs";
 import WgStrategyPresenter from "../strategy/strategy-presenter.mjs";
 import AbstractEntityPresenter from "../../abstract-entity-presenter.mjs";
+import WgApplicationData from "../../../business/model/wg-application-data.mjs";
 
 /**
  * This presenter handles a singular generator. 
@@ -36,6 +37,17 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
   get name() { return this.entity.name.value; }
 
   get isExpanded() { return this.entity.isExpanded.value; }
+
+  /**
+   * Returns `true`, if generation of results is possible. `false` otherwise. 
+   * 
+   * @type {Boolean}
+   * @readonly
+   */
+  get isGenerationEnabled() {
+    return this.entity.samplingStrategy.value.isFullyConfigured()
+      && this.entity.sequencingStrategy.value.isFullyConfigured();
+  }
 
   /**
    * @param {Object} args
@@ -108,6 +120,8 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
 
   /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+    
     const id = this.entity.id;
 
     this._infoBubble = new InfoBubble({
@@ -186,7 +200,7 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
           },
           condition: () => {
             return this.entity.parent.value !== undefined
-              && this.entity.parent.value.id !== "ROOT";
+              && this.entity.parent.value.id !== WgApplicationData.ROOT_FOLDER_ID;
           }
         },
         {
@@ -259,6 +273,16 @@ export default class WgGeneratorPresenter extends AbstractEntityPresenter {
    * @async
    */
   async generate(count) {
+    if (this.isGenerationEnabled !== true) {
+      const generateButtonElement = this._html.find(`#${this.id}-generate`);
+      this._infoBubble.show(
+        generateButtonElement, 
+        game.i18n.localize("wg.generator.generationImpossible"),
+      );
+
+      return;
+    }
+
     const generator = this.entity.toGenerator();
     const results = await generator.generate(count);
 

@@ -87,7 +87,8 @@ export class BeginningCapitalsSpellingStrategyPresenter extends AbstractEntityPr
   /** @override */
   get template() { return ""; }
   
+  /** @override */
   activateListeners(html) {
-    // No work to do. 
+    super.activateListeners(html);
   }
 }

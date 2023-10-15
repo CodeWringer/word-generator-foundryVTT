@@ -94,7 +94,7 @@ export default class InfoBubble {
     this.onShow = args.onShow ?? (() => {});
     this.onHide = args.onHide ?? (() => {});
 
-    this._element = $(this.html.add(`<span class="wg-info-bubble hidden"></span>`)[1]);
+    this._element = $(this.html.add(`<span class="wg-info-bubble hidden" id="${this._id}"></span>`)[1]);
     this.html.append(this._element);
 
     this._activateListeners();
@@ -124,6 +124,19 @@ export default class InfoBubble {
     const y = parentPos.top - bubbleSize.height;
 
     this._element[0].style = `left: ${x}px; top: ${y}px;`;
+
+    if(this.autoHideType === InfoBubbleAutoHidingTypes.ANY_INPUT) {
+      element.on(`keydown.${this._eventNameSpace}.${this._id}`, () => {
+        element.off(`keydown.${this._eventNameSpace}.${this._id}`);
+        this.hide();
+      });
+    }
+    if (this.autoHideType === InfoBubbleAutoHidingTypes.ANY_INPUT || this.autoHideType === InfoBubbleAutoHidingTypes.MOUSE_LEAVE) {
+      element.on(`mouseleave.${this._eventNameSpace}.${this._id}`, () => {
+        element.off(`mouseleave.${this._eventNameSpace}.${this._id}`);
+        this.hide();
+      });
+    }
 
     this.onShow();
   }
@@ -168,10 +181,10 @@ export default class InfoBubble {
     }
 
     if(this.autoHideType === InfoBubbleAutoHidingTypes.ANY_INPUT) {
-      this.html.on(`mousemove.${this._eventNameSpace}.${this._id}`, () => {
+      this.html.on(`keydown.${this._eventNameSpace}.${this._id}`, () => {
         this.hide();
       });
-      this.html.on(`keydown.${this._eventNameSpace}.${this._id}`, () => {
+      this.html.on(`mousemove.${this._eventNameSpace}.${this._id}`, () => {
         this.hide();
       });
     }

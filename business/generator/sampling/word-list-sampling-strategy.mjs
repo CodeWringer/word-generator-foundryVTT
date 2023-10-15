@@ -90,6 +90,11 @@ export class WordListSamplingStrategy extends AbstractSamplingStrategy {
   async getSamples() {
     return this.sampleSet.value.split(this.separator.value);
   }
+
+  /** @override */
+  isFullyConfigured() {
+    return this.sampleSet.value.trim().length > 0;
+  }
 }
 
 /**
@@ -114,7 +119,10 @@ export class WordListSamplingStrategySettingsPresenter extends AbstractEntityPre
 </a>`;
   }
   
+  /** @override */
   activateListeners(html) {
+    super.activateListeners(html);
+
     html.find(`input#${this.entity.id}-separator`).change((data) => {
       this.entity.separator.value = data.currentTarget.value;
     });

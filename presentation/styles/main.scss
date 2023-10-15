@@ -401,6 +401,26 @@ i.stacked {
     }
   }
 
+  &-auto-margins {
+    > * {
+      margin-right: 6px;
+    }
+    :last-child {
+      margin-right: 0;
+    }
+  }
+
+  &-button-square {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  &-icon-square {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 1.2rem;
+  }
+
   &-content-area {
     background-color: $c-bg-dark;
 
@@ -413,12 +433,12 @@ i.stacked {
     }
   }
 
-  &-folder, &-generator-item {
+  &-folder, &-generator-item, &-chain {
     &-content {
       border-left: 6px solid $c-bg-light;
     }
 
-    header.wg-folder, header.wg-generator-item {
+    header.wg-folder, header.wg-generator-item, header.wg-chain {
       color: $c-text-light;
       background-color: $c-bg-darkest;
       height: 2.5rem;
@@ -483,13 +503,11 @@ i.stacked {
 
   &-height {
     &-regular {
-      height: 1.8rem;
-      line-height: 1.8rem;
+      min-height: 1.8rem;
     }
 
     &-header {
-      height: 2.3rem;
-      line-height: 2.3rem;
+      min-height: 2.3rem;
     }
   }
 }

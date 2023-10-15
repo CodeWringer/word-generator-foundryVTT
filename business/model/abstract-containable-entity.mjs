@@ -34,7 +34,7 @@ export default class AbstractContainableEntity extends AbstractEntity {
    * Moves the represented entity to the root level, if possible. 
    * 
    * @param {String} type Determines the type of root collection to move the 
-   * represented entity to. Allowed: `"generator"` | `"folder"`
+   * represented entity to. Allowed: `"generator"` | `"folder"` | `"chain"`
    * 
    * @virtual
    */
@@ -51,6 +51,8 @@ export default class AbstractContainableEntity extends AbstractEntity {
       this.applicationData.rootFolder.generators.add(this);
     } else if (type === "folder") {
       this.applicationData.rootFolder.folders.add(this);
+    } else if (type === "chain") {
+      this.applicationData.rootFolder.chains.add(this);
     }
   }
   

@@ -49,4 +49,17 @@ export default class AbstractSequencingStrategy extends AbstractStrategy {
   getSequencesOfSample(sample) {
     throw new Error("Not implemented");
   }
+  
+  /**
+   * Returns `true`, if this sequencing strategy is fully configured and can be used 
+   * in result generation. Returns `false` otherwise. 
+   * 
+   * @returns {Boolean} `true`, if this sequencing strategy is fully configured. 
+   * `false` otherwise. 
+   * 
+   * @abstract
+   */
+  isFullyConfigured() {
+    throw new Error("Not implemented");
+  }
 }

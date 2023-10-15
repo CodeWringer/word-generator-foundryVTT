@@ -10,6 +10,7 @@ import WgGenerator from "../../business/model/wg-generator.mjs"
 import WgFolder from "../../business/model/wg-folder.mjs"
 import { SEARCH_MODES, Search, SearchItem } from "../../business/search/search.mjs"
 import ClipboardHandler from "../util/clipboard-handler.mjs"
+import WgChain from "../../business/model/wg-chain.mjs"
 
 /**
  * Houses the presentation layer logic of the word generator. 
@@ -197,7 +198,24 @@ export default class WgApplication extends Application {
       this.data.rootFolder.generators.add(newGenerator);
     });
 
-    // Sorting word generators
+    // Chain creation
+    html.find("#create-chain").click(async () => {
+      const dialog = await new DialogUtility().showSingleInputDialog({
+        localizedTitle: game.i18n.localize("wg.chain.create"),
+        localizedInputLabel: game.i18n.localize("wg.chain.name"),
+        modal: true,
+      });
+  
+      if (dialog.confirmed !== true) return;
+
+      const newChain = new WgChain({
+        name: dialog.input,
+        applicationData: this.data,
+      });
+      this.data.rootFolder.chains.add(newChain);
+    });
+
+    // Sorting
     html.find("#move-sort-alpha-desc").click(() => {
       this.data.rootFolder.sort(SORTING_ORDERS.DESC);
     });
@@ -287,39 +305,51 @@ export default class WgApplication extends Application {
   _regeneratePresenters() {
     let foldersToShow = [];
     let generatorsToShow = [];
+    let chainsToShow = [];
 
+    // TODO extract and generalize searching
     const searchTerm = this.data.generatorSearchTerm.value.trim();
     if (searchTerm.length > 0) {
-      // Show only filtered generators. 
-
-      let flatGeneratorList = this.data.rootFolder.generators.getAll();
-      for (const folder of this.data.rootFolder.folders.getAll()) {
-        flatGeneratorList = flatGeneratorList.concat(folder.getGenerators());
-      }
-
-      const searchItems = flatGeneratorList.map(generator => 
+      const flatGeneratorList = this.data.rootFolder.getGenerators();
+      const searchableGenerators = flatGeneratorList.map(generator => 
         new SearchItem({
           id: generator.id,
           term: generator.name.value,
         })
       );
+      const foundGenerators = new Search().search(searchableGenerators, searchTerm, SEARCH_MODES.FUZZY);
 
-      const searchResults = new Search().search(searchItems, searchTerm, SEARCH_MODES.FUZZY);
-      const relevantSearchResults = searchResults.filter(it => it.score > 0);
-      generatorsToShow = relevantSearchResults.map(result => 
+      const relevantGenerators = foundGenerators.filter(it => it.score > 0);
+      generatorsToShow = relevantGenerators.map(result => 
         flatGeneratorList.find(generator => generator.id === result.id)
       );
+
+      const flatChainList = this.data.rootFolder.getChains();
+      const searchableChains = flatChainList.map(chain => 
+        new SearchItem({
+          id: chain.id,
+          term: chain.name.value,
+        })
+      );
+      const foundChains = new Search().search(searchableChains, searchTerm, SEARCH_MODES.FUZZY);
+
+      const relevantChains = foundChains.filter(it => it.score > 0);
+      chainsToShow = relevantChains.map(result => 
+        flatChainList.find(chain => chain.id === result.id)
+      );
     } else {
-      // Show all folders and generators. 
+      // Show **all** content. 
 
       foldersToShow = this.data.rootFolder.folders.getAll();
       generatorsToShow = this.data.rootFolder.generators.getAll();
+      chainsToShow = this.data.rootFolder.chains.getAll();
     }
 
     this._contentListPresenter = new WgFolderContentsPresenter({
       application: this,
       folders: foldersToShow,
       generators: generatorsToShow,
+      chains: chainsToShow,
     });
   }
 
@@ -337,7 +367,7 @@ export default class WgApplication extends Application {
       autoHideType: InfoBubbleAutoHidingTypes.ANY_INPUT,
     });
 
-    html.find(".word-generator-generated-word").each((index, element) => {
+    html.find(".wg-generated-word").each((index, element) => {
       const jElement = $(element);
       const jCliboardButton = html.find(`#generated-word-${index}-copy-to-clipboard`);
       const jInput = jElement.find(`input#generated-word-${index}-word`);

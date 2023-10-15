@@ -1,0 +1,23 @@
+{{!--
+presenter: WgChainItemPresenter
+TEMPLATES: TEMPLATES
+--}}
+<div
+  class="wg-flex row middle grow wg-dark wg-padding-3 wg-height-header"
+  id="{{presenter.id}}-chain-dependency"
+  >
+  {{!-- Icon --}}
+  <div class="wg-flex row middle">
+    <div class="wg-flex center wg-icon-square">{{{presenter.icon}}}</div>
+  </div>
+  {{!-- Name --}}
+  <div class="wg-flex middle grow" style="font-size: 1.2rem;">
+    <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
+  </div>
+  {{!-- Quick Actions --}}
+  <div class="wg-flex row middle">
+    <a class="wg-flex center wg-button-square wg-height-regular wg-interactible" id="{{presenter.id}}-remove">
+      <i class="fas fa-trash"></i>
+    </a>
+  </div>
+</div>

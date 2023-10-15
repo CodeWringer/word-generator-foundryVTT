@@ -1,0 +1,63 @@
+{{!-- Params:
+TEMPLATES: TEMPLATES
+presenter: WgChainPresenter
+--}}
+<div class="wg-generator-item wg-flex column grow"
+  id="{{presenter.id}}"
+  >
+  <header class="wg-generator-item wg-flex row wg-dark wg-padding-3 wg-height-header{{#if presenter.isExpanded}} open{{/if}}"
+    id="{{presenter.id}}-header"
+    draggable="true"
+    >
+    {{!-- Identity --}}
+    <h3 class="wg-flex grow">
+      {{!-- Icon --}}
+      <div class="wg-flex center wg-icon-square">
+        <i class="fas fa-link stackable">
+        {{#if presenter.isExpanded}}{{else}}
+          <i class="fas fa-bars stacked wg-dark"></i>
+        {{/if}}
+        </i>
+      </div>
+      {{!-- Name --}}
+      <span class="wg-flex middle grow wg-margin-l-6">{{presenter.name}}</span>
+    </h3>
+    {{!-- Quick Actions --}}
+    <div class="wg-flex row middle">
+      <a class="wg-flex center wg-button-square wg-interactible" 
+        id="{{presenter.id}}-generate">
+        <i class="fas fa-pen-nib"></i>
+      </a>
+    </div>
+  </header>
+  {{#if presenter.isExpanded}}
+  <div class="wg-flex column wg-chain-content wg-dark">
+    <div class="wg-grid-2 gap-2 wg-padding-l-6">
+      {{!-- separator --}}
+      <div class="wg-flex middle">
+        <label for="{{presenter.id}}-separator" class="wg-flex grow">{{localize "wg.chain.separator.label"}}</label>
+        <i id="{{presenter.id}}-separator-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+      </div>
+      <input id="{{presenter.id}}-separator" type="text" value="{{presenter.entity.separator.value}}" class="wg-light" />
+    </div>
+    {{!-- Items --}}
+    <div class="wg-card wg-margin-t-3 wg-margin-b-3 wg-padding-3 wg-padding-l-6">
+      <div class="wg-grid-2 gap-2">
+        <div class="wg-flex middle">
+          <label for="{{presenter.id}}-edit-items" class="wg-flex grow">{{localize "wg.chain.items.label"}}</label>
+          <i id="{{presenter.id}}-items-info" class="far fa-question-circle wg-square wg-padding-6"></i>
+        </div>
+        <a id="{{presenter.id}}-edit-items" class="wg-flex center row grow wg-border-box wg-light wg-margin-3" style="height: 1.8rem">
+          <div class="wg-flex wg-margin-r-3 center"><i class="fas fa-edit"></i></div>
+          <div class="wg-flex middle"><span>{{localize "wg.chain.items.edit"}}</span></div>
+        </a>
+      </div>
+      <div class="wg-flex column">
+        {{#with presenter.itemsPresenter.template as |template|}}
+          {{> (template) presenter=../presenter.itemsPresenter TEMPLATES=../TEMPLATES }}
+        {{/with}}
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>
