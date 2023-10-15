@@ -14,8 +14,6 @@ import WgGenerator from "./wg-generator.mjs";
  * 
  * @property {ObservableField<Number>} amountToGenerate The number of words to generate. 
  * * Persisted
- * @property {ObservableField<SORTING_ORDERS>} resultsSortMode The sorting order of generated words. 
- * * Persisted
  * @property {ObservableCollection<String>} generatedResults The generated results. 
  * @property {ObservableField<String>} generatorSearchTerm The current generator filter to apply. 
  * * If not empty, only the generators whose name partially or fully matches this string. 
@@ -36,8 +34,6 @@ export default class WgApplicationData {
    * @param {Object} args 
    * @param {Number | undefined} args.amountToGenerate The number of words to generate. 
    * * Default `10`
-   * @param {SORTING_ORDERS | undefined} args.resultsSortMode The sorting order of generated words. 
-   * * Default `SORTING_ORDERS.DESC`
    * @param {Array<WgGenerator> | undefined} args.generators The collection of root-level generators. 
    * @param {Array<WgFolder> | undefined} args.folders The collection of root-level folders. 
    * @param {Array<WgChain> | undefined} args.chains The collection of root-level chains. 
@@ -46,7 +42,6 @@ export default class WgApplicationData {
    */
   constructor(args = {}) {
     this.amountToGenerate = new ObservableField({ value: args.amountToGenerate ?? 10 });
-    this.resultsSortMode = new ObservableField({ value: args.resultsSortMode ?? SORTING_ORDERS.ASC });
     this.generatedResults = new ObservableCollection();
     this.generatorSearchTerm = new ObservableField({ value: args.generatorSearchTerm ?? "" });
 
@@ -62,7 +57,6 @@ export default class WgApplicationData {
 
     this.propagator = new ObservationPropagator(this, [
       this.amountToGenerate,
-      this.resultsSortMode,
       this.generatedResults,
       this.generatorSearchTerm,
       this.rootFolder,
@@ -81,7 +75,6 @@ export default class WgApplicationData {
   static fromDto(obj) {
     const result = new WgApplicationData({
       amountToGenerate: obj.amountToGenerate,
-      resultsSortMode: obj.resultsSortMode,
     });
 
     // Only the deserialized folder contents are kept. All other data is hard-coded 
@@ -118,7 +111,6 @@ export default class WgApplicationData {
   toDto() {
     return {
       amountToGenerate: this.amountToGenerate.value,
-      resultsSortMode: this.resultsSortMode.value,
       rootFolder: this.rootFolder.toDto(),
     };
   }

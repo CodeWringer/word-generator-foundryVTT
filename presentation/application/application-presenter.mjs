@@ -241,21 +241,12 @@ export default class WgApplication extends Application {
     });
 
     // Sorting result list
-    const resultsSortDescButtonElement = html.find("#results-move-sort-alpha-desc");
-    resultsSortDescButtonElement.click(() => {
-      this.data.resultsSortMode.value = SORTING_ORDERS.DESC;
+    html.find("#results-move-sort-alpha-asc").click(() => {
+      this.data.generatedResults.sort((a, b) => a.localeCompare(b));
     });
-    if (this.data.resultsSortMode.value === SORTING_ORDERS.DESC) {
-      resultsSortDescButtonElement.addClass("active");
-    }
-
-    const resultsSortAscButtonElement = html.find("#results-move-sort-alpha-asc");
-    resultsSortAscButtonElement.click(() => {
-      this.data.resultsSortMode.value = SORTING_ORDERS.ASC;
+    html.find("#results-move-sort-alpha-desc").click(() => {
+      this.data.generatedResults.sort((a, b) => b.localeCompare(a));
     });
-    if (this.data.resultsSortMode.value === SORTING_ORDERS.ASC) {
-      resultsSortAscButtonElement.addClass("active");
-    }
 
     // Generated word event handling.
     this._activateListenersClipboardButtons(html);
