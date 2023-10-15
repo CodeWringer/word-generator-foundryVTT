@@ -25,11 +25,6 @@ export class BeginningCapitalsSpellingStrategyDefinition extends AbstractStrateg
  */
 export class BeginningCapitalsSpellingStrategy extends AbstractSpellingStrategy {
   /** @override */
-  static fromDto(dto) {
-    return new BeginningCapitalsSpellingStrategy();
-  }
-
-  /** @override */
   get definitionId() { return new BeginningCapitalsSpellingStrategyDefinition().id; }
 
   /** @override */

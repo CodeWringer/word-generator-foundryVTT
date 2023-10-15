@@ -7,20 +7,6 @@ import AbstractEntityPresenter from "../../../presentation/abstract-entity-prese
  */
 export default class AbstractStrategy {
   /**
-   * Returns a new instance of this object, based on the given DTO. 
-   * 
-   * @param {Object} dto 
-   * 
-   * @returns {AbstractStrategy}
-   * 
-   * @static
-   * @abstract
-   */
-  static fromDto(dto) {
-    throw new Error("Not implemented");
-  }
-
-  /**
    * ID of this strategy. 
    * 
    * @type {String}

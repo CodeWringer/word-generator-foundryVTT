@@ -11,7 +11,7 @@ import AbstractSamplingStrategy from "./abstract-sampling-strategy.mjs";
  */
 export class WordListSamplingStrategyDefinition extends AbstractStrategyDefinition {
   /** @override */
-  get id() { return "WordListSamplingStrategy" }
+  get id() { return "WordListSamplingStrategy"; }
 
   /** @override */
   get localizedName() { return game.i18n.localize("wg.generator.samplingStrategies.wordList"); }
@@ -31,14 +31,6 @@ export class WordListSamplingStrategyDefinition extends AbstractStrategyDefiniti
  * @extends AbstractSamplingStrategy
  */
 export class WordListSamplingStrategy extends AbstractSamplingStrategy {
-  /** @override */
-  static fromDto(dto) {
-    return new WordListSamplingStrategy({
-      separator: dto.separator,
-      sampleSet: dto.sampleSet,
-    });
-  }
-
   /** @override */
   get definitionId() { return new WordListSamplingStrategyDefinition().id; }
 

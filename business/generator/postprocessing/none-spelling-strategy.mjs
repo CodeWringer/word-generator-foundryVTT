@@ -28,11 +28,6 @@ export class NoneSpellingStrategyDefinition extends AbstractStrategyDefinition {
  */
 export class NoneSpellingStrategy extends AbstractSpellingStrategy {
   /** @override */
-  static fromDto(dto) {
-    return new NoneSpellingStrategy();
-  }
-
-  /** @override */
   get definitionId() { return new NoneSpellingStrategyDefinition().id; }
 
   /** @override */
