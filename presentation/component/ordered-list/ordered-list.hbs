@@ -5,7 +5,7 @@ presenter: OrderedListPresenter
 <ol class="wg-unstyled-list">
   {{#each presenter.itemPresenters as |itemPresenter index|}}
   <li class="wg-flex row wg-dark wg-border">
-    <div class="wg-flex row wg-height-header">
+    <div class="wg-flex row" style="max-height: 2.3rem;">
       {{!-- Move Controls --}}
       {{#with ../TEMPLATES.MOVE_CONTROLS as |template|}}
       {{> (template) 
