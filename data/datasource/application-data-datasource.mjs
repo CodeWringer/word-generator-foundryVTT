@@ -36,7 +36,7 @@ export default class ApplicationDataDataSource {
     const dto = user.getFlag(
       ApplicationDataDataSource.FLAG_SCOPE,
       ApplicationDataDataSource.KEY_FLAG
-    ) ?? new WgApplicationData();
+    ) ?? {};
 
     return WgApplicationData.fromDto(dto);
   }
